@@ -1,0 +1,22 @@
+{% extends 'celldb/base.html' %} {% block content %}
+<div class="jumbotron">
+  <h1 class="display-6">单细胞测序数据库项目日志</h1>
+  <hr class="my-4" />
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>日期</th>
+        <th>内容</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for log in logs %}
+      <tr>
+        <td>{{ log.date }}</td>
+        <td>{{ log.content }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

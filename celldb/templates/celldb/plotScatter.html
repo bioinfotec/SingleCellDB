@@ -1,0 +1,19 @@
+{% extends 'celldb/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="row mt-2 justify-content-center"> 
+    <div class="card">
+      <script src="{% static 'celldb/echarts/echarts.js' %} "></script>
+      <div id="Scatter" style="width: 1000px;height: 800px;"></div>
+      <script>var singledataUrl = "{% static 'celldb/singledata.txt' %}"</script>
+      <script src="{% static 'celldb/plotScatter.js' %} "></script>
+      </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
