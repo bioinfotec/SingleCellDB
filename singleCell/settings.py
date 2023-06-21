@@ -42,7 +42,6 @@ INSTALLED_APPS = [
     "crispy_bootstrap4",
     "celldb",
     "rest_framework",
-    
 ]
 
 MIDDLEWARE = [
@@ -54,8 +53,6 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    
-    
 ]
 
 ROOT_URLCONF = "singleCell.urls"
@@ -87,13 +84,13 @@ DATABASES = {
     #     "ENGINE": "django.db.backends.sqlite3",
     #     "NAME": BASE_DIR / "db.sqlite3",
     # }
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'Student',
-        'USER': 'ubuntu',
-        'PASSWORD': '200102',
-        'HOST': 'localhost',
-        'PORT': '3306',
+    "default": {
+        "ENGINE": "django.db.backends.mysql",
+        "NAME": "Student",
+        "USER": "root",
+        "PASSWORD": "200102",
+        "HOST": "localhost",
+        "PORT": "3306",
     }
 }
 
@@ -105,9 +102,15 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",},
-    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",},
-    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",},
+    {
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+    },
+    {
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+    },
 ]
 
 
@@ -134,6 +137,6 @@ STATIC_URL = "/static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
-CRISPY_TEMPLATE_PACK = 'bootstrap4'
+CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]

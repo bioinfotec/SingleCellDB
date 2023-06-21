@@ -1,15 +1,11 @@
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from celldb.models import TranMeta
-from .serializers import  TranMetaSerializer
+from .serializers import TranMetaSerializer
 from rest_framework.pagination import PageNumberPagination
 from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.views import APIView
-
-
-
-
 
 
 class CustomPagination(PageNumberPagination):
@@ -49,24 +45,25 @@ def getTran_detail(request, id, format=None):
         tran.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-#过滤功能
+
+# 过滤功能
 class MyView(APIView):
     filter_backends = [OrderingFilter]
-    ordering_fields = ['cell_type']  # 指定可排序的字段列表
+    ordering_fields = ["cell_type"]  # 指定可排序的字段列表
 
     def get(self, request):
         # 处理 GET 请求的逻辑
         # 获取排序参数
-        ordering = self.request.query_params.get('ordering')
-        
+        ordering = self.request.query_params.get("ordering")
+
         # 执行排序逻辑
         if ordering:
             # 根据排序参数对数据进行排序
             queryset = TranMeta().objects.all().order_by(ordering)
         else:
             # 默认排序逻辑
-            queryset = TranMeta().objects.all().order_by('id')
-        
+            queryset = TranMeta().objects.all().order_by("id")
+
         # 返回排序结果
         serializer = TranMetaSerializer(queryset, many=True)
         return Response(serializer.data)
