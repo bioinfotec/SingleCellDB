@@ -56,11 +56,10 @@
               <a
                 class="page-link mr-2"
                 href="?page={{ page_obj.previous_page_number }}"
-                >Previous</a
+                >{{page_obj.previous_page_number}}</a
               >
             </li>
             {% endif %}
-
             <li class="page-item active">
               <span class="page-link mr-2">{{ page_obj.number }}</span>
             </li>
@@ -70,7 +69,14 @@
               <a
                 class="page-link mr-2"
                 href="?page={{ page_obj.next_page_number }}"
-                >Next</a
+                >{{ page_obj.next_page_number }}</a
+              >
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link mr-2"
+                href="?page={{ page_obj.next_page_number|add:'1' }}"
+                >{{ page_obj.next_page_number|add:'1' }}</a
               >
             </li>
             <li class="page-item">

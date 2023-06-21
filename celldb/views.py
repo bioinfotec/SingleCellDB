@@ -10,15 +10,21 @@ def home(request):
         {"date": "6.3", "content": "学习使用JavaScript，以便处理数据格式"},
         {"date": "6.4~6.6", "content": "使用echarts.js绘图"},
         {"date": "6.7~6.10", "content": "分页功能实现"},
-        {"date": "6.11~", "content": "前后端分离"},
+        {"date": "6.11~15", "content": "前后端分离"},
+        {"date": "6.16~6.20", "content": "完善搜索功能和分页按钮"},
     ]
     return render(request, "celldb/home.html", {"logs": logs})
 
 def plotScatter(request):
     return render(request, "celldb/plotScatter.html")
 
-def student_search(request):
-    return render(request, 'celldb/search.html')
+def search(request):
+    query = request.GET.get('query', '')
+    data = ''
+    if query:
+        response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
+        data = response.json()
+    return render(request, 'celldb/search.html', {"data": data})
 
 def data(request):
     #restframework暂时未能实现

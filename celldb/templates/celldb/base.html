@@ -1,38 +1,68 @@
 {% load static %}
 <!DOCTYPE html>
 <html>
-<head>
+  <head>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
-    <link rel="stylesheet" type="text/css" href="{% static 'celldb/css/bootstrap.min.css' %}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'celldb/css/bootstrap.min.css' %}"
+    />
 
-    <link rel="stylesheet" type="text/css" href="{% static 'celldb/css/main.css' %}">
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'celldb/css/main.css' %}"
+    />
 
     {% if title %}
-        <title>{{ title }}</title>
+    <title>{{ title }}</title>
     {% else %}
-        <title>SingleCellDB</title>
+    <title>SingleCellDB</title>
     {% endif %}
-</head>
-<body>
+  </head>
+  <body>
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'celldb-home' %}">SingleCellDB</a>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
+          <a class="navbar-brand mr-4" href="{% url 'celldb-home' %}"
+            >SingleCellDB</a
+          >
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-toggle="collapse"
+            data-target="#navbarToggle"
+            aria-controls="navbarToggle"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{% url 'celldb-search' %}">Search</a>
-              <a class="nav-item nav-link" href="{% url 'celldb-data' %}">Data</a>
-              <a class="nav-item nav-link" href="{% url 'celldb-plot' %}">Plot</a>
+              <a class="nav-item nav-link" href="{% url 'celldb-search' %}"
+                >Search</a
+              >
+              <a class="nav-item nav-link" href="{% url 'celldb-data' %}"
+                >Data</a
+              >
+              <a class="nav-item nav-link" href="{% url 'celldb-plot' %}"
+                >Plot</a
+              >
               <a class="nav-item nav-link" href="#">Analyse</a>
               <a class="nav-item nav-link" href="{% url 'api-tran' %}">API</a>
+              <a class="nav-item nav-link" href="{% url 'celldb-test' %}"
+                >Code</a
+              >
             </div>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
@@ -45,10 +75,7 @@
     </header>
     <main role="main" class="container">
       <div class="row">
-        <div class="col-md-12">
-          {% block content %}{% endblock %}
-
-        </div>
+        <div class="col-md-12">{% block content %}{% endblock %}</div>
       </div>
     </main>
     <!-- Optional JavaScript -->
@@ -59,5 +86,5 @@
     <script src="{% static 'celldb/js/jquery-3.2.1.slim.min.js' %}"></script>
     <script src="{% static 'celldb/js/popper.min.js' %}"></script>
     <script src="{% static 'celldb/js/bootstrap.min.js' %}"></script>
-</body>
+  </body>
 </html>
