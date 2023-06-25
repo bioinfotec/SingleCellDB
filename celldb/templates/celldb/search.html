@@ -24,36 +24,36 @@
       </div>
     </div>
   </div>
-</div>
-{% if data %}
-<div class="container mt-2">
-  <div class="row cjustify-content-center">
-    <table class="table table-bordered">
-      <thead>
-        <tr>
-          <th>Data ID</th>
-          <th>Cell Barcode</th>
-          <th>Cell Type</th>
-          <th>Zone</th>
-          <th>Run ID</th>
-          <th>Time Point</th>
-          <th>UMAP X</th>
-          <th>UMAP Y</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>{{ data.data_id }}</td>
-          <td>{{ data.cell_barcode }}</td>
-          <td>{{ data.cell_type }}</td>
-          <td>{{ data.zone }}</td>
-          <td>{{ data.run_id }}</td>
-          <td>{{ data.time_point }}</td>
-          <td>{{ data.umap_x }}</td>
-          <td>{{ data.umap_y }}</td>
-        </tr>
-      </tbody>
-    </table>
+  {% if data %}
+  <div class="container mt-2">
+    <div class="row cjustify-content-center">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Data ID</th>
+            <th>Cell Barcode</th>
+            <th>Cell Type</th>
+            <th>Zone</th>
+            <th>Run ID</th>
+            <th>Time Point</th>
+            <th>UMAP X</th>
+            <th>UMAP Y</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ data.data_id }}</td>
+            <td>{{ data.cell_barcode }}</td>
+            <td>{{ data.cell_type }}</td>
+            <td>{{ data.zone }}</td>
+            <td>{{ data.run_id }}</td>
+            <td>{{ data.time_point }}</td>
+            <td>{{ data.umap_x }}</td>
+            <td>{{ data.umap_y }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
+  {% endif %} {% endblock %}
 </div>
-{% endif %} {% endblock %}

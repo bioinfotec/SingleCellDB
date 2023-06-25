@@ -2,6 +2,9 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import TranMeta
 import requests
+from django.views import View
+from django.http import HttpResponse
+
 
 def home(request):
     logs = [
@@ -15,19 +18,22 @@ def home(request):
     ]
     return render(request, "celldb/home.html", {"logs": logs})
 
+
 def plotScatter(request):
     return render(request, "celldb/plotScatter.html")
 
+
 def search(request):
-    query = request.GET.get('query', '')
-    data = ''
+    query = request.GET.get("query", "")
+    data = ""
     if query:
         response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
         data = response.json()
-    return render(request, 'celldb/search.html', {"data": data})
+    return render(request, "celldb/search.html", {"data": data})
+
 
 def data(request):
-    #restframework暂时未能实现
+    # restframework暂时未能实现
     # response = requests.get("http://127.0.0.1:8000/api/tran/", params=request.GET)
     # if response.status_code == 200:
     #     data = response.json()
@@ -38,16 +44,15 @@ def data(request):
     # else:
     #     page_data = Paginator([], 10).get_page(1)
     # return render(request, 'celldb/data.html', {'data': page_data})
-    
-    #直接使用内置API
+
+    # 直接使用内置API
     data = TranMeta.objects.all()
     items_per_page = 10
     paginator = Paginator(data, items_per_page)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    return render(request, 'celldb/data.html', {'page_obj': page_obj})
+    return render(request, "celldb/data.html", {"page_obj": page_obj})
 
 
 def test(request):
     return render(request, "celldb/test.html")
-

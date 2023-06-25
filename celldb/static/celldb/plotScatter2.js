@@ -1,164 +1,146 @@
-fetch(singledataUrl)
-.then(res => res.text())
-.then(testString =>{
-    var chartDom = document.getElementById('Scatter');
+fetch("http://127.0.0.1:8000/api/tran/all")
+  .then((res) => res.json())
+  .then((testString) => {
+    var chartDom = document.getElementById("Scatter");
     var myChart = echarts.init(chartDom);
     var option;
-    const rawdata = testString.split('\r\n').map(item => item.split(','))
-    let singledata = [];
-    let cell_type = [];
-    for (var i = 1; i < rawdata.length; i++) {
-        singledata.push([parseFloat(rawdata[i][5]), parseFloat(rawdata[i][6]), rawdata[i][1]]);      
-        cell_type.push(rawdata[i][1]);
+    // 处理数据
+    var cell_type = [];
+    plotdata = testString.map(function (value, index) {
+      if (cell_type.indexOf(value.cell_type) === -1) {
+        cell_type.push(value.cell_type);
+      }
+      return [
+        parseFloat(value.umap_x),
+        parseFloat(value.umap_y),
+        value.cell_type,
+      ];
+    });
+    // 生成transform_option
+    var transform_option = [];
+    for (var i = 0; i < cell_type.length; i++) {
+      transform_option.push({
+        transform: {
+          type: "filter",
+          config: { dimension: "cell_type", "=": cell_type[i] },
+        },
+      });
     }
-    cell_type = Array.from(new Set(cell_type));
-    cell_type.pop();
+    // 生成多个series
+    var series = [];
+    for (var i = 0; i < cell_type.length; i++) {
+      series.push({
+        name: cell_type[i],
+        type: "scatter",
+        emphasis: {
+          focus: "series",
+        },
+        datasetIndex: i + 1,
+        symbolSize: 2.5,
+        encode: {
+          x: "x",
+          y: "y",
+        },
+      });
+    }
     option = {
-    dataset: [{
-        source: singledata,
+      title: {
+        text: "UMAP",
+        left: "center",
+        top: "3%",
+      },
+      xAxis: {
+        name: "UMAP_X",
+        nameLocation: "middle",
+        nameGap: 25,
+        max: 20,
+        min: -20,
+        nameTextStyle: {
+          fontSize: 18,
         },
+        axisLine: {
+          onZero: false,
+        },
+        splitLine: { show: false },
+      },
+      yAxis: {
+        name: "UMAP_Y",
+        nameLocation: "middle",
+        nameGap: 25,
+        max: 20,
+        min: -20,
+        nameTextStyle: {
+          fontSize: 18,
+        },
+        axisLine: {
+          onZero: false,
+        },
+        splitLine: { show: false },
+      },
+      tooltip: {
+        position: "top",
+        formatter: function (params) {
+          var data = params.data;
+          var formattedTooltip =
+            "Cell: " + data[2] + "<br>X: " + data[0] + "<br>Y: " + data[1];
+          return formattedTooltip;
+        },
+      },
+      grid: {
+        left: "5%",
+        right: "15%",
+        // show: true,
+      },
+      legend: {
+        data: cell_type, // 初始为空数组，用于存储动态生成的图例项
+        orient: "vertical",
+        right: "5%",
+        type: "scroll",
+        selected: {
+          ...cell_type.reduce((acc, type) => {
+            acc[type] = true;
+            return acc;
+          }, {}),
+        },
+      },
+      dataset: [
         {
-            transform: {
-                type: 'filter',
-                config: {
-                    dimension: 2, value:cell_type[0]
-                }
-            }
+          dimensions: ["x", "y", "cell_type"],
+          source: plotdata,
         },
-        {
-            transform: {
-                type: 'filter',
-                config: {
-                    dimension: 2, value:cell_type[1]
-                }
-            }
-        },
-        {
-            transform: {
-                type: 'filter',
-                config: {
-                    dimension: 2, value:cell_type[2]
-                }
-            }
-        }
-
-        ],
-    title: {
-        text: 'SingleCellUMAP',
-        left: '5%',
-        top: '3%'
-    },
-    legend: {
-        right: '10%',
-        top: '3%',
-        data: [cell_type[0], cell_type[1], cell_type[2]]
-    },
-    grid: {
-        left: '8%',
-        top: '10%'
-    },
-    xAxis: {
-
-    },
-    yAxis: {
-        
-    },
-    series: [
-        {
-        name: cell_type[0],
-        datasetIndex: 1,
-        type: 'scatter',
-        symbolSize: 2,
-        emphasis: {
-            focus: 'series',
-            label: {
-            show: true,
-            // formatter: function (param) {
-            //     return param.data[2];
-            // },
-            position: 'top'
-            }
-        },
-        itemStyle: {
-            shadowBlur: 10,
-            shadowColor: 'rgba(120, 36, 50, 0.5)',
-            shadowOffsetY: 5,
-            color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [
-            {
-                offset: 0,
-                color: 'rgb(251, 118, 123)'
-            },
-            {
-                offset: 1,
-                color: 'rgb(204, 46, 72)'
-            }
-            ])
-        }
-        },
-        {
-        name: cell_type[1],
-        datasetIndex: 2,
-        type: 'scatter',
-        symbolSize: 2,
-        emphasis: {
-            focus: 'series',
-            label: {
-            show: true,
-            // formatter: function (param) {
-            //     return param.data[2];
-            // },
-            position: 'top'
-            }
-        },
-        itemStyle: {
-            shadowBlur: 10,
-            shadowColor: 'rgba(25, 100, 150, 0.5)',
-            shadowOffsetY: 5,
-            color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [
-            {
-                offset: 0,
-                color: 'rgb(129, 227, 238)'
-            },
-            {
-                offset: 1,
-                color: 'rgb(25, 183, 207)'
-            }
-            ])
-        }
-        },
-        {
-        name: cell_type[2],
-        datasetIndex: 2,
-        type: 'scatter',
-        symbolSize: 2,
-        emphasis: {
-            focus: 'series',
-            label: {
-            show: true,
-            // formatter: function (param) {
-            //     return param.data[2];
-            // },
-            position: 'top'
-            }
-        },
-        itemStyle: {
-            shadowBlur: 10,
-            shadowColor: 'rgba(25, 100, 150, 0.5)',
-            shadowOffsetY: 5,
-            color: new echarts.graphic.RadialGradient(0.4, 0.3, 1, [
-            {
-                offset: 0,
-                color: 'rgb(129, 227, 238)'
-            },
-            {
-                offset: 1,
-                color: 'rgb(25, 183, 207)'
-            }
-            ])
-        }
-        }
-    ]
+        ...transform_option,
+      ],
+      series: [...series],
     };
-
     option && myChart.setOption(option);
-})
+    // 下拉框
+    var cellTypeSelect = document.getElementById("cellTypeSelect");
+    ["ALL"].concat(cell_type).forEach(function (type) {
+      var option = document.createElement("option");
+      option.value = type;
+      option.text = type;
+      cellTypeSelect.appendChild(option);
+    });
+
+    // 监听下拉框事件
+    cellTypeSelect.addEventListener("change", function (event) {
+      var selectedCellType = event.target.value;
+      var legendSelected = {};
+
+      // 更新图例选中状态
+      if (selectedCellType === "ALL") {
+        cell_type.forEach(function (type) {
+          legendSelected[type] = true;
+        });
+      } else {
+        cell_type.forEach(function (type) {
+          legendSelected[type] = type === selectedCellType;
+        });
+      }
+      myChart.setOption({
+        legend: {
+          selected: legendSelected,
+        },
+      });
+    });
+  });

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from celldb.models import TranMeta
+from celldb.models import TranMeta, DataSetMeta
 
 
 class TranMetaSerializer(serializers.ModelSerializer):
@@ -15,3 +15,9 @@ class TranMetaSerializer(serializers.ModelSerializer):
             "umap_x",
             "umap_y",
         )
+
+
+class DataSetMetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DataSetMeta
+        fields = "__all__"
