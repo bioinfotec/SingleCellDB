@@ -1,11 +1,29 @@
 from rest_framework.response import Response
+from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
 from celldb.models import TranMeta, DataSetMeta
 from .serializers import TranMetaSerializer, DataSetMetaSerializer
 from .paginations import CustomPagination
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
+from django.core.files.storage import default_storage
+from django.views.decorators.csrf import csrf_exempt
 
+#For Photo upload
+@csrf_exempt
+def SaveFiles(request):
+    try:
+        file = request.FILES['file']
+        # 验证文件类型是否为图片
+        allowed_extensions = ['jpg', 'jpeg', 'png', 'gif']
+        extension = file.name.split('.')[-1].lower()
+        if extension not in allowed_extensions:
+            return JsonResponse({'error': '只能上传图片文件'}, status=400)
+        
+        file_name = default_storage.save(file.name, file)
+        return JsonResponse({'message': '文件上传成功'}, status=201)
+    except KeyError:
+        return JsonResponse({'error': '未找到上传的文件'}, status=400)
 
 class DataSetView(ModelViewSet):
     queryset = DataSetMeta.objects.order_by("dataset_id")

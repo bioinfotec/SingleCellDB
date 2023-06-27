@@ -91,6 +91,7 @@ fetch("http://127.0.0.1:8000/api/tran/all")
         right: "15%",
         // show: true,
       },
+      
       legend: {
         data: cell_type, // 初始为空数组，用于存储动态生成的图例项
         orient: "vertical",
