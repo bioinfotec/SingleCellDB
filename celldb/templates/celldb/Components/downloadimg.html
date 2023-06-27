@@ -17,7 +17,7 @@
   </head>
   <body>
     <div class="container mt-2">
-      <button type="button" class="btn btn-primary" onclick="downloadFile()">
+      <button type="button" class="btn btn-primary" id="downloadBtn">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="16"
@@ -43,9 +43,20 @@
     crossorigin="anonymous"
   ></script>
   <script>
-    function downloadFile() {
-      // 发送 GET 请求到视图函数的 URL
-      window.location.href = "{% url 'api:api-download' %}";
-    }
+    // 获取按钮元素
+    var downloadButton = document.getElementById("downloadBtn");
+
+    // 添加点击事件处理程序
+    downloadButton.addEventListener("click", function () {
+      // 创建一个 <a> 元素
+      var link = document.createElement("a");
+
+      // 设置下载链接和文件名
+      link.href = "http://127.0.0.1:8000/api/photo/Docker.png"; // 替换为你要下载的文件的路径
+      link.download = "Docker.png"; // 替换为你要设置的文件名
+
+      // 模拟点击下载链接
+      link.click();
+    });
   </script>
 </html>

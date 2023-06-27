@@ -8,6 +8,29 @@ from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
 from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
+from django.http import FileResponse
+import os
+
+# For File download
+def download_file(request):
+    # 获取文件路径
+    file_path = '/home/azureuser/SingleCellDB/Photo/Docker.png'  # 文件的实际路径
+    file_name = os.path.basename(file_path)  # 文件名
+
+    # 检查文件是否存在
+    if not os.path.exists(file_path):
+        raise FileNotFoundError("File not found")
+
+    # 打开文件并创建响应对象
+    file = open(file_path, 'rb')
+    response = FileResponse(file)
+
+    # 设置响应头，指定文件名和内容类型
+    response['Content-Disposition'] = f'attachment; filename={file_name.split("/")[-1].encode().decode("latin-1")}'
+    print(f'attachment; filename={file_name.split("/")[-1].encode().decode("latin-1")}')
+    response['Content-Type'] = 'application/png'  # 根据实际文件类型设置
+
+    return response
 
 #For Photo upload
 @csrf_exempt
