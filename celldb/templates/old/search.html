@@ -1,0 +1,59 @@
+{% extends 'celldb/base.html' %} {% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title mb-4">Search</h3>
+        <form method="GET" action="{% url 'celldb-search' %}">
+          <div class="form-group">
+            <div class="input-group">
+              <input
+                type="text"
+                class="form-control"
+                id="search-input"
+                name="query"
+                placeholder="Enter data ID (1,2,3....)"
+                required
+              />
+              <div class="input-group-append">
+                <button type="submit" class="btn btn-primary">Search</button>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  {% if data %}
+  <div class="container mt-2">
+    <div class="row cjustify-content-center">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>Data ID</th>
+            <th>Cell Barcode</th>
+            <th>Cell Type</th>
+            <th>Zone</th>
+            <th>Run ID</th>
+            <th>Time Point</th>
+            <th>UMAP X</th>
+            <th>UMAP Y</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ data.data_id }}</td>
+            <td>{{ data.cell_barcode }}</td>
+            <td>{{ data.cell_type }}</td>
+            <td>{{ data.zone }}</td>
+            <td>{{ data.run_id }}</td>
+            <td>{{ data.time_point }}</td>
+            <td>{{ data.umap_x }}</td>
+            <td>{{ data.umap_y }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %} {% endblock %}
+</div>

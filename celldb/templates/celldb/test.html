@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html>
   <head>
@@ -10,42 +11,60 @@
       crossorigin="anonymous"
     />
     <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.min.css"
+      href="{% static 'celldb/css/cdn.datatables.net_1.13.4_css_dataTables.bootstrap5.min.css' %}"
       rel="stylesheet"
     />
     <style></style>
   </head>
   <body>
-    <div class="container mt-2">
-      <button type="button" class="btn btn-primary" onclick="downloadFile()">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="16"
-          height="16"
-          fill="currentColor"
-          class="bi bi-0-circle"
-          viewBox="0 0 16 18"
-        >
-          <path
-            d="M7.988 12.158c-1.851 0-2.941-1.57-2.941-3.99V7.84c0-2.408 1.101-3.996 2.965-3.996 1.857 0 2.935 1.57 2.935 3.996v.328c0 2.408-1.101 3.99-2.959 3.99ZM8 4.951c-1.008 0-1.629 1.09-1.629 2.895v.31c0 1.81.627 2.895 1.629 2.895s1.623-1.09 1.623-2.895v-.31c0-1.8-.621-2.895-1.623-2.895Z"
-          />
-          <path
-            d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0ZM1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8Z"
-          />
-        </svg>
-        Download
-      </button>
+    <div class="container">
+      <table id="example" class="table table-hover" style="width: 100%">
+        <thead>
+          <tr>
+            <th>Data ID</th>
+            <th>Cell Barcode</th>
+            <th>Cell Type</th>
+            <th>Zone</th>
+            <th>Run ID</th>
+            <th>Time Point</th>
+            <th>UMAP X</th>
+            <th>UMAP Y</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
     </div>
   </body>
+  <script
+    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"
+    integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ=="
+    crossorigin="anonymous"
+    referrerpolicy="no-referrer"
+  ></script>
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
     crossorigin="anonymous"
   ></script>
+  <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_dataTables.bootstrap5.min.js' %}"></script>
   <script>
-    function downloadFile() {
-      // 发送 GET 请求到视图函数的 URL
-      window.location.href = "{% url 'api:api-download' %}";
-    }
+    $(document).ready(function () {
+      $("#example").DataTable({
+        ajax: { url: "http://127.0.0.1:8000/api/tran/all", dataSrc: "" },
+        columns: [
+          { data: "data_id" },
+          { data: "cell_barcode" },
+          { data: "cell_type" },
+          { data: "zone" },
+          { data: "run_id" },
+          { data: "time_point" },
+          { data: "umap_x" },
+          { data: "umap_y" },
+        ],
+        paging: true,
+        deferRender: true,
+      });
+    });
   </script>
 </html>

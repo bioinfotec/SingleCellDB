@@ -1,0 +1,97 @@
+{% extends 'celldb/base.html' %} {% load static %} {% block content %}
+
+<div class="row mt-2 justify-content-center">
+  <div class="col-md-12">
+    <div class="card">
+      <div class="card-body">
+        <h3 class="card-title mb-4">Single_cell_Meta_data</h3>
+        <div
+          class="table-responsive"
+          style="max-height: 800px; overflow-y: scroll"
+        >
+          <table class="table table-striped">
+            <thead>
+              <tr>
+                <th>Data ID</th>
+                <th>Cell Barcode</th>
+                <th>Cell Type</th>
+                <th>Zone</th>
+                <th>Run ID</th>
+                <th>Time Point</th>
+                <th>UMAP X</th>
+                <th>UMAP Y</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in page_obj %}
+              <tr>
+                <td>{{ item.data_id }}</td>
+                <td>{{ item.cell_barcode }}</td>
+                <td>{{ item.cell_type }}</td>
+                <td>{{ item.zone }}</td>
+                <td>{{ item.run_id }}</td>
+                <td>{{ item.time_point }}</td>
+                <td>{{ item.umap_x }}</td>
+                <td>{{ item.umap_y }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <form action="{% url 'celldb-plot' %}">
+          {% csrf_token %}
+          <div class="mt-2">
+            <button type="submit" name="generate_umap" class="btn btn-primary">
+              生成UMAP图
+            </button>
+          </div>
+        </form>
+        <div class="pagination justify-content-center">
+          <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+              <a class="page-link mr-2" href="?page=1">&laquo; First</a>
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link mr-2"
+                href="?page={{ page_obj.previous_page_number }}"
+                >{{page_obj.previous_page_number}}</a
+              >
+            </li>
+            {% endif %}
+            <li class="page-item active">
+              <span class="page-link mr-2">{{ page_obj.number }}</span>
+            </li>
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+              <a
+                class="page-link mr-2"
+                href="?page={{ page_obj.next_page_number }}"
+                >{{ page_obj.next_page_number }}</a
+              >
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link mr-2"
+                href="?page={{ page_obj.next_page_number|add:'1' }}"
+                >{{ page_obj.next_page_number|add:'1' }}</a
+              >
+            </li>
+            <li class="page-item">
+              <a
+                class="page-link mr-2"
+                href="?page={{ page_obj.paginator.num_pages }}"
+                >Last &raquo;</a
+              >
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

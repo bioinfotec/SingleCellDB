@@ -59,4 +59,16 @@
       link.click();
     });
   </script>
+  <!-- 也可以用视图函数处理 -->
+  <button
+    type="button"
+    class="btn btn-primary"
+    onclick="downloadFile()"
+  ></button>
+  <!-- <script>
+    function downloadFile() {
+      // 发送 GET 请求到视图函数的 URL
+      window.location.href = "{% url 'api:api-download' %}";
+    }
+  </script> -->
 </html>
