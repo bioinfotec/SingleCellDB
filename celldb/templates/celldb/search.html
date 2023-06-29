@@ -3,57 +3,96 @@
   <div class="col-md-12">
     <div class="card">
       <div class="card-body">
-        <h3 class="card-title mb-4">Search</h3>
-        <form method="GET" action="{% url 'celldb-search' %}">
-          <div class="form-group">
-            <div class="input-group">
-              <input
-                type="text"
-                class="form-control"
-                id="search-input"
-                name="query"
-                placeholder="Enter data ID (1,2,3....)"
-                required
-              />
-              <div class="input-group-append">
-                <button type="submit" class="btn btn-primary">Search</button>
-              </div>
-            </div>
-          </div>
-        </form>
+        <h3 class="card-title mb-4">Liver Data Summary</h3>
+        <div
+          class="table-responsive"
+          style="max-height: 800px; overflow-y: scroll"
+        >
+          <table class="table table-striped table-bordered">
+            <thead>
+              <tr>
+                <th>Liter_pmid</th>
+                <th>Liter_title</th>
+                <th>Liter_abstract</th>
+                <th>Liter_publication</th>
+                <th>Liter_content</th>
+                <th>Liter_data</th>
+                <th>Sample_info</th>
+                <th>Species</th>
+                <th>Tissue</th>
+                <th>Number_cells</th>
+                <th>Cell_types</th>
+                <th>Method</th>
+                <th>Markers</th>
+                <th>Note</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for item in liter %}
+              <tr>
+                <td>{{ item.Liter_pmid }}</td>
+                <td>
+                  <span
+                    class="d-inline-block text-truncate"
+                    style="max-width: 200px"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="{{ item.Liter_title }}"
+                  >
+                    {{ item.Liter_title }}
+                  </span>
+                </td>
+                <td>
+                  <span
+                    class="d-inline-block text-truncate"
+                    style="max-width: 200px"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="{{ item.Liter_abstract }}"
+                  >
+                    {{ item.Liter_abstract }}
+                  </span>
+                </td>
+                <td class="text-truncate" style="max-width: 200px">
+                  {{ item.Liter_publication }}
+                </td>
+                <td>
+                  <span
+                    class="d-inline-block text-truncate"
+                    style="max-width: 200px"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="{{ item.Liter_content }}"
+                  >
+                    {{ item.Liter_content }}
+                  </span>
+                </td>
+                <td>{{ item.Liter_data }}</td>
+                <td>{{ item.Sample_info }}</td>
+                <td>{{ item.Species }}</td>
+                <td>{{ item.Tissue }}</td>
+                <td>{{ item.Number_cells }}</td>
+                <td>{{ item.Cell_types }}</td>
+                <td>{{ item.Method }}</td>
+                <td>
+                  <span
+                    class="d-inline-block text-truncate"
+                    style="max-width: 200px"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="{{ item.Markers }}"
+                  >
+                    {{ item.Markers }}
+                  </span>
+                </td>
+                <td>{{ item.Note }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
-  {% if data %}
-  <div class="container mt-2">
-    <div class="row cjustify-content-center">
-      <table class="table table-bordered">
-        <thead>
-          <tr>
-            <th>Data ID</th>
-            <th>Cell Barcode</th>
-            <th>Cell Type</th>
-            <th>Zone</th>
-            <th>Run ID</th>
-            <th>Time Point</th>
-            <th>UMAP X</th>
-            <th>UMAP Y</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>{{ data.data_id }}</td>
-            <td>{{ data.cell_barcode }}</td>
-            <td>{{ data.cell_type }}</td>
-            <td>{{ data.zone }}</td>
-            <td>{{ data.run_id }}</td>
-            <td>{{ data.time_point }}</td>
-            <td>{{ data.umap_x }}</td>
-            <td>{{ data.umap_y }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  {% endif %} {% endblock %}
 </div>
+{% endblock %}

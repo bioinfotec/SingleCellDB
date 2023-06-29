@@ -1,8 +1,8 @@
 from rest_framework.response import Response
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
-from celldb.models import TranMeta, DataSetMeta
-from .serializers import TranMetaSerializer, DataSetMetaSerializer
+from celldb.models import TranMeta, DataSetMeta, LiteratureMeta
+from .serializers import TranMetaSerializer, DataSetMetaSerializer, LiteratureMetaSerializer
 from .paginations import CustomPagination
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -48,10 +48,15 @@ def SaveFiles(request):
     except KeyError:
         return JsonResponse({'error': '未找到上传的文件'}, status=400)
 
+#For DataSet
 class DataSetView(ModelViewSet):
     queryset = DataSetMeta.objects.order_by("dataset_id")
     serializer_class = DataSetMetaSerializer
 
+# For LiteratureMeta
+class LiteratureMetaView(ModelViewSet):
+    queryset = LiteratureMeta.objects.all()
+    serializer_class = LiteratureMetaSerializer
 
 @api_view(["GET"])
 def getTran(request, formar=None):

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from celldb.models import TranMeta, DataSetMeta
+from celldb.models import TranMeta, DataSetMeta, LiteratureMeta
 
 
 class TranMetaSerializer(serializers.ModelSerializer):
@@ -20,4 +20,9 @@ class TranMetaSerializer(serializers.ModelSerializer):
 class DataSetMetaSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSetMeta
+        fields = "__all__"
+        
+class LiteratureMetaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = LiteratureMeta
         fields = "__all__"

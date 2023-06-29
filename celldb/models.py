@@ -18,7 +18,7 @@ class TranMeta(models.Model):
     data_id = models.AutoField(primary_key=True)
     cell_barcode = models.CharField(max_length=255)
     cell_type = models.CharField(max_length=255)
-    zone = models.IntegerField()
+    zone = models.CharField(max_length=255)
     run_id = models.CharField(max_length=255)
     time_point = models.IntegerField()
     umap_x = models.FloatField()
@@ -29,13 +29,13 @@ class TranMeta(models.Model):
 
 
 class DataSetMeta(models.Model):
-    dataset_id = models.CharField(primary_key=True, max_length=50)
-    subdata_id = models.CharField(max_length=50, blank=True, null=True)
+    dataset_id = models.CharField(primary_key=True, max_length=100)
+    subdata_id = models.CharField(max_length=100, blank=True, null=True)
     dataset_design = models.TextField(blank=True, null=True)
     dataset_citation = models.TextField(blank=True, null=True)
-    data_platform = models.CharField(max_length=50, blank=True, null=True)
-    data_model = models.CharField(max_length=50, blank=True, null=True)
-    data_library = models.CharField(max_length=50, blank=True, null=True)
+    data_platform = models.CharField(max_length=100, blank=True, null=True)
+    data_model = models.CharField(max_length=100, blank=True, null=True)
+    data_library = models.CharField(max_length=100, blank=True, null=True)
     dataset_sample = models.TextField(blank=True, null=True)
 
     def __self__(self):
@@ -50,12 +50,12 @@ class LiteratureMeta(models.Model):
     Liter_content = models.TextField(blank=True, null=True)
     Liter_data = models.TextField(blank=True, null=True)
     Sample_info = models.TextField(blank=True, null=True)
-    Species = models.CharField(max_length=100, blank=True, null=True)
-    Tissue = models.CharField(max_length=100, blank=True, null=True)
+    Species = models.CharField(max_length=1000, blank=True, null=True)
+    Tissue = models.CharField(max_length=1000, blank=True, null=True)
     Number_cells = models.CharField(max_length=100, blank=True, null=True)
-    Cell_types = models.CharField(max_length=100, blank=True, null=True)
-    Method = models.CharField(max_length=100, blank=True, null=True)
-    Markers = models.CharField(max_length=1000, blank=True, null=True)
+    Cell_types = models.TextField(blank=True, null=True)
+    Method = models.CharField(max_length=1000, blank=True, null=True)
+    Markers = models.TextField(blank=True, null=True)
     Note = models.TextField(blank=True, null=True)
 
     def __self__(self):

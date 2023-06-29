@@ -6,7 +6,8 @@ __pycache__
 db.sqlite3
 media
 /Photo
-
+celldb/migrations/*
+nohup.out
 # Backup files # 
 *.bak 
 

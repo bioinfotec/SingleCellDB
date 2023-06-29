@@ -1,191 +1,146 @@
-{% load static %}
-<!DOCTYPE html>
-<html>
-  <head>
-    <!-- Required meta tags -->
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1, shrink-to-fit=no"
-    />
+{% extends 'celldb/base.html' %} {% load static %} {% block content %}
 
-    <!-- Bootstrap CSS -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'celldb/css/bootstrap.min.css' %}"
-    />
-
-    <link
-      rel="stylesheet"
-      type="text/css"
-      href="{% static 'celldb/css/main.css' %}"
-    />
-
-    {% if title %}
-    <title>{{ title }}</title>
-    {% else %}
-    <title>SingleCellDB</title>
-    {% endif %}
-  </head>
-  <body>
-    <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-        <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'celldb-home' %}"
-            >SingleCellDB</a
-          >
-          <button
-            class="navbar-toggler"
-            type="button"
-            data-toggle="collapse"
-            data-target="#navbarToggle"
-            aria-controls="navbarToggle"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{% url 'celldb-data' %}"
-                >Data</a
-              >
-              <a class="nav-item nav-link" href="{% url 'celldb-search' %}"
-                >Download</a
-              >
-              <a class="nav-item nav-link" href="{% url 'celldb-plot' %}"
-                >Plot</a
-              >
-              <a class="nav-item nav-link" href="#">Analyse</a>
-              <a class="nav-item nav-link" href="{% url 'api:api-tran' %}"
-                >API</a
-              >
-              <a class="nav-item nav-link" href="{% url 'celldb-test' %}"
-                >Code</a
-              >
-            </div>
-            <!-- Navbar Right Side -->
-            <div class="navbar-nav">
-              <a class="nav-item nav-link" href="#">Login</a>
-              <a class="nav-item nav-link" href="#">Register</a>
-            </div>
-          </div>
+<div class="card">
+  <div class="card-body">
+    <div class="container">
+      <div class="row justify-content-between">
+        <h3 class="card-title col-md-4 mb-2">Data</h3>
+        <div class="col-md-4 mb-2">
+          <label for="cellTypeFilter">Type</label>
+          <select id="cellTypeFilter" class="mb-2" style="width: 25%">
+            <option value="">All</option>
+            <option value="Hep">Hep</option>
+            <option value="HSC">HSC</option>
+            <option value="cDC">cDC</option>
+            <option value="pDC">pDC</option>
+            <option value="Monocytes">Monocytes</option>
+            <option value="KC">KC</option>
+            <option value="Macrophages">Macrophages</option>
+            <option value="Endo">Endo</option>
+            <option value="B">B</option>
+            <option value="T+NK">T+NK</option>
+            <option value="Chol">Chol</option>
+          </select>
         </div>
-      </nav>
-    </header>
-    <main role="main" class="container">
+        <button
+          id="downloadBtn"
+          class="btn btn-primary col-md-2 mb-2"
+          style="height: 50%; width: 50%"
+        >
+          Download Data
+        </button>
+      </div>
       <div class="row">
         <div class="col-md-12">
-          <link
-            href="{% static 'celldb/css/cdn.datatables.net_1.13.4_css_dataTables.bootstrap5.min.css' %}"
-            rel="stylesheet"
-          />
-          <div class="row mt-2 justify-content-center">
-            <div class="col-md-12">
-              <div class="card">
-                <div class="card-body">
-                  <div class="container">
-                    <div class="row">
-                      <h3 class="card-title mb-4">Single_cell_Meta_data</h3>
-                      <button
-                        id="downloadBtn"
-                        class="btn btn-primary mb-3 offset-md-7"
-                      >
-                        Download Data
-                      </button>
-                    </div>
-                    <div class="row">
-                      <div class="col-md-12">
-                        <table
-                          id="example"
-                          class="table table-hover"
-                          style="width: 100%"
-                        >
-                          <thead>
-                            <tr>
-                              <th style="text-align: right">ID</th>
-                              <th style="text-align: right">Barcode</th>
-                              <th style="text-align: right">Type</th>
-                              <th style="text-align: right">Zone</th>
-                              <th style="text-align: right">Run</th>
-                              <th style="text-align: right">Time</th>
-                              <th style="text-align: right">X</th>
-                              <th style="text-align: right">Y</th>
-                            </tr>
-                          </thead>
-                          <tbody></tbody>
-                        </table>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <script
-            src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"
-            integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ=="
-            crossorigin="anonymous"
-            referrerpolicy="no-referrer"
-          ></script>
-          <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
-            crossorigin="anonymous"
-          ></script>
-          <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_jquery.dataTables.min.js' %}"></script>
-          <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_dataTables.bootstrap5.min.js' %}"></script>
-          <script>
-            $(document).ready(function () {
-              $("#example").DataTable({
-                ajax: {
-                  url: "http://127.0.0.1:8000/api/tran/all",
-                  dataSrc: "",
-                },
-                columns: [
-                  { data: "data_id" },
-                  { data: "cell_barcode" },
-                  { data: "cell_type" },
-                  { data: "zone" },
-                  { data: "run_id" },
-                  { data: "time_point" },
-                  { data: "umap_x" },
-                  { data: "umap_y" },
-                ],
-                paging: true,
-                deferRender: true,
-              });
-            });
-          </script>
-          <script>
-            $(document).ready(function () {
-              // ...
-
-              // 添加按钮点击事件处理函数
-              $("#downloadBtn").click(function () {
-                // 获取当前表格中的数据
-                var table = $("#example").DataTable();
-                var filteredData = table
-                  .rows({ search: "applied" })
-                  .data()
-                  .toArray();
-
-                // 执行下载操作，可以根据需要自定义实现
-                downloadData(filteredData);
-              });
-
-              // ...
-            });
-
-            // 下载数据的函数，示例使用 console.log 输出数据
-            function downloadData(data) {
-              console.log(data);
-            }
-          </script>
+          <table id="example" class="table table-hover" style="width: 100%">
+            <thead>
+              <tr>
+                <th style="text-align: right">ID</th>
+                <th style="text-align: right">Barcode</th>
+                <th style="text-align: right">Type</th>
+                <th style="text-align: right">Zone</th>
+                <th style="text-align: right">Run</th>
+                <th style="text-align: right">Time</th>
+                <th style="text-align: right">X</th>
+                <th style="text-align: right">Y</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
         </div>
       </div>
-    </main>
-  </body>
-</html>
+    </div>
+  </div>
+</div>
+
+{% endblock %} {% block scripts %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"
+  integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+  crossorigin="anonymous"
+></script>
+<script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_jquery.dataTables.min.js' %}"></script>
+<script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_dataTables.bootstrap5.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    var table = $("#example").DataTable({
+      ajax: {
+        url: "/api/tran/all",
+        dataSrc: "",
+      },
+      columns: [
+        { data: "data_id" },
+        { data: "cell_barcode" },
+        { data: "cell_type" },
+        { data: "zone" },
+        { data: "run_id" },
+        { data: "time_point" },
+        { data: "umap_x" },
+        { data: "umap_y" },
+      ],
+      paging: true,
+      deferRender: true,
+    });
+    $("#cellTypeFilter").on("change", function () {
+      var selectedCellType = $(this).val();
+
+      table.column(2).search(selectedCellType).draw();
+    });
+  });
+</script>
+<script>
+  $(document).ready(function () {
+    // ...
+
+    // 添加按钮点击事件处理函数
+    $("#downloadBtn").click(function () {
+      // 获取当前表格中的数据
+      var table = $("#example").DataTable();
+      var filteredData = table.rows({ search: "applied" }).data().toArray();
+
+      // 执行下载操作，可以根据需要自定义实现
+      downloadData(filteredData);
+    });
+
+    // ...
+  });
+
+  // 下载数据的函数，示例使用 console.log 输出数据
+  function downloadData(data) {
+    // 将数据转换为文本格式
+    var textData = JSON.stringify(data);
+    // 转化为csv格式
+    var csv =
+      "data_id,cell_barcode,cell_type,zone,run_id,time_point,umap_x,umap_y\n";
+    var csvRows = data.map(function (row) {
+      return [
+        row.data_id,
+        row.cell_barcode,
+        row.cell_type,
+        row.zone,
+        row.run_id,
+        row.time_point,
+        row.umap_x,
+        row.umap_y,
+      ].join(",");
+    });
+    csv += csvRows.join("\n");
+    var blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+    // 创建一个 <a> 元素
+    var link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "data.csv");
+
+    // 模拟点击下载链接
+    link.click();
+  }
+</script>
+{% endblock %}

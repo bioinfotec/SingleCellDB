@@ -1,6 +1,6 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
-from .models import TranMeta
+from .models import TranMeta, LiteratureMeta
 import requests
 from django.views import View
 from django.http import HttpResponse
@@ -13,8 +13,9 @@ def home(request):
         {"date": "6.3", "content": "学习使用JavaScript，以便处理数据格式"},
         {"date": "6.4~6.6", "content": "使用echarts.js绘图"},
         {"date": "6.7~6.10", "content": "分页功能实现"},
-        {"date": "6.11~15", "content": "前后端分离"},
+        {"date": "6.11~15", "content": "尝试前后端分离"},
         {"date": "6.16~6.20", "content": "完善搜索功能和分页按钮"},
+        {"date": "6.21~6.27", "content": "使用Databales插件;增加了下载数据功能;Plot增加了筛选功能;上传了summary文件中的数据"},
     ]
     return render(request, "celldb/home.html", {"logs": logs})
 
@@ -24,12 +25,13 @@ def plotScatter(request):
 
 
 def search(request):
-    query = request.GET.get("query", "")
+    liter = LiteratureMeta.objects.all()
+    # query = request.GET.get("query", "")
     data = ""
-    if query:
-        response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
-        data = response.json()
-    return render(request, "celldb/search.html", {"data": data})
+    # if query:
+    #     response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
+    #     data = response.json()
+    return render(request, "celldb/search.html", {"data": data, "liter":liter})
 
 
 def data(request):

@@ -21,8 +21,10 @@ urlpatterns = [
     path("download", views.download_file, name="api-download"),
     
     #For photo file
-    path("savefile", views.SaveFiles, name="api-savefile")
+    path("savefile", views.SaveFiles, name="api-savefile"),
     
+    #For LiteratureMeta
+    path("liter/", views.LiteratureMetaView.as_view({"get": "list", "post": "create"}), name="api-literature"),
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
