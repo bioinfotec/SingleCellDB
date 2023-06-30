@@ -24,17 +24,17 @@ def plotScatter(request):
     return render(request, "celldb/plotScatter.html")
 
 
-def search(request):
+def overview(request):
     liter = LiteratureMeta.objects.all()
     # query = request.GET.get("query", "")
     data = ""
     # if query:
     #     response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
     #     data = response.json()
-    return render(request, "celldb/search.html", {"data": data, "liter":liter})
+    return render(request, "celldb/overview.html", {"data": data, "liter":liter})
 
 
-def data(request):
+def download(request):
     # restframework暂时未能实现
     # response = requests.get("http://127.0.0.1:8000/api/tran/", params=request.GET)
     # if response.status_code == 200:
@@ -53,7 +53,7 @@ def data(request):
     paginator = Paginator(data, items_per_page)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    return render(request, "celldb/data.html", {"page_obj": page_obj})
+    return render(request, "celldb/download.html", {"page_obj": page_obj})
 
 
 def test(request):
