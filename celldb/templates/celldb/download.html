@@ -7,12 +7,12 @@
   <div class="card-body">
     <div class="container">
       <div class="row justify-content-between">
-        <h3 class="card-title col-md-4 mb-2">Data</h3>
+        <h3 class="card-title col-md-2 mb-2">Data</h3>
         <div class="col-md-4 mb-2">
           <label for="cellTypeFilter">Type</label>
           <select id="cellTypeFilter" class="mb-2" style="width: 25%">
             <option value="">All</option>
-            <option value="Hep">Hep</option>
+            <!-- <option value="Hep">Hep</option>
             <option value="HSC">HSC</option>
             <option value="cDC">cDC</option>
             <option value="pDC">pDC</option>
@@ -22,8 +22,16 @@
             <option value="Endo">Endo</option>
             <option value="B">B</option>
             <option value="T+NK">T+NK</option>
-            <option value="Chol">Chol</option>
+            <option value="Chol">Chol</option> -->
           </select>
+        </div>
+        <div class="col-md-4">
+          <div class="input-row">
+            <label for="min">Min X</label>
+            <input type="text" style="width: 100px" id="min" name="min" />
+            <label for="max">Max X</label>
+            <input type="text" style="width: 100px" id="max" name="max" />
+          </div>
         </div>
         <button
           id="downloadBtn"
@@ -35,17 +43,21 @@
       </div>
       <div class="row">
         <div class="col-md-12">
-          <table id="example" class="table table-hover" style="width: 100%">
+          <table
+            id="example"
+            class="table table-hover table-str"
+            style="width: 100%; border-collapse: collapse"
+          >
             <thead>
               <tr>
-                <th style="text-align: right">ID</th>
-                <th style="text-align: right">Barcode</th>
-                <th style="text-align: right">Type</th>
-                <th style="text-align: right">Zone</th>
-                <th style="text-align: right">Run</th>
-                <th style="text-align: right">Time</th>
-                <th style="text-align: right">X</th>
-                <th style="text-align: right">Y</th>
+                <th>ID</th>
+                <th>Barcode</th>
+                <th>Type</th>
+                <th>Zone</th>
+                <th>Run</th>
+                <th>Time</th>
+                <th>X</th>
+                <th>Y</th>
               </tr>
             </thead>
             <tbody></tbody>
@@ -72,28 +84,80 @@
 <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_dataTables.bootstrap5.min.js' %}"></script>
 <script>
   $(document).ready(function () {
+    var minEl = $("#min");
+    var maxEl = $("#max");
+
+    // Custom range filtering function
+    DataTable.ext.search.push(function (settings, data, dataIndex) {
+      var min = parseInt(minEl.val(), 10);
+      var max = parseInt(maxEl.val(), 10);
+      var x_col = parseFloat(data[6]) || 0; // use data for the x column
+
+      if (
+        (isNaN(min) && isNaN(max)) ||
+        (isNaN(min) && x_col <= max) ||
+        (min <= x_col && isNaN(max)) ||
+        (min <= x_col && x_col <= max)
+      ) {
+        return true;
+      }
+
+      return false;
+    });
     var table = $("#example").DataTable({
       ajax: {
         url: "/api/tran/all",
         dataSrc: "",
       },
       columns: [
-        { data: "data_id" },
-        { data: "cell_barcode" },
-        { data: "cell_type" },
-        { data: "zone" },
-        { data: "run_id" },
-        { data: "time_point" },
-        { data: "umap_x" },
-        { data: "umap_y" },
+        { data: "data_id", orderable: false },
+        { data: "cell_barcode", orderable: false },
+        { data: "cell_type", orderable: false },
+        { data: "zone", orderable: false },
+        { data: "run_id", orderable: false },
+        { data: "time_point", orderable: false },
+        {
+          data: "umap_x",
+          render: function (data) {
+            return parseFloat(data).toFixed(2);
+          },
+        },
+        {
+          data: "umap_y",
+          render: function (data) {
+            return parseFloat(data).toFixed(2);
+          },
+        },
       ],
       paging: true,
       deferRender: true,
-    });
-    $("#cellTypeFilter").on("change", function () {
-      var selectedCellType = $(this).val();
+      order: [],
 
-      table.column(2).search(selectedCellType).draw();
+      language: {
+        sortAscending: '<i class="fas fa-sort-up"></i>',
+        sortDescending: '<i class="fas fa-sort-down"></i>',
+      },
+      // 获取所有的 cell_type 数据
+      initComplete: function () {
+        var cellTypes = table.column(2).data().unique().toArray();
+        console.log(cellTypes);
+        var selectOptions = cellTypes.map(function (cellType) {
+          return '<option value="' + cellType + '">' + cellType + "</option>";
+        });
+        $("#cellTypeFilter").append(selectOptions.join(""));
+        $("#cellTypeFilter").on("change", function () {
+          var selectedCellType = $(this).val();
+
+          table.column(2).search(selectedCellType).draw();
+        });
+      },
+    });
+
+    minEl.on("input", function () {
+      table.draw();
+    });
+    maxEl.on("input", function () {
+      table.draw();
     });
   });
 </script>
