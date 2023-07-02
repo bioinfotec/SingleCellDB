@@ -1,4 +1,5 @@
-{% extends 'celldb/base.html' %} {% block content %}
+{% extends 'celldb/base.html' %}{% load static %} {% block content %}
+
 <div class="row justify-content-center">
   <div class="col-md-12">
     <div class="card">
@@ -30,17 +31,24 @@
             <tbody>
               {% for item in liter %}
               <tr>
-                <td>{{ item.Liter_pmid }}</td>
-                <td>
-                  <span
+                <td
+                  style="cursor: pointer"
+                  onclick="redirectToLink('{{ item.Liter_pmid }}')"
+                >
+                  {{ item.Liter_pmid }}
+                </td>
+                <td style="cursor: pointer">
+                  <a
                     class="d-inline-block text-truncate"
                     style="max-width: 200px"
-                    data-toggle="tooltip"
-                    data-placement="top"
+                    data-toggle="modal"
+                    data-target="#literModal"
+                    data-abstract="{{ item.Liter_abstract }}"
+                    data-title="{{ item.Liter_title }}"
                     title="{{ item.Liter_title }}"
                   >
                     {{ item.Liter_title }}
-                  </span>
+                  </a>
                 </td>
                 <td>
                   <span
@@ -67,7 +75,17 @@
                     {{ item.Liter_content }}
                   </span>
                 </td>
-                <td>{{ item.Liter_data }}</td>
+                <td>
+                  <span
+                    class="d-inline-block text-truncate"
+                    style="max-width: 200px"
+                    data-toggle="tooltip"
+                    data-placement="top"
+                    title="{{ item.Liter_data }}"
+                  >
+                    {{ item.Liter_data }}
+                  </span>
+                </td>
                 <td>{{ item.Sample_info }}</td>
                 <td>{{ item.Species }}</td>
                 <td>{{ item.Tissue }}</td>
@@ -95,4 +113,56 @@
     </div>
   </div>
 </div>
-{% endblock %}
+<!-- 模态框 -->
+<div
+  class="modal fade"
+  id="literModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="literModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="literModalLabel">Literature Details</h5>
+        <button
+          type="button"
+          class="close"
+          data-dismiss="modal"
+          aria-label="Close"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- 这里显示详细信息 -->
+        <div id="literDetails"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% block scripts %}
+<script src="{% static 'celldb/js/jquery-3.2.1.slim.min.js' %}"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script>
+  $(document).ready(function () {
+    $("#literModal").on("show.bs.modal", function (event) {
+      var triggerElement = $(event.relatedTarget);
+      var title = triggerElement.data("title");
+      var abstract = triggerElement.data("abstract");
+
+      var modal = $(this);
+      modal.find(".modal-title").text(title);
+      modal.find("#literDetails").text(abstract);
+    });
+  });
+</script>
+<script>
+  function redirectToLink(pmid) {
+    var url = "https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/";
+    window.location.href = url;
+  }
+</script>
+{% endblock %} {% endblock %}
