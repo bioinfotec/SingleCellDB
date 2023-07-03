@@ -1,128 +1,121 @@
-{% extends 'celldb/base.html' %}{% load static %} {% block content %}
+{% extends 'celldb/base.html' %}{% load static %} {% block overview %}
 
-<div class="row justify-content-center">
-  <div class="col-md-12">
-    <div class="card">
-      <div class="card-body">
-        <div class="d-flex justify-content-between mb-4">
-          <h3 class="card-title">Liver Data Summary</h3>
-          <button
-            id="addData"
-            class="btn btn-primary"
-            data-toggle="modal"
-            data-target="#addDataModal"
+<div class="row align-items-center mb-2">
+  <h3 class="col-md-3">Liver Data Summary</h3>
+  <button
+    id="addData"
+    class="ms-6 btn btn-primary"
+    data-toggle="modal"
+    data-target="#addDataModal"
+  >
+    Add Data
+  </button>
+</div>
+
+<div class="row">
+  <div class="table-responsive" style="max-height: 600px; overflow-y: scroll">
+    <table class="table table-striped table-bordered" style="width: 100%">
+      <thead>
+        <tr>
+          <th>Liter_pmid</th>
+          <th>Liter_title</th>
+          <th>Liter_abstract</th>
+          <th>Liter_publication</th>
+          <th>Liter_content</th>
+          <th>Liter_data</th>
+          <th>Sample_info</th>
+          <th>Species</th>
+          <th>Tissue</th>
+          <th>Number_cells</th>
+          <th>Cell_types</th>
+          <th>Method</th>
+          <th>Markers</th>
+          <th>Note</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for item in liter %}
+        <tr>
+          <td
+            style="cursor: pointer"
+            onclick="redirectToLink('{{ item.Liter_pmid }}')"
           >
-            Add Data
-          </button>
-        </div>
-        <div
-          class="table-responsive"
-          style="max-height: 600px; overflow-y: scroll"
-        >
-          <table class="table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th>Liter_pmid</th>
-                <th>Liter_title</th>
-                <th>Liter_abstract</th>
-                <th>Liter_publication</th>
-                <th>Liter_content</th>
-                <th>Liter_data</th>
-                <th>Sample_info</th>
-                <th>Species</th>
-                <th>Tissue</th>
-                <th>Number_cells</th>
-                <th>Cell_types</th>
-                <th>Method</th>
-                <th>Markers</th>
-                <th>Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for item in liter %}
-              <tr>
-                <td
-                  style="cursor: pointer"
-                  onclick="redirectToLink('{{ item.Liter_pmid }}')"
-                >
-                  {{ item.Liter_pmid }}
-                </td>
-                <td style="cursor: pointer">
-                  <a
-                    class="d-inline-block text-truncate"
-                    style="max-width: 200px"
-                    data-toggle="modal"
-                    data-target="#literModal"
-                    data-abstract="{{ item.Liter_abstract }}"
-                    data-title="{{ item.Liter_title }}"
-                    title="{{ item.Liter_title }}"
-                  >
-                    {{ item.Liter_title }}
-                  </a>
-                </td>
-                <td>
-                  <span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 200px"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="{{ item.Liter_abstract }}"
-                  >
-                    {{ item.Liter_abstract }}
-                  </span>
-                </td>
-                <td class="text-truncate" style="max-width: 200px">
-                  {{ item.Liter_publication }}
-                </td>
-                <td>
-                  <span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 200px"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="{{ item.Liter_content }}"
-                  >
-                    {{ item.Liter_content }}
-                  </span>
-                </td>
-                <td>
-                  <span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 200px"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="{{ item.Liter_data }}"
-                  >
-                    {{ item.Liter_data }}
-                  </span>
-                </td>
-                <td>{{ item.Sample_info }}</td>
-                <td>{{ item.Species }}</td>
-                <td>{{ item.Tissue }}</td>
-                <td>{{ item.Number_cells }}</td>
-                <td>{{ item.Cell_types }}</td>
-                <td>{{ item.Method }}</td>
-                <td>
-                  <span
-                    class="d-inline-block text-truncate"
-                    style="max-width: 200px"
-                    data-toggle="tooltip"
-                    data-placement="top"
-                    title="{{ item.Markers }}"
-                  >
-                    {{ item.Markers }}
-                  </span>
-                </td>
-                <td>{{ item.Note }}</td>
-              </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+            {{ item.Liter_pmid }}
+          </td>
+          <td style="cursor: pointer">
+            <a
+              class="d-inline-block text-truncate"
+              style="max-width: 200px"
+              data-toggle="modal"
+              data-target="#literModal"
+              data-abstract="{{ item.Liter_abstract }}"
+              data-title="{{ item.Liter_title }}"
+              data-id="{{ item.Liter_pmid }}"
+            >
+              {{ item.Liter_title }}
+            </a>
+          </td>
+          <td>
+            <span
+              class="d-inline-block text-truncate"
+              style="max-width: 200px"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="{{ item.Liter_abstract }}"
+            >
+              {{ item.Liter_abstract }}
+            </span>
+          </td>
+          <td class="text-truncate" style="max-width: 200px">
+            {{ item.Liter_publication }}
+          </td>
+          <td>
+            <span
+              class="d-inline-block text-truncate"
+              style="max-width: 200px"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="{{ item.Liter_content }}"
+            >
+              {{ item.Liter_content }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="d-inline-block text-truncate"
+              style="max-width: 200px"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="{{ item.Liter_data }}"
+            >
+              {{ item.Liter_data }}
+            </span>
+          </td>
+          <td>{{ item.Sample_info }}</td>
+          <td>{{ item.Species }}</td>
+          <td>{{ item.Tissue }}</td>
+          <td>{{ item.Number_cells }}</td>
+          <td>{{ item.Cell_types }}</td>
+          <td>{{ item.Method }}</td>
+          <td>
+            <span
+              class="d-inline-block text-truncate"
+              style="max-width: 200px"
+              data-toggle="tooltip"
+              data-placement="top"
+              title="{{ item.Markers }}"
+            >
+              {{ item.Markers }}
+            </span>
+          </td>
+          <td>{{ item.Note }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
 </div>
+
 <!-- 模态框 表格详情-->
 <div
   class="modal fade"
@@ -149,11 +142,19 @@
         <!-- 这里显示详细信息 -->
         <div id="literDetails"></div>
       </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" id="deleteLiterature">
+          Delete
+        </button>
+        <button type="button" class="btn btn-primary" id="updateLiterature">
+          Update
+        </button>
+      </div>
     </div>
   </div>
 </div>
 
-<!-- 模态框 增加数据-->
+<!--增加数据-->
 <div
   class="modal fade"
   id="addDataModal"
@@ -210,30 +211,97 @@
   </div>
 </div>
 
-{% block scripts %}
+<!-- 删除后的通知
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-6">
+      <div
+        id="deleteAlert"
+        class="toast"
+        role="alert"
+        aria-live="assertive"
+        aria-atomic="true"
+        data-autohide="true"
+        data-delay="3000"
+      >
+        <div class="toast-header">
+          <strong class="mr-auto">记录已删除</strong>
+          <button
+            type="button"
+            class="ml-2 mb-1 close"
+            data-dismiss="toast"
+            aria-label="Close"
+          >
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="toast-body">记录已成功删除！</div>
+      </div>
+    </div>
+  </div>
+</div> -->
+{% endblock %} {% block scripts %}
 <script src="{% static 'celldb/js/jquery-3.2.1.slim.min.js' %}"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
+<!-- 查看数据模态框 -->
 <script>
   $(document).ready(function () {
+    var id;
     $("#literModal").on("show.bs.modal", function (event) {
       var triggerElement = $(event.relatedTarget);
       var title = triggerElement.data("title");
       var abstract = triggerElement.data("abstract");
-
+      id = triggerElement.data("id");
       var modal = $(this);
       modal.find(".modal-title").text(title);
       modal.find("#literDetails").text(abstract);
     });
+    // 为删除按钮绑定点击事件
+    $("#deleteLiterature").on("click", function () {
+      if (confirm("确定删除这条记录吗？")) {
+        $.ajax({
+          url: "api/liter/" + id + "/",
+          type: "DELETE",
+          success: function (response) {
+            // 删除成功后执行的操作
+            // $("#deleteAlert").toast("show"); // 通知
+            $("#literModal").modal("hide"); // 关闭模态框
+            location.reload(); // 刷新页面
+          },
+          error: function (error) {
+            // 处理删除请求失败的情况
+            console.error("删除记录时发生错误");
+            // 显示错误消息或执行其他操作...
+          },
+        });
+      }
+    });
+
+    // 为更新按钮绑定点击事件
+    $("#updateLiterature").on("click", function () {
+      // 执行更新操作
+      // 可以通过AJAX请求将更新请求发送到后端
+      // 这里仅作为示例，弹出警告框进行确认
+      if (confirm("确定更新这条记录吗？")) {
+        // 执行更新操作的代码
+        // ...
+        // 关闭模态框
+        $("#literModal").modal("hide");
+      }
+    });
   });
 </script>
+
+<!-- 跳转到pmid链接 -->
 <script>
   function redirectToLink(pmid) {
     var url = "https://pubmed.ncbi.nlm.nih.gov/" + pmid + "/";
     window.location.href = url;
   }
 </script>
+
+<!-- 增加数据模态框 -->
 <script>
   function addData() {
     var form = $("#addDataForm");
@@ -261,4 +329,4 @@
     });
   }
 </script>
-{% endblock %} {% endblock %}
+{% endblock %}
