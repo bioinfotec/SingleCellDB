@@ -38,10 +38,10 @@ def SaveFiles(request):
     try:
         file = request.FILES['file']
         # 验证文件类型是否为图片
-        allowed_extensions = ['jpg', 'jpeg', 'png', 'gif']
+        allowed_extensions = ['txt', 'csv', 'xls', 'xlsx']
         extension = file.name.split('.')[-1].lower()
         if extension not in allowed_extensions:
-            return JsonResponse({'error': '只能上传图片文件'}, status=400)
+            return JsonResponse({'error': '只能上传文本文件'}, status=400)
         
         file_name = default_storage.save(file.name, file)
         return JsonResponse({'message': '文件上传成功'}, status=201)

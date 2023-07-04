@@ -3,6 +3,35 @@
   href="{% static 'celldb/css/cdn.datatables.net_1.13.4_css_dataTables.bootstrap5.min.css' %}"
   rel="stylesheet"
 />
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+/>
+
+<!-- 自定义样式 -->
+<!-- <style>
+  /* 排序图标覆盖 */
+  table.dataTable thead .sorting:before,
+  table.dataTable thead .sorting_asc:before,
+  table.dataTable thead .sorting_desc:before,
+  table.dataTable thead .sorting_asc_disabled:before,
+  table.dataTable thead .sorting_desc_disabled:before {
+    right: 1em;
+    content: "" !important; /* 替换为 Font Awesome 的图标代码 */
+  }
+
+  table.dataTable thead .sorting:after,
+  table.dataTable thead .sorting_asc:after,
+  table.dataTable thead .sorting_desc:after,
+  table.dataTable thead .sorting_asc_disabled:after,
+  table.dataTable thead .sorting_desc_disabled:after {
+    right: 0.5em;
+    content: "" !important;
+  }
+
+</style> -->
+
+<!-- 表格数据 -->
 <div class="card">
   <div class="card-body">
     <div class="container">
@@ -24,13 +53,14 @@
             <option value="T+NK">T+NK</option>
             <option value="Chol">Chol</option> -->
           </select>
+          <button type="button" id="Plot" class="btn btn-primary">Plot</button>
         </div>
         <div class="col-md-4">
           <div class="input-row">
-            <label for="min">Min X</label>
-            <input type="text" style="width: 100px" id="min" name="min" />
-            <label for="max">Max X</label>
-            <input type="text" style="width: 100px" id="max" name="max" />
+            <label for="min" style="font-size: 4px">Min X</label>
+            <input type="text" style="width: 50px" id="min" name="min" />
+            <label for="max" style="font-size: 4px">Max X</label>
+            <input type="text" style="width: 50px" id="max" name="max" />
           </div>
         </div>
         <button
@@ -86,13 +116,11 @@
   $(document).ready(function () {
     var minEl = $("#min");
     var maxEl = $("#max");
-
     // Custom range filtering function
     DataTable.ext.search.push(function (settings, data, dataIndex) {
-      var min = parseInt(minEl.val(), 10);
-      var max = parseInt(maxEl.val(), 10);
+      var min = parseFloat(minEl.val(), 10);
+      var max = parseFloat(maxEl.val(), 10);
       var x_col = parseFloat(data[6]) || 0; // use data for the x column
-
       if (
         (isNaN(min) && isNaN(max)) ||
         (isNaN(min) && x_col <= max) ||
@@ -110,23 +138,25 @@
         dataSrc: "",
       },
       columns: [
-        { data: "data_id", orderable: false },
-        { data: "cell_barcode", orderable: false },
-        { data: "cell_type", orderable: false },
-        { data: "zone", orderable: false },
-        { data: "run_id", orderable: false },
-        { data: "time_point", orderable: false },
+        { data: "data_id", orderable: false, searchable: false },
+        { data: "cell_barcode", orderable: false, searchable: false },
+        { data: "cell_type", orderable: false, searchable: true },
+        { data: "zone", orderable: false, searchable: false },
+        { data: "run_id", orderable: false, searchable: false },
+        { data: "time_point", orderable: false, searchable: false },
         {
           data: "umap_x",
           render: function (data) {
             return parseFloat(data).toFixed(2);
           },
+          searchable: true,
         },
         {
           data: "umap_y",
           render: function (data) {
             return parseFloat(data).toFixed(2);
           },
+          searchable: true,
         },
       ],
       paging: true,
@@ -140,7 +170,6 @@
       // 获取所有的 cell_type 数据
       initComplete: function () {
         var cellTypes = table.column(2).data().unique().toArray();
-        console.log(cellTypes);
         var selectOptions = cellTypes.map(function (cellType) {
           return '<option value="' + cellType + '">' + cellType + "</option>";
         });
@@ -163,8 +192,6 @@
 </script>
 <script>
   $(document).ready(function () {
-    // ...
-
     // 添加按钮点击事件处理函数
     $("#downloadBtn").click(function () {
       // 获取当前表格中的数据
@@ -175,10 +202,20 @@
       downloadData(filteredData);
     });
 
-    // ...
+    // 处理绘图事件
+    // 获取选择框和按钮的元素
+    var cellTypeFilter = $("#cellTypeFilter");
+    var plotButton = $("#Plot");
+
+    // 添加点击事件处理程序
+    plotButton.on("click", function () {
+      // 获取选择框的值
+      var selectedCellType = cellTypeFilter.val();
+      window.location.href = "/plot";
+    });
   });
 
-  // 下载数据的函数，示例使用 console.log 输出数据
+  // 下载数据的函数
   function downloadData(data) {
     // 将数据转换为文本格式
     var textData = JSON.stringify(data);

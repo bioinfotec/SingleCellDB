@@ -11,18 +11,18 @@
 
     <!-- Bootstrap CSS -->
     <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+    {% block styles %}
     <link
       rel="stylesheet"
       type="text/css"
       href="{% static 'celldb/css/bootstrap.min.css' %}"
     />
-
+    {% endblock %}
     <link
       rel="stylesheet"
       type="text/css"
       href="{% static 'celldb/css/main.css' %}"
     />
-
     {% if title %}
     <title>{{ title }}</title>
     {% else %}
@@ -72,17 +72,13 @@
         </div>
       </nav>
     </header>
-
+    {% block customlayout %} {% if not customlayout %}
     <main role="main" class="container">
       <div class="row">
-        
         <div class="col-md-12">{% block content %}{% endblock %}</div>
-        
-      </div>
       </div>
     </main>
-
-    <div class="container-fluid">{% block overview %} {% endblock %}</div>
+    {% endif %} {% endblock %}
 
     <!-- footer -->
     <div class="container">
@@ -99,7 +95,9 @@
             >
           </li>
           <li class="nav-item">
-            <a href="https://github.com/bioinfotec/SingleCellDB" class="nav-link px-2 text-muted"
+            <a
+              href="https://github.com/bioinfotec/SingleCellDB"
+              class="nav-link px-2 text-muted"
               >GitHub</a
             >
           </li>

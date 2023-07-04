@@ -11,8 +11,8 @@ fetch("api/tran/all")
         cell_type.push(value.cell_type);
       }
       return [
-        parseFloat(value.umap_x),
-        parseFloat(value.umap_y),
+        parseFloat(value.umap_x).toFixed(2),
+        parseFloat(value.umap_y).toFixed(2),
         value.cell_type,
       ];
     });
@@ -36,7 +36,7 @@ fetch("api/tran/all")
           focus: "series",
         },
         datasetIndex: i + 1,
-        symbolSize: 2.5,
+        symbolSize: 2,
         encode: {
           x: "x",
           y: "y",

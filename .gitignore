@@ -8,6 +8,8 @@ media
 /Photo
 celldb/migrations/*
 nohup.out
+new
+Photo
 # Backup files # 
 *.bak 
 

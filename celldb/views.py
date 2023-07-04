@@ -1,9 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import TranMeta, LiteratureMeta
-import requests
-from django.views import View
-from django.http import HttpResponse
+
 
 
 def home(request):
@@ -16,6 +14,7 @@ def home(request):
         {"date": "6.11~15", "content": "尝试前后端分离"},
         {"date": "6.16~6.20", "content": "完善搜索功能和分页按钮"},
         {"date": "6.21~6.27", "content": "使用Databales插件;增加了下载数据功能;Plot增加了筛选功能;上传了summary文件中的数据"},
+        {"date": "6.28~7.5", "content": "对数据过滤，允许对数据进行添加或删除"},
     ]
     return render(request, "celldb/home.html", {"logs": logs})
 
@@ -55,6 +54,8 @@ def download(request):
     page_obj = paginator.get_page(page_number)
     return render(request, "celldb/download.html", {"page_obj": page_obj})
 
+def upload(request):
+    return render(request, "celldb/upload.html")
 
 def test(request):
     return render(request, "celldb/test.html")

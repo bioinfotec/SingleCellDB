@@ -15,8 +15,6 @@ urlpatterns = [
         views.DataSetView.as_view({"get": "list", "post": "create"}),
         name="api-geo",
     ),
-    re_path("dataset/(?P<pk>\w+)/$", views.DataSetView.as_view({"get": "retrieve"})),
-    
     #For File download
     path("download", views.download_file, name="api-download"),
     
@@ -25,6 +23,7 @@ urlpatterns = [
     
     #For LiteratureMeta
     path("liter/", views.LiteratureMetaView.as_view({"get": "list", "post": "create"}), name="api-literature"),
+    re_path("liter/(?P<pk>\w+)/$", views.LiteratureMetaView.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})),
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
