@@ -1,0 +1,135 @@
+{% extends 'celldb/base.html' %} {% block customlayout %}
+<div class="container">
+  <button
+    type="button"
+    class="btn btn-outline-success btn-sm"
+    data-bs-toggle="modal"
+    data-bs-target="#uploadFileModal"
+    title="添加文件"
+  >
+    添加文件
+  </button>
+  <div
+    class="modal fade"
+    id="uploadFileModal"
+    data-bs-keyboard="false"
+    tabindex="-1"
+    aria-labelledby="staticBackdropLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="updateFileModal-staticBackdropLabel">
+            请上传新文件
+          </h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mx-3">
+            <!-- 图片类型：gif、png、jpeg -->
+            <input
+              type="file"
+              id="new-file"
+              name="new_file"
+              class="form-control mb-2"
+              accept=".txt,.csv,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+              placeholder="支持txt、csv、Excel格式文件"
+            />
+            <span class="text-secondary text-opacity-50">
+              <i class="fa fa-volume-down"></i>
+              支持txt、csv、Excel格式文件
+            </span>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            取消
+          </button>
+          <!--执行上传操作，并关闭模态框-->
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+            onclick="uploadNewFile()"
+          >
+            上传
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <table class="table table-striped table-bordered table-hover">
+    <thead>
+      <tr>
+        <th scope="col"></th>
+        <th scope="col">First</th>
+        <th scope="col">Last</th>
+        <th scope="col">Handle</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+{% endblock %} {% block scripts %}
+<script
+  src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+  integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
+  crossorigin="anonymous"
+></script>
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  // 上传新文件
+  function uploadNewFile() {
+    // 构造表单数据
+    let formData = new FormData();
+    // --- 文件
+    let file = $("#new-file")[0].files[0];
+    formData.append("file", file);
+    // 文件不能为空
+    if (file) {
+      // 发起上传操作
+      $.ajax({
+        url: "/api/savefile",
+        type: "post",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (res) {
+          if (res.message == "文件上传成功") {
+            $("#success-toast").removeClass("d-none").show();
+          } else if (res.error == "只能上传文本文件") {
+            $("#error-toast").removeClass("d-none").show();
+          }
+        },
+      });
+    } else {
+      alert("文件不能为空！");
+    }
+    // 清空input文件表单：再次打开上传界面，不会保留上次的选项
+    $("#new-file")[0].value = "";
+  }
+</script>
+{% endblock %}
