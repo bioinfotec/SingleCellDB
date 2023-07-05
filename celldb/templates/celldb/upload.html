@@ -15,9 +15,10 @@
     <thead>
       <tr>
         <th scope="col" style="width: 50px"></th>
-        <th scope="col">File</th>
-        <th scope="col">Statistic</th>
-        <th scope="col">Size</th>
+        <th scope="col">文件名称</th>
+        <th scope="col">统计信息</th>
+        <th scope="col">文件大小</th>
+        <th scope="col">上传时间</th>
       </tr>
     </thead>
     <tbody>
@@ -28,6 +29,7 @@
         </td>
         <td>23,944 Cells</td>
         <td>1.7M</td>
+        <td>2023</td>
       </tr>
     </tbody>
   </table>
@@ -138,7 +140,8 @@
   crossorigin="anonymous"
   referrerpolicy="no-referrer"
 ></script>
-<script>
+<!-- 处理文件上传, 不使用model-->
+<!-- <script>
   // 上传新文件
   function uploadNewFile() {
     // 构造表单数据
@@ -148,6 +151,10 @@
     formData.append("file", file);
     // 文件不能为空
     if (file) {
+      let fileName = file.name; // 文件名称
+      let fileSize = (file.size / (1024 * 1024)).toFixed(2); // 文件大小
+      console.log("文件名称：" + fileName);
+      console.log("文件大小：" + fileSize + "MB");
       // 发起上传操作
       $.ajax({
         url: "/api/savefile",
@@ -174,5 +181,7 @@
     // 清空input文件表单：再次打开上传界面，不会保留上次的选项
     $("#new-file")[0].value = "";
   }
-</script>
+</script>  -->
+<!-- 处理文件上传，使用model -->
+
 {% endblock %}
