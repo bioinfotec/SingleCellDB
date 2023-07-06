@@ -1,8 +1,9 @@
 from rest_framework.response import Response
 from django.http.response import JsonResponse
 from rest_framework.decorators import api_view
-from celldb.models import TranMeta, DataSetMeta, LiteratureMeta
-from .serializers import TranMetaSerializer, DataSetMetaSerializer, LiteratureMetaSerializer
+from celldb.models import TranMeta, DataSetMeta, LiteratureMeta,UploadedFile
+from .serializers import TranMetaSerializer, DataSetMetaSerializer, LiteratureMetaSerializer,UploadedFileSerializer
+from rest_framework.parsers import MultiPartParser, FormParser
 from .paginations import CustomPagination
 from rest_framework import status
 from rest_framework.viewsets import ModelViewSet
@@ -10,6 +11,11 @@ from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.http import FileResponse
 import os
+
+def close_view(request):
+    print("API is closed.")
+    return JsonResponse({"message": "API is closed."})
+    
 
 # For File download
 def download_file(request):
@@ -47,7 +53,11 @@ def SaveFiles(request):
         return JsonResponse({'message': '文件上传成功'}, status=201)
     except KeyError:
         return JsonResponse({'error': '未找到上传的文件'}, status=400)
-
+# For FileUpload
+class UploadedFileViewSet(ModelViewSet):
+    queryset = UploadedFile.objects.all()
+    serializer_class = UploadedFileSerializer
+    parser_classes = (MultiPartParser, FormParser)
 #For DataSet
 class DataSetView(ModelViewSet):
     queryset = DataSetMeta.objects.order_by("dataset_id")

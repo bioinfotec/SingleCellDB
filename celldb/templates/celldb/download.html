@@ -134,8 +134,8 @@
     });
     var table = $("#example").DataTable({
       ajax: {
-        url: "/api/tran/all",
-        dataSrc: "",
+        url: "/api/tran/?page_size=10",
+        dataSrc: "results",
       },
       columns: [
         { data: "data_id", orderable: false, searchable: false },
@@ -147,14 +147,14 @@
         {
           data: "umap_x",
           render: function (data) {
-            return parseFloat(data).toFixed(2);
+            return parseFloat(data).toExponential(2);
           },
           searchable: true,
         },
         {
           data: "umap_y",
           render: function (data) {
-            return parseFloat(data).toFixed(2);
+            return parseFloat(data).toExponential(2);
           },
           searchable: true,
         },

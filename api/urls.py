@@ -7,6 +7,7 @@ from django.conf.urls.static import static
 from django.conf import settings
 app_name = "api"
 urlpatterns = [
+    path('close', views.close_view, name='close'),
     path("tran/", views.getTran, name="api-tran"),
     path("tran/<int:id>", views.getTran_detail),
     path("tran/all", views.getTran_all, name="api-tran-all"),
@@ -20,6 +21,10 @@ urlpatterns = [
     
     #For photo file
     path("savefile", views.SaveFiles, name="api-savefile"),
+    
+    #For FileUpload
+    path("upload", views.UploadedFileViewSet.as_view({"get": "list", "post": "create"}), name="api-upload"),
+    path("upload/<int:pk>/", views.UploadedFileViewSet.as_view({"get": "retrieve", "put": "update", "patch": "partial_update", "delete": "destroy"}), name="api-upload-detail"),
     
     #For LiteratureMeta
     path("liter/", views.LiteratureMetaView.as_view({"get": "list", "post": "create"}), name="api-literature"),

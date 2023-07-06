@@ -60,3 +60,13 @@ class LiteratureMeta(models.Model):
 
     def __self__(self):
         return self.Liter_pmid
+
+
+class UploadedFile(models.Model):
+    file = models.FileField(upload_to='data')
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    size = models.CharField(max_length=20)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    def __self__(self):
+        return self.name

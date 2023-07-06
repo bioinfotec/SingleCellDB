@@ -2,8 +2,6 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import TranMeta, LiteratureMeta
 
-
-
 def home(request):
     logs = [
         {"date": "5.24~5.31", "content": "使用Django框架建立网站的雏形"},
@@ -18,10 +16,8 @@ def home(request):
     ]
     return render(request, "celldb/home.html", {"logs": logs})
 
-
 def plotScatter(request):
     return render(request, "celldb/plotScatter.html")
-
 
 def overview(request):
     liter = LiteratureMeta.objects.all()
@@ -31,7 +27,6 @@ def overview(request):
     #     response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
     #     data = response.json()
     return render(request, "celldb/overview.html", {"data": data, "liter":liter})
-
 
 def download(request):
     # restframework暂时未能实现
@@ -58,4 +53,25 @@ def upload(request):
     return render(request, "celldb/upload.html")
 
 def test(request):
-    return render(request, "celldb/test.html")
+    import rpy2.robjects as robjects
+    # 定义R脚本
+    r_script = """
+    # 定义一组数字
+    numbers <- c(1)
+
+    # 计算数字的和
+    sum <- sum(numbers)
+
+    # 返回结果
+    sum
+    """
+
+    # 执行R脚本
+    result = robjects.r(r_script)
+
+    # 提取结果值
+    sum_value = result[0]
+
+    # 将结果值传递给前端
+    context = {'sum_value': sum_value}
+    return render(request, "celldb/test.html", context)
