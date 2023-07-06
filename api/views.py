@@ -58,6 +58,7 @@ class UploadedFileViewSet(ModelViewSet):
     queryset = UploadedFile.objects.all()
     serializer_class = UploadedFileSerializer
     parser_classes = (MultiPartParser, FormParser)
+    
 #For DataSet
 class DataSetView(ModelViewSet):
     queryset = DataSetMeta.objects.order_by("dataset_id")
@@ -79,9 +80,26 @@ def getTran(request, formar=None):
 
 @api_view(["GET"])
 def getTran_all(request, formar=None):
-    data = TranMeta.objects.all()
+    data = TranMeta.objects.order_by("data_id")
     serializer = TranMetaSerializer(data, many=True)
-    return Response(serializer.data)
+    import gzip,json
+    from django.http import HttpResponse
+    # 将序列化后的数据转换为字符串
+    serialized_data = serializer.data
+    json_str = json.dumps(serialized_data)
+
+    # 使用gzip进行压缩
+    compressed_data = gzip.compress(json_str.encode("utf-8"))
+
+    # 构建gzip响应
+    response = HttpResponse(content_type="application/json")
+    response["Content-Encoding"] = "gzip"
+    response["Content-Disposition"] = "attachment; filename=data.json.gz"
+
+    # 将压缩后的数据写入响应
+    response.write(compressed_data)
+
+    return response
 
 
 @api_view(["GET", "POST", "DELETE"])
