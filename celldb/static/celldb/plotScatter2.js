@@ -1,4 +1,4 @@
-fetch("api/tran/all")
+fetch("api/tran/all?fields=cell_type,umap_x,umap_y")
   .then((res) => res.json())
   .then((testString) => {
     var chartDom = document.getElementById("Scatter");

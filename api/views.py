@@ -53,6 +53,7 @@ def SaveFiles(request):
         return JsonResponse({'message': '文件上传成功'}, status=201)
     except KeyError:
         return JsonResponse({'error': '未找到上传的文件'}, status=400)
+
 # For FileUpload
 class UploadedFileViewSet(ModelViewSet):
     queryset = UploadedFile.objects.all()
@@ -80,8 +81,14 @@ def getTran(request, formar=None):
 
 @api_view(["GET"])
 def getTran_all(request, formar=None):
-    data = TranMeta.objects.order_by("data_id")
-    serializer = TranMetaSerializer(data, many=True)
+    fields = request.GET.get("fields")
+    if fields:
+        fields = fields.split(",")
+        data = TranMeta.objects.order_by("data_id").values(*fields)
+    else:
+        fields = "__all__"
+        data = TranMeta.objects.all()
+    serializer = TranMetaSerializer(data, many=True, fields=fields)
     import gzip,json
     from django.http import HttpResponse
     # 将序列化后的数据转换为字符串
