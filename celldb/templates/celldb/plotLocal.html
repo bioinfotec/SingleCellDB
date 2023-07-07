@@ -1,0 +1,242 @@
+{% extends 'celldb/base.html' %} {% load static %} {% block content %}
+
+<div class="row mt-2 justify-content-center">
+  <div class="card">
+    <!-- <input type="file" id="fileInput" /> -->
+    <!-- 创建一个具有指定大小的容器，用于显示图表 -->
+    <div id="chart" style="width: 800px; height: 800px"></div>
+    <script src="{% static 'celldb/echarts/echarts.js' %} "></script>
+  </div>
+</div>
+
+<!-- 折线图 -->
+<!-- <script>
+  // 监听文件选择事件
+  document
+    .getElementById("fileInput")
+    .addEventListener("change", handleFileSelect, false);
+
+  function handleFileSelect(event) {
+    var file = event.target.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function (event) {
+      var csvData = event.target.result;
+      var dataArray = processData(csvData); // 处理CSV数据，将其转换为ECharts所需的数据格式
+      drawChart(dataArray); // 绘制图表
+    };
+
+    reader.readAsText(file);
+  }
+
+  function processData(csvData) {
+    // 在这里进行CSV数据的解析和转换，将其转换为ECharts所需的数据格式
+    // 这里仅作示例，假设CSV数据的格式为"日期,数值"，每行一条记录
+    var lines = csvData.split("\n");
+    var dataArray = [];
+
+    for (var i = 1; i < lines.length; i++) {
+      var line = lines[i].trim();
+
+      if (line) {
+        var parts = line.split(",");
+        var date = parts[0].trim();
+        var value = parseFloat(parts[1].trim());
+
+        dataArray.push({
+          date: date,
+          value: value,
+        });
+      }
+    }
+
+    return dataArray;
+  }
+
+  function drawChart(dataArray) {
+    // 创建图表实例
+    var chart = echarts.init(document.getElementById("chart"));
+
+    // 定义图表的配置项和数据
+    var options = {
+      xAxis: {
+        type: "category",
+        data: dataArray.map(function (item) {
+          return item.date;
+        }),
+      },
+      yAxis: {
+        type: "value",
+      },
+      series: [
+        {
+          type: "line",
+          data: dataArray.map(function (item) {
+            return item.value;
+          }),
+        },
+      ],
+    };
+
+    // 使用配置项和数据绘制图表
+    chart.setOption(options);
+  }
+</script> -->
+
+<!-- 聚类图 -->
+<script>
+  // 计算中心点
+  function calculateCenterPoint(data) {
+    var sumX = 0;
+    var sumY = 0;
+    var count = data.length;
+
+    // 计算所有 x 坐标的总和
+    for (var i = 0; i < count; i++) {
+      sumX += data[i].x;
+    }
+
+    // 计算所有 y 坐标的总和
+    for (var i = 0; i < count; i++) {
+      sumY += data[i].y;
+    }
+
+    // 计算平均值作为中心点的坐标
+    var centerX = sumX / count;
+    var centerY = sumY / count;
+
+    return { x: centerX, y: centerY };
+  }
+
+  fetch("/api/photo/cell_feature.json")
+    .then((response) => response.json())
+    .then((data) => {
+      var cell_type = [];
+      var plotdata = data.map(function (value, index) {
+        if (cell_type.indexOf(value.annotation) === -1) {
+          cell_type.push(value.annotation);
+        }
+        return [
+          parseFloat(value.UMAP_1).toFixed(2),
+          parseFloat(value.UMAP_2).toFixed(2),
+          value.annotation,
+        ];
+      });
+      var transform_option = [];
+      for (var i = 0; i < cell_type.length; i++) {
+        transform_option.push({
+          transform: {
+            type: "filter",
+            config: { dimension: "cell_type", "=": cell_type[i] },
+          },
+        });
+      }
+      // 生成多个series
+      var series = [];
+      for (var i = 0; i < cell_type.length; i++) {
+        series.push({
+          name: cell_type[i],
+          label: {
+            show: true,
+            position: "top",
+            color: "#000",
+            fontSize: 10,
+            formatter: function (params) {
+              if (params.dataIndex === 0) {
+                console.log(params.data);
+                // 仅在数据索引为 0 的点上显示标签
+                return params.data[2];
+              } else {
+                return "";
+              }
+            },
+          },
+          type: "scatter",
+          emphasis: {
+            focus: "series",
+          },
+          datasetIndex: i + 1,
+          symbolSize: 2,
+          encode: {
+            x: "x",
+            y: "y",
+          },
+        });
+      }
+      option = {
+        title: {
+          text: "UMAP",
+          left: "center",
+          top: "3%",
+        },
+        xAxis: {
+          name: "UMAP_X",
+          nameLocation: "middle",
+          nameGap: 25,
+          max: 10,
+          min: -10,
+          nameTextStyle: {
+            fontSize: 18,
+          },
+          axisLine: {
+            onZero: false,
+          },
+          splitLine: { show: false },
+        },
+        yAxis: {
+          name: "UMAP_Y",
+          nameLocation: "middle",
+          nameGap: 25,
+          max: 10,
+          min: -10,
+          nameTextStyle: {
+            fontSize: 18,
+          },
+          axisLine: {
+            onZero: false,
+          },
+          splitLine: { show: false },
+        },
+        tooltip: {
+          position: "top",
+          formatter: function (params) {
+            var data = params.data;
+            var formattedTooltip =
+              "Cell: " + data[2] + "<br>X: " + data[0] + "<br>Y: " + data[1];
+            return formattedTooltip;
+          },
+        },
+        grid: {
+          left: "5%",
+          right: "15%",
+          // show: true,
+        },
+
+        legend: {
+          data: cell_type, // 初始为空数组，用于存储动态生成的图例项
+          orient: "vertical",
+          right: "5%",
+          type: "scroll",
+          selected: {
+            ...cell_type.reduce((acc, type) => {
+              acc[type] = true;
+              return acc;
+            }, {}),
+          },
+        },
+        dataset: [
+          {
+            dimensions: ["x", "y", "cell_type"],
+            source: plotdata,
+          },
+          ...transform_option,
+        ],
+        series: [...series],
+      };
+      var chart = echarts.init(document.getElementById("chart"));
+      chart.setOption(option);
+    });
+</script>
+
+<!-- 火山图 -->
+{% endblock %}
