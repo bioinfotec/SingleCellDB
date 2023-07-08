@@ -1,0 +1,55 @@
+{% extends 'celldb/base.html' %} {% block customlayout %}
+<div class="container">
+  <div class="row">
+    <div class="col-md-6 form-group">
+      {% csrf_token %}
+      <label for="r-code-input">Write your R code here</label>
+      <textarea
+        class="form-control"
+        id="r-code-input"
+        rows="10"
+        cols="50"
+      ></textarea>
+    </div>
+    <div class="col-md-6" id="R-code-result">
+      <!-- R返回的结果 -->
+    </div>
+  </div>
+  <div class="row">
+    <button type="button" class="btn btn-primary mb-2" id="execute-button">
+      Execute
+    </button>
+  </div>
+</div>
+{% endblock %} {% block customscripts %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  // 获取用户编写的 R 代码并发送到后端执行
+  $("#execute-button").click(function () {
+    var rCode = $("#r-code-input").val();
+    var csrftoken = $("[name=csrfmiddlewaretoken]").val();
+    console.log(rCode);
+    console.log(csrftoken);
+    // 发送 AJAX 请求到后端
+    $.ajax({
+      url: "/api-runcode/execute/",
+      type: "POST",
+      data: { r_code: rCode },
+      headers: { "X-CSRFToken": csrftoken },
+      success: function (response) {
+        // 处理执行结果
+        var resultDiv = $("#R-code-result"); // 选择要输出结果的 <div> 元素
+        resultDiv.html(response.result); // 将结果设置为 <div> 元素的内容
+      },
+      error: function (error) {
+        alert("发生错误，请联系管理员。");
+      },
+    });
+  });
+</script>
+{% endblock %}

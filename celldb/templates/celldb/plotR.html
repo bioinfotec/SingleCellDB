@@ -1,0 +1,63 @@
+{% extends 'celldb/base.html' %} {% load static %} {% block content %}
+<div class="row">
+  <button id="linePlot" class="btn btn-primary mb-2 mx-2">Plot-Line</button>
+  <button id="scatterPlot" class="btn btn-primary mb-2 mx-2">
+    Plot-Scatter
+  </button>
+</div>
+<div class="row mt-2">
+  <div class="col-md-6">
+    <img
+      id="lineImg"
+      alt="plotR-Line"
+      class="img-fluid"
+      style="display: none"
+    />
+  </div>
+  <div class="col-md-6">
+    <img
+      id="scatterImg"
+      alt="plotR-Scatter"
+      class="img-fluid"
+      style="display: none"
+    />
+  </div>
+</div>
+
+{% endblock %} {% block customscripts %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  $(document).ready(function () {
+    // 主函数
+    function plotImage(url, imgElementId) {
+      fetch(url, {
+        headers: {
+          "Access-Control-Request-Headers": "Content-Type, Authorization",
+        },
+      })
+        .then((response) => response.blob())
+        .then((data) => {
+          const imgUrl = URL.createObjectURL(data);
+          $(`#${imgElementId}`).attr("src", imgUrl);
+          $(`#${imgElementId}`).show();
+        });
+    }
+
+    //绘制折线图
+    $("#linePlot").click(function () {
+      plotImage("http://110.41.149.156:8080/line", "lineImg");
+    });
+
+    //绘制散点图
+    $("#scatterPlot").click(function () {
+      plotImage("http://110.41.149.156:8080/scatter", "scatterImg");
+    });
+  });
+</script>
+
+{% endblock %}

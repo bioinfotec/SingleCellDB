@@ -23,4 +23,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("celldb.urls")),
     path("api/", include("api.urls")),
+    path("api-runcode/", include("api-RunCode.urls")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
