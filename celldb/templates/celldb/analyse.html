@@ -1,0 +1,76 @@
+{% extends "celldb/base.html" %} {% load static %} {% block content %}
+<div class="row justify-content-center">
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">visualize QC metrics as a violin plot</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">VlnPlot(pbmc, features = c("nFeature_RNA", "nCount_RNA", "percent.mt"), ncol = 3)
+
+      </code>
+      </pre>
+      <button id="QC-metrice-Plot" class="btn btn-primary mb-2 mx-2">
+        QC-Plot
+      </button>
+    </div>
+    <img src="..." class="card-img-top" style="display: none" alt="..." />
+  </div>
+
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">visualize feature-feature relationships</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">plot1 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "percent.mt")
+plot2 <- FeatureScatter(pbmc, feature1 = "nCount_RNA", feature2 = "nFeature_RNA")
+plot1 + plot2</code>
+        </pre>
+      <button id="F2F-Plot" class="btn btn-primary mb-2 mx-2">F2F-Plot</button>
+    </div>
+    <img src="..." class="card-img-top" style="display: none" alt="..." />
+  </div>
+</div>
+<div class="row mt-2 justify-content-center">
+  <div class="card">
+    <div class="card-body">
+      <div id="Plot" style="width: 45rem; height: 30rem">
+        <img
+          id="img-VlnPlot"
+          alt="plotR-Scatter"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block customscripts %}
+<script>
+  $(document).ready(function () {
+    // 主函数
+    function plotImage(url, imgElementId) {
+      fetch(url, {
+        headers: {
+          "Access-Control-Request-Headers": "Content-Type, Authorization",
+        },
+      })
+        .then((response) => response.blob())
+        .then((data) => {
+          const imgUrl = URL.createObjectURL(data);
+          $(`#${imgElementId}`).attr("src", imgUrl);
+          $(`#${imgElementId}`).show();
+        });
+    }
+
+    //绘制折线图
+    $("#QC-metrice-Plot").click(function () {
+      plotImage("http://110.41.149.156:8080/img-VlnPlot", "img-VlnPlot");
+    });
+
+    //绘制散点图
+    $("#F2F-Plot").click(function () {
+      plotImage("http://110.41.149.156:8080/line", "img-VlnPlot");
+    });
+  });
+</script>
+{% endblock %}
