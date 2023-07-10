@@ -13,7 +13,6 @@
         QC-Plot
       </button>
     </div>
-    <img src="..." class="card-img-top" style="display: none" alt="..." />
   </div>
 
   <div class="card mx-3" style="width: 30rem">
@@ -27,15 +26,27 @@ plot1 + plot2</code>
         </pre>
       <button id="F2F-Plot" class="btn btn-primary mb-2 mx-2">F2F-Plot</button>
     </div>
-    <img src="..." class="card-img-top" style="display: none" alt="..." />
   </div>
 </div>
+
 <div class="row mt-2 justify-content-center">
-  <div class="card">
+  <div class="card mx-2">
     <div class="card-body">
-      <div id="Plot" style="width: 45rem; height: 30rem">
+      <div id="Plot" style="width: 30rem; height: 25rem">
         <img
           id="img-VlnPlot"
+          alt="plotR-VlnPlot"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="card mx-2">
+    <div class="card-body">
+      <div id="Plot" style="width: 30rem; height: 25rem">
+        <img
+          id="img-FeatureScatter"
           alt="plotR-Scatter"
           class="img-fluid"
           style="display: none"
@@ -44,6 +55,163 @@ plot1 + plot2</code>
     </div>
   </div>
 </div>
+
+<div class="row justify-content-center mt-2">
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">feature selection</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">pbmc <- FindVariableFeatures(pbmc, selection.method = "vst", nfeatures = 2000)
+top10 <- head(VariableFeatures(pbmc), 10)
+plot1 <- VariableFeaturePlot(pbmc)
+plot2 <- LabelPoints(plot = plot1, points = top10, repel = TRUE)</code>
+      </pre>
+      <button id="feature-selection-Plot" class="btn btn-primary mb-2 mx-2">
+        FeaSelect-Plot
+      </button>
+    </div>
+  </div>
+
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">linear dimensional reduction</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">pbmc <- RunPCA(pbmc, features = VariableFeatures(object = pbmc))
+VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
+
+</code>
+        </pre>
+      <button id="linear-dimensional-Plot" class="btn btn-primary mb-2 mx-2">
+        LinReduc-Plot
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2 justify-content-center">
+  <div class="card mx-2">
+    <div class="card-body">
+      <div id="Plot" style="width: 30rem; height: 25rem">
+        <img
+          id="img-HighVarFeatures"
+          alt="plotR-HighVarFeatures"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="card mx-2">
+    <div class="card-body">
+      <div id="Plot" style="width: 30rem; height: 25rem">
+        <img
+          id="img-Examine-PCA"
+          alt="plotR-PCA"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2 justify-content-center mt-2">
+  <div class="card mx-3" style="width: 60rem">
+    <div class="card-body">
+      <h5 class="card-title">Examine PCA results</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">print(pbmc[["pca"]], dims = 1:5, nfeatures = 5)</code>
+        </pre>
+      <button id="btn-top5-PCA-txt" class="btn btn-primary" m>Top5-PCA</button>
+      <pre>
+        <p id="p-top5-PCA-txt" class="card-text mx-2"></p>
+      </pre>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2 justify-content-center">
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">visualize PCA using DimPlot</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">DimPlot(pbmc, reduction = "pca")
+      </code>
+      </pre>
+      <button id="PCA-Dim-Plot" class="btn btn-primary mb-2 mx-2">
+        DimPlot
+      </button>
+    </div>
+  </div>
+
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">visualize PCA using DimHeatmap</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">DimHeatmap(pbmc, dims = 1, cells = 500, balanced = TRUE)</code>
+        </pre>
+      <button id="PCA-Heatmap-Plot" class="btn btn-primary mb-2 mx-2">
+        DimHeatmap
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2 justify-content-center">
+  <div class="card mx-2">
+    <div class="card-body">
+      <div id="Plot" style="width: 30rem; height: 25rem">
+        <img
+          id="img-PCA-DimPlot"
+          alt="plotR-DimPlot"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+  <div class="card mx-2">
+    <div class="card-body">
+      <div id="Plot" style="width: 30rem; height: 25rem">
+        <img
+          id="img-PCA-DimHeatmap"
+          alt="plotR-Heatmap"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row mt-2 justify-content-center mt-2">
+  <div class="card mx-3" style="width: 60rem">
+    <div class="card-body">
+      <h5 class="card-title">visualize 15 PCA using DimHeatmap</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">DimHeatmap(pbmc, dims = 1:15, cells = 500, balanced = TRUE)</code>
+        </pre>
+      <button id="15-PCA-Heatmap-Plot" class="btn btn-primary" m>
+        15PCA-Heatmap
+      </button>
+      <div id="Plot">
+        <img
+          id="img-15-PCA-Heatmap"
+          alt="15-PCA-Heatmap"
+          class="img-fluid"
+          style="display: none"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+
 {% endblock %} {% block customscripts %}
 <script>
   $(document).ready(function () {
@@ -62,14 +230,67 @@ plot1 + plot2</code>
         });
     }
 
-    //绘制折线图
     $("#QC-metrice-Plot").click(function () {
       plotImage("http://110.41.149.156:8080/img-VlnPlot", "img-VlnPlot");
     });
 
-    //绘制散点图
     $("#F2F-Plot").click(function () {
-      plotImage("http://110.41.149.156:8080/line", "img-VlnPlot");
+      plotImage(
+        "http://110.41.149.156:8080/img-FeatureScatter",
+        "img-FeatureScatter"
+      );
+    });
+
+    $("#feature-selection-Plot").click(function () {
+      plotImage(
+        "http://110.41.149.156:8080/img-HighVarFeatures",
+        "img-HighVarFeatures"
+      );
+    });
+
+    $("#linear-dimensional-Plot").click(function () {
+      plotImage(
+        "http://110.41.149.156:8080/img-Examine-PCA",
+        "img-Examine-PCA"
+      );
+    });
+
+    $("#btn-top5-PCA-txt").click(function () {
+      fetch("http://110.41.149.156:8080/txt-Examine-PCA", {
+        headers: {
+          "Access-Control-Request-Headers": "Content-Type, Authorization",
+        },
+      })
+        .then(function (response) {
+          return response.text();
+        })
+        .then(function (outputText) {
+          $("#p-top5-PCA-txt").text(outputText);
+        })
+        .catch(function (error) {
+          alert("获取信息失败！请稍后重试！");
+        });
+    });
+
+    $("#PCA-Dim-Plot").click(function () {
+      plotImage(
+        "http://110.41.149.156:8080/img-PCA-DimPlot",
+        "img-PCA-DimPlot"
+      );
+    });
+
+    $("#PCA-Heatmap-Plot").click(function () {
+      plotImage(
+        "http://110.41.149.156:8080/img_PCA_Headtmap",
+        "img-PCA-DimHeatmap"
+      );
+    });
+
+    $("#15-PCA-Heatmap-Plot").click(function () {
+      plotImage(
+        "http://110.41.149.156:8080/img_15_PCA_Headtmap",
+        "img-15-PCA-Heatmap"
+      );
     });
   });
 </script>
