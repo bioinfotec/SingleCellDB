@@ -116,6 +116,7 @@
   $(document).ready(function () {
     var minEl = $("#min");
     var maxEl = $("#max");
+
     // Custom range filtering function
     DataTable.ext.search.push(function (settings, data, dataIndex) {
       var min = parseFloat(minEl.val(), 10);
@@ -132,54 +133,78 @@
 
       return false;
     });
-    var table = $("#example").DataTable({
-      ajax: {
-        url: "/api/tran/?page_size=10",
-        dataSrc: "results",
-      },
-      columns: [
-        { data: "data_id", orderable: false, searchable: false },
-        { data: "cell_barcode", orderable: false, searchable: false },
-        { data: "cell_type", orderable: false, searchable: true },
-        { data: "zone", orderable: false, searchable: false },
-        { data: "run_id", orderable: false, searchable: false },
-        { data: "time_point", orderable: false, searchable: false },
-        {
-          data: "umap_x",
-          render: function (data) {
-            return parseFloat(data).toExponential(2);
-          },
-          searchable: true,
-        },
-        {
-          data: "umap_y",
-          render: function (data) {
-            return parseFloat(data).toExponential(2);
-          },
-          searchable: true,
-        },
-      ],
-      paging: true,
-      deferRender: true,
-      order: [],
 
-      language: {
-        sortAscending: '<i class="fas fa-sort-up"></i>',
-        sortDescending: '<i class="fas fa-sort-down"></i>',
-      },
-      // 获取所有的 cell_type 数据
-      initComplete: function () {
-        var cellTypes = table.column(2).data().unique().toArray();
-        var selectOptions = cellTypes.map(function (cellType) {
-          return '<option value="' + cellType + '">' + cellType + "</option>";
-        });
-        $("#cellTypeFilter").append(selectOptions.join(""));
-        $("#cellTypeFilter").on("change", function () {
-          var selectedCellType = $(this).val();
+    // 初始化定义DataTable
+    function initializeDataTable(cachedData) {
+      return $("#example").DataTable({
+        data: cachedData,
+        columns: [
+          { data: "data_id", orderable: false, searchable: false },
+          { data: "cell_barcode", orderable: false, searchable: false },
+          { data: "cell_type", orderable: false, searchable: true },
+          { data: "zone", orderable: false, searchable: false },
+          { data: "run_id", orderable: false, searchable: false },
+          { data: "time_point", orderable: false, searchable: false },
+          {
+            data: "umap_x",
+            render: function (data) {
+              return parseFloat(data).toExponential(2);
+            },
+            searchable: true,
+          },
+          {
+            data: "umap_y",
+            render: function (data) {
+              return parseFloat(data).toExponential(2);
+            },
+            searchable: true,
+          },
+        ],
+        paging: true,
+        deferRender: true,
+        order: [],
 
-          table.column(2).search(selectedCellType).draw();
-        });
-      },
+        language: {
+          sortAscending: '<i class="fas fa-sort-up"></i>',
+          sortDescending: '<i class="fas fa-sort-down"></i>',
+        },
+      });
+    }
+
+    var cachedDatabalesData = localStorage.getItem("cachedDataTableData");
+
+    if (cachedDatabalesData) {
+      // 如果存在缓存数据，则使用缓存数据初始化DataTable
+      table = initializeDataTable(JSON.parse(cachedDatabalesData));
+      var cellTypes = table.column(2).data().unique().toArray();
+      var selectOptions = cellTypes.map(function (cellType) {
+        return '<option value="' + cellType + '">' + cellType + "</option>";
+      });
+      $("#cellTypeFilter").append(selectOptions.join(""));
+    } else {
+      // 如果缓存数据不存在，则进行AJAX请求获取数据
+      $.ajax({
+        url: "/api/tran/all/",
+        success: function (data) {
+          // 存储数据到本地缓存
+          localStorage.setItem("cachedDatabalesData", JSON.stringify(data));
+          // 使用返回的数据初始化DataTable
+          table = initializeDataTable(data);
+          var cellTypes = table.column(2).data().unique().toArray();
+          var selectOptions = cellTypes.map(function (cellType) {
+            return '<option value="' + cellType + '">' + cellType + "</option>";
+          });
+          $("#cellTypeFilter").append(selectOptions.join(""));
+        },
+        error: function () {
+          alert("Error loading data from ajax");
+        },
+      });
+    }
+
+    $("#cellTypeFilter").on("change", function () {
+      var selectedCellType = $(this).val();
+      table.column(2).search(selectedCellType).draw();
     });
 
     minEl.on("input", function () {
