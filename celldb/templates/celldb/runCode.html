@@ -33,8 +33,6 @@
   $("#execute-button").click(function () {
     var rCode = $("#r-code-input").val();
     var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-    console.log(rCode);
-    console.log(csrftoken);
     // 发送 AJAX 请求到后端
     $.ajax({
       url: "/api-runcode/execute/",
@@ -44,7 +42,12 @@
       success: function (response) {
         // 处理执行结果
         var resultDiv = $("#R-code-result"); // 选择要输出结果的 <div> 元素
-        resultDiv.html(response.result); // 将结果设置为 <div> 元素的内容
+        if (response.result) {
+          resultDiv.html(response.result); // 将结果设置为 <div> 元素的内容
+        }
+        if (response.error) {
+          resultDiv.html(response.error);
+        }
       },
       error: function (error) {
         alert("发生错误，请联系管理员。");

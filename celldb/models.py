@@ -38,7 +38,7 @@ class DataSetMeta(models.Model):
     data_library = models.CharField(max_length=100, blank=True, null=True)
     dataset_sample = models.TextField(blank=True, null=True)
 
-    def __self__(self):
+    def __str__(self):
         return self.dataset_id
 
 
@@ -58,7 +58,7 @@ class LiteratureMeta(models.Model):
     Markers = models.TextField(blank=True, null=True)
     Note = models.TextField(blank=True, null=True)
 
-    def __self__(self):
+    def __str__(self):
         return self.Liter_pmid
 
 
@@ -68,5 +68,5 @@ class UploadedFile(models.Model):
     description = models.TextField(blank=True)
     size = models.CharField(max_length=20)
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    def __self__(self):
+    def __str__(self):
         return self.name

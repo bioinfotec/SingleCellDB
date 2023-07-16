@@ -1,5 +1,18 @@
 {% extends "celldb/base.html" %} {% load static %} {% block content %}
 <div class="row justify-content-center">
+  <div class="input-group mb-3 col-md-6">
+    <label class="input-group-text" for="input-SelectAnalyeData"
+      >请选择要绘图的数据</label
+    >
+    <select class="custom-select" id="input-SelectAnalyeData">
+      <option selected value="-1">Choose...</option>
+      <option value="APAP">APAP</option>
+      <option value="pbmc">pbmc</option>
+    </select>
+  </div>
+</div>
+
+<div class="row justify-content-center">
   <div class="card mx-3" style="width: 30rem">
     <div class="card-body">
       <h5 class="card-title">visualize QC metrics as a violin plot</h5>
@@ -14,7 +27,6 @@
       </button>
     </div>
   </div>
-
   <div class="card mx-3" style="width: 30rem">
     <div class="card-body">
       <h5 class="card-title">visualize feature-feature relationships</h5>
@@ -118,7 +130,7 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 </div>
 
 <div class="row mt-2 justify-content-center mt-2">
-  <div class="card mx-3" style="width: 60rem">
+  <div class="card mx-3 clo-md-12">
     <div class="card-body">
       <h5 class="card-title">Examine PCA results</h5>
       <pre
@@ -190,7 +202,7 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 </div>
 
 <div class="row mt-2 justify-content-center mt-2">
-  <div class="card mx-3" style="width: 60rem">
+  <div class="card mx-3 col-md-12">
     <div class="card-body">
       <h5 class="card-title">visualize 15 PCA using DimHeatmap</h5>
       <pre
@@ -200,15 +212,15 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
       <button id="15-PCA-Heatmap-Plot" class="btn btn-primary" m>
         15PCA-Heatmap
       </button>
-      <div id="Plot">
-        <img
-          id="img-15-PCA-Heatmap"
-          alt="15-PCA-Heatmap"
-          class="img-fluid"
-          style="display: none"
-        />
-      </div>
     </div>
+  </div>
+  <div id="Plot">
+    <img
+      id="img-15-PCA-Heatmap"
+      alt="15-PCA-Heatmap"
+      class="img-fluid"
+      style="display: none"
+    />
   </div>
 </div>
 
@@ -227,36 +239,39 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
           const imgUrl = URL.createObjectURL(data);
           $(`#${imgElementId}`).attr("src", imgUrl);
           $(`#${imgElementId}`).show();
+        })
+        .catch((error) => {
+          alert("服务器故障！请稍后重试！\n" + error);
         });
     }
 
     $("#QC-metrice-Plot").click(function () {
-      plotImage("http://110.41.149.156:8080/img-VlnPlot", "img-VlnPlot");
+      plotImage("http://110.41.149.156:8080/img-vlnplot", "img-VlnPlot");
     });
 
     $("#F2F-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-FeatureScatter",
+        "http://110.41.149.156:8080/img-feature-scatter",
         "img-FeatureScatter"
       );
     });
 
     $("#feature-selection-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-HighVarFeatures",
+        "http://110.41.149.156:8080/img-highVar-features",
         "img-HighVarFeatures"
       );
     });
 
     $("#linear-dimensional-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-Examine-PCA",
+        "http://110.41.149.156:8080/img-examine-pca",
         "img-Examine-PCA"
       );
     });
 
     $("#btn-top5-PCA-txt").click(function () {
-      fetch("http://110.41.149.156:8080/txt-Examine-PCA", {
+      fetch("http://110.41.149.156:8080/txt-examine-pca", {
         headers: {
           "Access-Control-Request-Headers": "Content-Type, Authorization",
         },
@@ -274,24 +289,53 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
 
     $("#PCA-Dim-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-PCA-DimPlot",
+        "http://110.41.149.156:8080/img-pca-dimplot",
         "img-PCA-DimPlot"
       );
     });
 
     $("#PCA-Heatmap-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img_PCA_Headtmap",
+        "http://110.41.149.156:8080/img-pca-headtmap",
         "img-PCA-DimHeatmap"
       );
     });
 
     $("#15-PCA-Heatmap-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img_15_PCA_Headtmap",
+        "http://110.41.149.156:8080/img-15-pca-headtmap",
         "img-15-PCA-Heatmap"
       );
     });
+  });
+</script>
+
+<script>
+  $("#input-SelectAnalyeData").change(function () {
+    var selectedData = $(this).val();
+    if (selectedData === "Choose...") {
+      return; // 提前返回，不执行后续代码
+    }
+    fetch(
+      "http://110.41.149.156:8080/choose-data?selectedData=" +
+        `${selectedData}`,
+      {
+        method: "POST",
+      }
+    )
+      .then(function (response) {
+        if (!response.ok) {
+          throw new Error("请求出错");
+        }
+        return response.text();
+      })
+      .then(function (data) {
+        alert(data);
+      })
+      .catch(function (error) {
+        alert("服务器故障！请稍后重试！");
+        console.log(error);
+      });
   });
 </script>
 {% endblock %}

@@ -9,6 +9,8 @@ celldb/migrations/*
 nohup.out
 new
 Photo
+backup.sql
+api-test
 # Backup files # 
 *.bak 
 

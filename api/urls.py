@@ -1,16 +1,15 @@
 from django.urls import path, re_path
 from . import views
 from rest_framework.urlpatterns import format_suffix_patterns
-
-#For photo File
 from django.conf.urls.static import static
 from django.conf import settings
+
+
 app_name = "api"
 urlpatterns = [
-    path('close', views.close_view, name='close'),
     path("tran/", views.getTran, name="api-tran"),
     path("tran/<int:id>", views.getTran_detail),
-    path("tran/all", views.getTran_all, name="api-tran-all"),
+    path("tran/all/", views.getTran_all, name="api-tran-all"),
     path(
         "dataset/", 
         views.DataSetView.as_view({"get": "list", "post": "create"}),

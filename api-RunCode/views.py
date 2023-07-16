@@ -19,6 +19,4 @@ def execute_r_code(request):
         error = e.output.decode("utf-8")
         return Response({"error": error})
     finally:
-        pass
-        # 删除临时文件
-        # subprocess.call(["rm", "tempCode/temp.R"])
+        subprocess.call(["rm", "tempCode/temp.R"])

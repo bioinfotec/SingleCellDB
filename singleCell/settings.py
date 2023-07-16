@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     # "crispy_bootstrap4",
     "celldb",
     "rest_framework",
+    'rest_framework.authtoken'
 ]
 
 MIDDLEWARE = [
@@ -103,7 +104,15 @@ DATABASES = {
 REST_FRAMEWORK = {
     # "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     # "PAGE_SIZE": 10,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -149,5 +158,5 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap4"
 # CRISPY_TEMPLATE_PACK = "bootstrap4"
 
-ALLOWED_HOSTS = ["*"]
 CORS_ALLOW_ALL_ORIGINS = True
+ALLOWED_HOSTS = ["*"]

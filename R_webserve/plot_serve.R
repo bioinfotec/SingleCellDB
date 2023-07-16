@@ -86,4 +86,4 @@ fib_handler = function(.req, .res) {
 app$add_get(path = "/fib", FUN = fib_handler)
 
 backend = BackendRserve$new()
-backend$start(app, http_port = 8080)
+backend$start(app, http_port = 8081)

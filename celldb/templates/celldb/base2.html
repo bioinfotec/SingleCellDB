@@ -1,0 +1,232 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+
+<head>
+  <style>
+    .link {
+      color: grey;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .link:hover {
+      color: red;
+    }
+
+
+    .svgicon {
+      margin-right: 5px;
+      margin-bottom: 2px;
+    }
+  </style>
+
+
+
+  <!-- Required meta tags -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+
+  <!-- Bootstrap CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+    integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+  {% block styles %}
+  <link rel="stylesheet" type="text/css" href="{% static 'celldb/css/bootstrap5/bootstrap.min.css' %}" />
+  {% endblock %}
+
+  <link rel="stylesheet" type="text/css" href="{% static 'celldb/css/main.css' %}" />
+  <!-- {% if title %}
+    <title>{{ title }}</title>
+    {% else %} -->
+  <title>SingleCellDB</title>
+  <!-- {% endif %} -->
+</head>
+
+<body>
+  <header class="site-header">
+    <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <div class="container">
+        <a class="navbar-brand mr-4" href="{% url 'celldb-home' %}">SingleCellDB</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle"
+          aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarToggle">
+          <div class="navbar-nav mr-auto">
+            <ul class="navbar-nav mr-auto navset">
+              <li class="nav-item">
+                <a class="nav-item nav-link" href="{% url 'celldb-overview' %}"> <svg xmlns="http://www.w3.org/2000/svg"
+                    width="16" height="16" fill="currentColor" class="bi bi-book-fill svgicon" viewBox="0 0 16 16">
+                    <path
+                      d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z" />
+                  </svg>Overview </a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle dropdown-toggleB" href="browse" id="navbarDropdown"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-search svgicon" viewBox="0 0 16 16">
+                    <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z" />
+                  </svg>Browse
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'celldb-browseU' %}"> UMAP</a>
+                  <a class="dropdown-item" href="{% url 'celldb-browseG' %}">Gene Expression</a>
+                </div>
+
+
+
+
+
+
+
+
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'celldb-upload' %}"><svg xmlns="http://www.w3.org/2000/svg" width="16"
+                    height="16" fill="currentColor" class="bi bi-capslock-fill svgicon" viewBox="0 0 16 16">
+                    <path
+                      d="M7.27 1.047a1 1 0 0 1 1.46 0l6.345 6.77c.6.638.146 1.683-.73 1.683H11.5v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1H1.654C.78 9.5.326 8.455.924 7.816L7.27 1.047zM4.5 13.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1z" />
+                  </svg>Upload</a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="{% url 'celldb-plot' %}" id="navbarDropdown"
+                  data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><svg
+                    xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-brush-fill svgicon" viewBox="0 0 16 16">
+                    <path
+                      d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z" />
+                  </svg>Plot
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="{% url 'celldb-plot' %}">Plot UMAP</a>
+                  <a class="dropdown-item" href="#">Plot R</a>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href=""><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                    fill="currentColor" class="bi bi-gear-fill svgicon" viewBox="0 0 16 16">
+                    <path
+                      d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z" />
+                  </svg>Analyse</a>
+
+
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'celldb-download' %}">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                    class="bi bi-cloud-download-fill svgicon" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                      d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.5a.5.5 0 0 1 1 0V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.354 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V11h-1v3.293l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z" />
+                  </svg>Download</a>
+              </li>
+              </li>
+            </ul>
+
+          </div>
+          <!-- Navbar Right Side -->
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="#">Login</a>
+            <a class="nav-item nav-link" href="#">Register</a>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </header>
+  {% block customlayout %} {% if not customlayout %}
+  <main role="main" class="container">
+    <div class="row">
+      <div class="col-md-12">{% block content %}{% endblock %}</div>
+    </div>
+  </main>
+  {% endif %} {% endblock %}
+
+  <!-- footer -->
+  <div class="container">
+    <footer class="py-3 my-4">
+      <ul class="nav justify-content-center border-bottom pb-3 mb-3">
+        <li class="nav-item">
+          <a href="{% url 'celldb-home' %}" class="nav-link px-2 text-muted">Home</a>
+        </li>
+        <li class="nav-item">
+          <a href="{% url 'api:api-upload' %}" class="nav-link px-2 text-muted">API</a>
+        </li>
+        <li class="nav-item">
+          <a href="https://github.com/bioinfotec/SingleCellDB" class="nav-link px-2 text-muted">GitHub</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link px-2 text-muted">FAQs</a>
+        </li>
+        <li class="nav-item">
+          <a href="#" class="nav-link px-2 text-muted">About</a>
+        </li>
+      </ul>
+      <p class="text-center text-muted">© 2023 SingleCellDB</p>
+    </footer>
+  </div>
+
+  <!-- Optional JavaScript -->
+  <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+    integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous">
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous">
+  </script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
+  </script>
+
+
+
+  <script>
+    $(document).ready(function () {
+      $('.dropdown-toggle').dropdown();
+
+
+      // 获取当前页面的URL
+      var currentUrl = window.location.href;
+      if (currentUrl.includes("browseU") || currentUrl.includes("browseG")) {
+        $(".dropdown-toggleB").addClass("active");
+      }
+
+
+      if (currentUrl.includes("plotU") || currentUrl.includes("plotR")) {
+        $(".dropdown-toggleP").addClass("active");
+      }
+      // 获取导航项的链接并遍历
+      var navLinks = document.querySelectorAll('.navset a');
+      navLinks.forEach(function (navLink) {
+        if (navLink.href === currentUrl) {
+          navLink.classList.add('active');
+        }
+      });
+
+    });
+  </script>
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.js"
+    integrity="sha512-WNLxfP/8cVYL9sj8Jnp6et0BkubLP31jhTG9vhL/F5uEZmg5wEzKoXp1kJslzPQWwPT1eyMiSxlKCgzHLOTOTQ=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz" crossorigin="anonymous">
+  </script>
+  <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_jquery.dataTables.min.js' %}"></script>
+  <script src="{% static 'celldb/js/cdn.datatables.net_1.13.4_js_dataTables.bootstrap5.min.js' %}"></script>
+
+
+
+  {% block scripts %}
+  <script src="{% static 'celldb/js/jquery-3.2.1.slim.min.js' %}"></script>
+  <script src="{% static 'celldb/js/popper.min.js' %}"></script>
+  <script src="{% static 'celldb/js/bootstrap.min.js' %}"></script>
+  {% endblock %}
+</body>
+
+</html>

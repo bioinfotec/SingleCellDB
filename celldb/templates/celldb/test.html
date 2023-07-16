@@ -1,39 +1,32 @@
-<html>
-  <body>
-    {% csrf_token %}
-    <textarea id="r-code-input" rows="10" cols="50"></textarea>
-    <button id="execute-button">执行</button>
-    {% if sum_value %}
-    <p>The R result is {{sum_value}}</p>
-    {% endif %}
-  </body>
-  <script
-    src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
-    integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
-    crossorigin="anonymous"
-    referrerpolicy="no-referrer"
-  ></script>
+{% extends 'celldb/base.html' %} {% load static %} {% block content %}
+<div class="row">
+  <button id="linePlot" class="btn btn-primary mb-2">Plot-Line</button>
+</div>
+<div class="row">
+  <div id="result"></div>
+</div>
 
-  <script>
-    // 获取用户编写的 R 代码并发送到后端执行
-    document
-      .getElementById("execute-button")
-      .addEventListener("click", function () {
-        var rCode = document.getElementById("r-code-input").value;
-        var csrftoken = $("[name=csrfmiddlewaretoken]").val();
-        // 发送 AJAX 请求到后端
-        $.ajax({
-          url: "/test",
-          type: "POST",
-          data: { r_code: rCode },
-          headers: { "X-CSRFToken": csrftoken },
-          success: function (response) {
-            // 处理执行结果
-          },
-          error: function (error) {
-            console.error(error);
-          },
-        });
+{% endblock %} {% block customscripts %}
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"
+  integrity="sha512-3gJwYpMe3QewGELv8k/BX9vcqhryRdzRMxVfq6ngyWXwo03GFEzjsUm8Q7RZcHPHksttq7/GFoxjCVUjkjvPdw=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  document.getElementById("linePlot").addEventListener("click", function () {
+    fetch("http://110.41.149.156:8080/line", {
+      headers: {
+        "Access-Control-Request-Headers": "Content-Type, Authorization",
+      },
+    })
+      .then((response) => response.blob())
+      .then((data) => {
+        const img = document.createElement("img");
+        const imgUrl = URL.createObjectURL(data);
+        img.src = imgUrl;
+        document.getElementById("result").appendChild(img);
       });
-  </script>
-</html>
+  });
+</script>
+{% endblock %}

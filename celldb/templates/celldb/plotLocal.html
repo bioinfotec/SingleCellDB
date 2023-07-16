@@ -1,23 +1,45 @@
 {% extends 'celldb/base.html' %} {% load static %} {% block content %}
-
+<div class="row justify-content-center">
+  <input type="file" id="fileInput" />
+  <button id="linePlot" class="btn btn-primary mb-2 mx-2">Line</button>
+  <button id="scatterPlot" class="btn btn-primary mb-2 mx-2">Scatter</button>
+  <a
+    id="downloadTestFile"
+    href="/photo/Test/linedata.txt"
+    class="btn btn-secondary mb-2 mx-2"
+    download="linedata"
+  >
+    Download Test Data 1
+  </a>
+  <a
+    id="downloadTestFile"
+    href="/photo/Test/scatterdata.txt"
+    class="btn btn-secondary mb-2 mx-2"
+    download="scatterdata"
+  >
+    Download Test Data 2
+  </a>
+</div>
 <div class="row mt-2 justify-content-center">
   <div class="card">
-    <!-- <input type="file" id="fileInput" /> -->
     <!-- 创建一个具有指定大小的容器，用于显示图表 -->
     <div id="chart" style="width: 800px; height: 800px"></div>
     <script src="{% static 'celldb/echarts/echarts.js' %} "></script>
   </div>
 </div>
 
+{% endblock %} {% block customscripts %}
 <!-- 折线图 -->
-<!-- <script>
+<script>
   // 监听文件选择事件
-  document
-    .getElementById("fileInput")
-    .addEventListener("change", handleFileSelect, false);
+  $("#linePlot").on("click", handleLineFileSelect);
 
-  function handleFileSelect(event) {
-    var file = event.target.files[0];
+  function handleLineFileSelect(event) {
+    var file = $("#fileInput")[0].files[0];
+    if (!file) {
+      alert("请先选择一个文件！");
+      return false;
+    }
     var reader = new FileReader();
 
     reader.onload = function (event) {
@@ -42,6 +64,7 @@
         var parts = line.split(",");
         var date = parts[0].trim();
         var value = parseFloat(parts[1].trim());
+        console.log(date, value);
 
         dataArray.push({
           date: date,
@@ -55,7 +78,14 @@
 
   function drawChart(dataArray) {
     // 创建图表实例
-    var chart = echarts.init(document.getElementById("chart"));
+    var chartElement = document.getElementById("chart");
+    var chart = echarts.getInstanceByDom(chartElement);
+
+    if (chart) {
+      chart.clear();
+    } else {
+      chart = echarts.init(chartElement);
+    }
 
     // 定义图表的配置项和数据
     var options = {
@@ -81,7 +111,7 @@
     // 使用配置项和数据绘制图表
     chart.setOption(options);
   }
-</script> -->
+</script>
 
 <!-- 聚类图 -->
 <script>
@@ -108,134 +138,181 @@
     return { x: centerX, y: centerY };
   }
 
-  fetch("/api/photo/cell_feature.json")
-    .then((response) => response.json())
-    .then((data) => {
-      var cell_type = [];
-      var plotdata = data.map(function (value, index) {
-        if (cell_type.indexOf(value.annotation) === -1) {
-          cell_type.push(value.annotation);
-        }
-        return [
-          parseFloat(value.UMAP_1).toFixed(2),
-          parseFloat(value.UMAP_2).toFixed(2),
-          value.annotation,
-        ];
-      });
-      var transform_option = [];
-      for (var i = 0; i < cell_type.length; i++) {
-        transform_option.push({
-          transform: {
-            type: "filter",
-            config: { dimension: "cell_type", "=": cell_type[i] },
-          },
-        });
-      }
-      // 生成多个series
-      var series = [];
-      for (var i = 0; i < cell_type.length; i++) {
-        series.push({
-          name: cell_type[i],
-          label: {
-            show: true,
-            position: "top",
-            color: "#000",
-            fontSize: 10,
-            formatter: function (params) {
-              if (params.dataIndex === 0) {
-                console.log(params.data);
-                // 仅在数据索引为 0 的点上显示标签
-                return params.data[2];
-              } else {
-                return "";
-              }
-            },
-          },
-          type: "scatter",
-          emphasis: {
-            focus: "series",
-          },
-          datasetIndex: i + 1,
-          symbolSize: 2,
-          encode: {
-            x: "x",
-            y: "y",
-          },
-        });
-      }
-      option = {
-        title: {
-          text: "UMAP",
-          left: "center",
-          top: "3%",
-        },
-        xAxis: {
-          name: "UMAP_X",
-          nameLocation: "middle",
-          nameGap: 25,
-          max: 10,
-          min: -10,
-          nameTextStyle: {
-            fontSize: 18,
-          },
-          axisLine: {
-            onZero: false,
-          },
-          splitLine: { show: false },
-        },
-        yAxis: {
-          name: "UMAP_Y",
-          nameLocation: "middle",
-          nameGap: 25,
-          max: 10,
-          min: -10,
-          nameTextStyle: {
-            fontSize: 18,
-          },
-          axisLine: {
-            onZero: false,
-          },
-          splitLine: { show: false },
-        },
-        tooltip: {
-          position: "top",
-          formatter: function (params) {
-            var data = params.data;
-            var formattedTooltip =
-              "Cell: " + data[2] + "<br>X: " + data[0] + "<br>Y: " + data[1];
-            return formattedTooltip;
-          },
-        },
-        grid: {
-          left: "5%",
-          right: "15%",
-          // show: true,
-        },
+  $("#scatterPlot").on("click", handleScatterFileSelect);
 
-        legend: {
-          data: cell_type, // 初始为空数组，用于存储动态生成的图例项
-          orient: "vertical",
-          right: "5%",
-          type: "scroll",
-          selected: {
-            ...cell_type.reduce((acc, type) => {
-              acc[type] = true;
-              return acc;
-            }, {}),
+  function handleScatterFileSelect(event) {
+    var file = $("#fileInput")[0].files[0];
+    if (!file) {
+      alert("请先选择一个文件！");
+      return false;
+    }
+    var reader = new FileReader();
+    reader.onload = function (event) {
+      var tsvData = event.target.result;
+      var dataJson = processScatterData(tsvData); // 处理TSV数据，将其转换为ECharts所需的数据格式
+      drawScatterChart(dataJson); // 绘制图表
+    };
+
+    reader.readAsText(file);
+  }
+
+  function processScatterData(tsvData) {
+    var lines = tsvData.split("\n");
+    var headers = lines[0].split("\t");
+    var jsonData = [];
+
+    for (var i = 1; i < lines.length; i++) {
+      var currentLine = lines[i].split("\t");
+      var entry = {};
+
+      for (var j = 0; j < headers.length; j++) {
+        entry[headers[j]] = currentLine[j];
+      }
+
+      jsonData.push(entry);
+    }
+
+    return jsonData;
+  }
+
+  function drawScatterChart(dataArray) {
+    var chartElement = document.getElementById("chart");
+    var chart = echarts.getInstanceByDom(chartElement);
+
+    if (chart) {
+      chart.clear();
+    } else {
+      chart = echarts.init(chartElement);
+    }
+
+    // 提取绘图所需的数据
+    var cell_type = [];
+    var plotdata = dataArray.map(function (value, index) {
+      if (cell_type.indexOf(value.annotation) === -1) {
+        cell_type.push(value.annotation);
+      }
+      return [
+        parseFloat(value.UMAP_1).toFixed(2),
+        parseFloat(value.UMAP_2).toFixed(2),
+        value.annotation,
+      ];
+    });
+    cell_type = cell_type.filter(function (value) {
+      return value !== undefined;
+    });
+    var transform_option = [];
+    for (var i = 0; i < cell_type.length; i++) {
+      transform_option.push({
+        transform: {
+          type: "filter",
+          config: { dimension: "cell_type", "=": cell_type[i] },
+        },
+      });
+    }
+    // 生成多个series
+    var series = [];
+    for (var i = 0; i < cell_type.length; i++) {
+      series.push({
+        name: cell_type[i],
+        label: {
+          show: true,
+          position: "top",
+          color: "#000",
+          fontSize: 15,
+          formatter: function (params) {
+            if (params.dataIndex === 0) {
+              console.log(params.data);
+              // 仅在数据索引为 0 的点上显示标签
+              return params.data[2];
+            } else {
+              return "";
+            }
           },
         },
-        dataset: [
-          {
-            dimensions: ["x", "y", "cell_type"],
-            source: plotdata,
-          },
-          ...transform_option,
-        ],
-        series: [...series],
-      };
-      var chart = echarts.init(document.getElementById("chart"));
-      chart.setOption(option);
-    });
+        type: "scatter",
+        emphasis: {
+          focus: "series",
+        },
+        datasetIndex: i + 1,
+        symbolSize: 2,
+        encode: {
+          x: "x",
+          y: "y",
+        },
+      });
+    }
+    option = {
+      title: {
+        text: "UMAP",
+        left: "center",
+        top: "3%",
+      },
+      xAxis: {
+        name: "UMAP_X",
+        nameLocation: "middle",
+        nameGap: 25,
+        max: 10,
+        min: -10,
+        nameTextStyle: {
+          fontSize: 18,
+        },
+        axisLine: {
+          onZero: false,
+        },
+        splitLine: { show: false },
+      },
+      yAxis: {
+        name: "UMAP_Y",
+        nameLocation: "middle",
+        nameGap: 25,
+        max: 10,
+        min: -10,
+        nameTextStyle: {
+          fontSize: 18,
+        },
+        axisLine: {
+          onZero: false,
+        },
+        splitLine: { show: false },
+      },
+      tooltip: {
+        position: "top",
+        formatter: function (params) {
+          var data = params.data;
+          var formattedTooltip =
+            "Cell: " + data[2] + "<br>X: " + data[0] + "<br>Y: " + data[1];
+          return formattedTooltip;
+        },
+      },
+      grid: {
+        left: "5%",
+        right: "15%",
+        // show: true,
+      },
+
+      legend: {
+        data: cell_type, // 初始为空数组，用于存储动态生成的图例项
+        orient: "vertical",
+        right: "5%",
+        type: "scroll",
+        selected: {
+          ...cell_type.reduce((acc, type) => {
+            acc[type] = true;
+            return acc;
+          }, {}),
+        },
+      },
+      dataset: [
+        {
+          dimensions: ["x", "y", "cell_type"],
+          source: plotdata,
+        },
+        ...transform_option,
+      ],
+      series: [...series],
+    };
+    chart.setOption(option);
+  }
 </script>
 
 <!-- 火山图 -->

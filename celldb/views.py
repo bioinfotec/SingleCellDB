@@ -21,12 +21,7 @@ def plotScatter(request):
 
 def overview(request):
     liter = LiteratureMeta.objects.all()
-    # query = request.GET.get("query", "")
-    data = ""
-    # if query:
-    #     response = requests.get(f"http://127.0.0.1:8000/api/tran/{query}.json")
-    #     data = response.json()
-    return render(request, "celldb/overview.html", {"data": data, "liter":liter})
+    return render(request, "celldb/overview.html", {"liter":liter})
 
 def download(request):
     # restframework暂时未能实现
@@ -52,26 +47,17 @@ def download(request):
 def upload(request):
     return render(request, "celldb/upload.html")
 
+def plotLocal(request):
+    return render(request, "celldb/plotLocal.html")
+
+def plotR(request):
+    return render(request, "celldb/plotR.html")
+
+def runCode(request):
+    return render(request, "celldb/runCode.html")
+
+def analyse(request):
+    return render(request, "celldb/analyse.html")
+
 def test(request):
-    import rpy2.robjects as robjects
-    # 定义R脚本
-    r_script = """
-    # 定义一组数字
-    numbers <- c(1)
-
-    # 计算数字的和
-    sum <- sum(numbers)
-
-    # 返回结果
-    sum
-    """
-
-    # 执行R脚本
-    result = robjects.r(r_script)
-
-    # 提取结果值
-    sum_value = result[0]
-
-    # 将结果值传递给前端
-    context = {'sum_value': sum_value}
-    return render(request, "celldb/test.html", context)
+    return render(request, "celldb/test.html")
