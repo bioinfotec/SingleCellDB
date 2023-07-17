@@ -11,6 +11,7 @@ new
 Photo
 backup.sql
 api-test
+R_webserve/filtered_gene_bc_matrices/*
 # Backup files # 
 *.bak 
 
