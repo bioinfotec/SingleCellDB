@@ -1,13 +1,17 @@
 {% extends "celldb/base.html" %} {% load static %} {% block content %}
-<div class="row justify-content-center">
-  <div class="input-group mb-3 col-md-6">
+<div class="row justify-content-center mb-3">
+  <div class="col-md-6">
+    <h3>The current data is from {{ pmid|default:"default data" }}</h3>
+  </div>
+  <div class="input-group col-md-6">
     <label class="input-group-text" for="input-SelectAnalyeData"
-      >请选择要绘图的数据</label
+      >Or select the data</label
     >
-    <select class="custom-select" id="input-SelectAnalyeData">
+    <select class="form-select" id="input-SelectAnalyeData" style="width: 25%">
       <option selected value="-1">Choose...</option>
       <option value="APAP">APAP</option>
       <option value="pbmc">pbmc</option>
+      <option value="0">终止进程</option>
     </select>
   </div>
 </div>
@@ -316,13 +320,10 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
     if (selectedData === "Choose...") {
       return; // 提前返回，不执行后续代码
     }
-    fetch(
-      "http://110.41.149.156:8080/choose-data?selectedData=" +
-        `${selectedData}`,
-      {
-        method: "POST",
-      }
-    )
+    alert("你选择了数据：" + selectedData + "，正在分析中，请稍后...");
+    fetch("/api-runcode/analyse?data_id=" + `${selectedData}`, {
+      method: "GET",
+    })
       .then(function (response) {
         if (!response.ok) {
           throw new Error("请求出错");
@@ -333,7 +334,7 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
         alert(data);
       })
       .catch(function (error) {
-        alert("服务器故障！请稍后重试！");
+        alert("数据尚未加载完成！！");
         console.log(error);
       });
   });

@@ -8,21 +8,29 @@
       name="viewport"
       content="width=device-width, initial-scale=1, shrink-to-fit=no"
     />
-
-    <!-- Bootstrap CSS -->
-    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> -->
+    <!-- Bootstrap CSS 5.3 -->
     {% block styles %}
     <link
       rel="stylesheet"
       type="text/css"
       href="{% static 'celldb/css/bootstrap.min.css' %}"
     />
-    {% endblock %} {% block customstyles %}{% endblock %}
-    <link
+    {% endblock %}
+    <!-- 子页面中需要自定义的样式 -->
+    {% block customstyles %}{% endblock %}
+    <!-- 预设的一些样式 -->
+    <!-- <link
       rel="stylesheet"
       type="text/css"
       href="{% static 'celldb/css/main.css' %}"
+    /> -->
+    <!-- Font Awesome 6.0 -->
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="{% static 'celldb/plugins/fontawesome-6.0.0/css/all.min.css' %}"
     />
+    <!-- 判断是否需要更改页面的标题 -->
     {% if title %}
     <title>{{ title }}</title>
     {% else %}
@@ -30,67 +38,165 @@
     {% endif %}
   </head>
   <body>
-    <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+    <header class="site-header mb-2">
+      <nav class="navbar navbar-expand-lg" style="background-color: #e3f2fd">
         <div class="container">
-          <a class="navbar-brand mr-4" href="{% url 'celldb-home' %}"
+          <a class="navbar-brand" href="{% url 'celldb-home' %}"
             >SingleCellDB</a
           >
           <button
             class="navbar-toggler"
             type="button"
-            data-toggle="collapse"
-            data-target="#navbarToggle"
-            aria-controls="navbarToggle"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
             aria-expanded="false"
             aria-label="Toggle navigation"
+            _mstaria-label="320099"
           >
             <span class="navbar-toggler-icon"></span>
           </button>
-          <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav mr-auto">
-              <a class="nav-item nav-link" href="{% url 'celldb-overview' %}"
-                >Overview</a
-              >
-              <a class="nav-item nav-link" href="{% url 'celldb-download' %}"
-                >Download</a
-              >
-              <a class="nav-item nav-link" href="{% url 'celldb-upload' %}"
-                >Upload</a
-              >
-              <div class="nav-item dropdown">
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
                 <a
-                  class="nav-item nav-link dropdown-toggle"
-                  href="{% url 'celldb-plot' %}"
-                  id="plotDropdown"
+                  class="nav-link"
+                  aria-current="page"
+                  href="{% url 'celldb-overview' %}"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-book-fill svgicon"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"
+                    /></svg
+                  >Overview
+                </a>
+              </li>
+
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle dropdown-toggleB"
+                  href="#"
                   role="button"
-                  data-toggle="dropdown"
-                  aria-haspopup="true"
+                  data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
-                  Plot
-                </a>
-                <div class="dropdown-menu dropdown-menu-center">
-                  <a class="dropdown-item" href="{% url 'celldb-plot' %}"
-                    >Plot using echarts</a
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-search svgicon"
+                    viewBox="0 0 16 16"
                   >
-                  <div class="dropdown-divider"></div>
+                    <path
+                      d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
+                    /></svg
+                  >Browse
+                </a>
+                <ul class="dropdown-menu">
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'celldb-browse-feature' %}"
+                    >Cell Feature</a
+                  >
+                  <a
+                    class="dropdown-item"
+                    href="{% url 'celldb-browse-expression' %}"
+                    >Gene Expression</a
+                  >
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'celldb-upload' %}"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-capslock-fill svgicon"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M7.27 1.047a1 1 0 0 1 1.46 0l6.345 6.77c.6.638.146 1.683-.73 1.683H11.5v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1H1.654C.78 9.5.326 8.455.924 7.816L7.27 1.047zM4.5 13.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1z"
+                    /></svg
+                  >Upload</a
+                >
+              </li>
+              <li class="nav-item dropdown">
+                <a
+                  class="nav-link dropdown-toggle dropdown-toggleP"
+                  href="#"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-brush-fill svgicon"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z"
+                    /></svg
+                  >Plot
+                </a>
+                <ul class="dropdown-menu">
+                  <a class="dropdown-item" href="{% url 'celldb-plot' %}"
+                    >Plot UMAP using echarts</a
+                  >
+                  <a class="dropdown-item" href="{% url 'celldb-plot-local' %}"
+                    >Plot UMAP in local</a
+                  >
                   <a class="dropdown-item" href="{% url 'celldb-plot-r' %}"
                     >Plot using R</a
                   >
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="{% url 'celldb-plot-local' %}"
-                    >Plot in local</a
+                </ul>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'celldb-analyse' %}"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-gear-fill svgicon"
+                    viewBox="0 0 16 16"
                   >
-                </div>
-              </div>
-              <a class="nav-item nav-link" href="{% url 'celldb-analyse' %}"
-                >Analyse</a
-              >
-              <!-- <a class="nav-item nav-link" href="{% url 'celldb-runcode' %}"
-                >RunCode</a
-              > -->
-            </div>
+                    <path
+                      d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
+                    /></svg
+                  >Analyse</a
+                >
+              </li>
+
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'celldb-download' %}">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="16"
+                    height="16"
+                    fill="currentColor"
+                    class="bi bi-cloud-download-fill svgicon"
+                    viewBox="0 0 16 16"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.5a.5.5 0 0 1 1 0V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.354 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V11h-1v3.293l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
+                    /></svg
+                  >Download</a
+                >
+              </li>
+            </ul>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               <a class="nav-item nav-link" href="/admin/">Login</a>
@@ -139,7 +245,7 @@
             <a href="#" class="nav-link px-2 text-muted">About</a>
           </li>
           <li class="nav-item">
-            <a href="{% url 'celldb-test' %}" class="nav-link px-2 text-muted"
+            <a href="{% url 'celldb-test2' %}" class="nav-link px-2 text-muted"
               >Test</a
             >
           </li>
@@ -149,11 +255,12 @@
     </div>
 
     {% block scripts %}
-    <!-- <script src="{% static 'celldb/js/jquery-3.2.1.slim.min.js' %}"></script> -->
     <script src="{% static 'celldb/js/jquery-3.7.0-.min.js' %}"></script>
     <script src="{% static 'celldb/js/popper.min.js' %}"></script>
     <script src="{% static 'celldb/js/bootstrap.min.js' %}"></script>
-    {% endblock %}<!-- 样式控制 -->
+    {% endblock %}
+
+    <!-- 样式控制 -->
     <script>
       $(document).ready(function () {
         // 在鼠标悬停时展开下拉菜单
@@ -167,6 +274,7 @@
             $(this).find(".dropdown-menu").removeClass("show");
           }
         );
+
         // 导航栏状态
         var currentPath = window.location.pathname;
         $(".nav-item.nav-link").each(function () {
@@ -176,6 +284,8 @@
         });
       });
     </script>
+
+    <!-- 子页面自定义脚本 -->
     {% block customscripts %}{% endblock %}
   </body>
 </html>

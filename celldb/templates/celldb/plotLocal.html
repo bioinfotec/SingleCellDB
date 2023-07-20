@@ -1,24 +1,26 @@
 {% extends 'celldb/base.html' %} {% load static %} {% block content %}
 <div class="row justify-content-center">
-  <input type="file" id="fileInput" />
-  <button id="linePlot" class="btn btn-primary mb-2 mx-2">Line</button>
-  <button id="scatterPlot" class="btn btn-primary mb-2 mx-2">Scatter</button>
-  <a
-    id="downloadTestFile"
-    href="/photo/Test/linedata.txt"
-    class="btn btn-secondary mb-2 mx-2"
-    download="linedata"
-  >
-    Download Test Data 1
-  </a>
-  <a
-    id="downloadTestFile"
-    href="/photo/Test/scatterdata.txt"
-    class="btn btn-secondary mb-2 mx-2"
-    download="scatterdata"
-  >
-    Download Test Data 2
-  </a>
+  <div class="col">
+    <input type="file" id="fileInput" />
+    <button id="linePlot" class="btn btn-primary mb-2 mx-2">Line</button>
+    <button id="scatterPlot" class="btn btn-primary mb-2 mx-2">Scatter</button>
+    <a
+      id="downloadTestFile"
+      href="/photo/Test/linedata.txt"
+      class="btn btn-secondary mb-2 mx-2"
+      download="linedata"
+    >
+      Download Test Data 1
+    </a>
+    <a
+      id="downloadTestFile"
+      href="/photo/Test/scatterdata.txt"
+      class="btn btn-secondary mb-2 mx-2"
+      download="scatterdata"
+    >
+      Download Test Data 2
+    </a>
+  </div>
 </div>
 <div class="row mt-2 justify-content-center">
   <div class="card">
