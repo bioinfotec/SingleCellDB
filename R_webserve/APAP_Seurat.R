@@ -27,7 +27,7 @@ CommonHandler <- function(.req, .res, png_function, width = 600, height = 400, r
 # pbmc.data <- Read10X(data.dir = "filtered_gene_bc_matrices/hg19/")
 # pbmc <- CreateSeuratObject(counts = pbmc.data, project = "pbmc3k", min.cells = 3, min.features = 200)
 # pbmc[["percent.mt"]] <- PercentageFeatureSet(pbmc, pattern = "^MT-")
-pbmc <- readRDS("../../APAP_Seurat.Rds")
+pbmc <- readRDS("../APAP_Seurat.Rds")
 
 
 img_VlnPlot <- function() {

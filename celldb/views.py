@@ -1,6 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import TranMeta, LiteratureMeta
+from celldb_v2.models import literature_info
 
 def home(request):
     logs = [
@@ -16,12 +17,21 @@ def home(request):
     ]
     return render(request, "celldb/home.html", {"logs": logs})
 
-def plotScatter(request):
-    return render(request, "celldb/plotScatter.html")
-
 def overview(request):
-    liter = LiteratureMeta.objects.all()
-    return render(request, "celldb/overview.html", {"liter":liter})
+    literature = literature_info.objects.all()
+    return render(request, "celldb/overview.html", {"literature_info":literature})
+
+def browseFeature(request):
+    # 根据参数浏览数据
+    pmid = request.GET.get("pmid", None)
+    context = {"pmid": pmid}
+    return render(request, "celldb/browseFeature.html", context)
+
+def browseExpression(request):
+    # 根据参数浏览数据
+    pmid = request.GET.get("pmid", None)
+    context = {"pmid": pmid}
+    return render(request, "celldb/browseExpression.html", context)
 
 def download(request):
     # restframework暂时未能实现
@@ -47,6 +57,12 @@ def download(request):
 def upload(request):
     return render(request, "celldb/upload.html")
 
+def plotScatter(request):
+    # 根据参数绘制散点图
+    pmid = request.GET.get("pmid", None)
+    context = {"pmid": pmid}
+    return render(request, "celldb/plotScatter.html", context)
+
 def plotLocal(request):
     return render(request, "celldb/plotLocal.html")
 
@@ -57,7 +73,13 @@ def runCode(request):
     return render(request, "celldb/runCode.html")
 
 def analyse(request):
-    return render(request, "celldb/analyse.html")
+    # 根据参数分析数据
+    pmid = request.GET.get("pmid", None)
+    context = {"pmid": pmid}
+    return render(request, "celldb/analyse.html", context)
 
 def test(request):
     return render(request, "celldb/test.html")
+
+def test2(request):
+    return render(request, "celldb/test2.html")

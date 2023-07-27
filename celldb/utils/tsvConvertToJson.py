@@ -25,6 +25,6 @@ def tsv2json(input_file,output_file):
         output_file.write(json.dumps(arr, indent=4))
   
 # Driver Code
-input_filename = '/home/ubuntu/SingleCellDB/Photo/Matrix/APAP_LR_EC_Cell_features.txt'
-output_filename = 'cell_feature.json'
+input_filename = '/home/ubuntu/SingleCellDB/media/Matrix/APAP_LR_EC_Cell_features.txt'
+output_filename = 'cell_feature_APAP.json'
 tsv2json(input_filename,output_filename)

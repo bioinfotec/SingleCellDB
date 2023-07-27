@@ -1,6 +1,7 @@
 library(RestRserve)
 library(png)
 library(Seurat)
+# library(tidyverse)
 
 app = Application$new()
 
@@ -20,8 +21,7 @@ CommonHandler <- function(.req, .res, png_function, width = 600, height = 400, r
     .res$set_body(img_data)
     .res$set_content_type("image/png")
     .res$set_header("Content-Disposition", "inline")
-    .res$set_header("Access-Control-Allow-Origin", "http://110.41.149.156:8000")
-    unlink(png_file)
+    .res$set_header("Access-Control-Allow-Origin", "*")
 }
 
 pbmc.data <- Read10X(data.dir = "filtered_gene_bc_matrices/hg19/")
@@ -76,7 +76,7 @@ txt_Examine_PCA_handler <- function(.req, .res) {
   output_text <- paste(output, collapse = "\n")
   .res$set_body(output_text)
   .res$set_content_type("text/plain")
-  .res$set_header("Access-Control-Allow-Origin", "http://110.41.149.156:8000")
+  .res$set_header("Access-Control-Allow-Origin", "*")
 }
 app$add_get(path = "/txt-examine-pca", FUN = txt_Examine_PCA_handler)
 
@@ -107,6 +107,39 @@ img_15_PCA_Headtmap <- function() {
 app$add_get(path = "/img-15-pca-headtmap", FUN = function(.req, .res) {
   CommonHandler(.req, .res, img_15_PCA_Headtmap, width = 1200, height = 1000, res=95)
 })
+
+pbmc1 <- FindNeighbors(pbmc, dims = 1:10)
+pbmc1 <- FindClusters(pbmc1,resolution=0.5)
+
+pbmc1 <- RunUMAP(pbmc1, dims = 1:10)
+
+img_UMAP_DimPlot <- function() {
+  print(DimPlot(pbmc1, reduction = "umap"))
+}
+app$add_get(path = "/img-umap-dimplot", FUN = function(.req, .res) {
+  CommonHandler(.req, .res, img_UMAP_DimPlot)
+})
+
+# FindMarkers(pbmc1,
+#             ident.1 = 1,
+#             min.pct = 0.25) -> cluster1.markers
+
+# head(cluster1.markers,5)
+
+# pbmc.markers <- FindAllMarkers(pbmc1,
+#                                only.pos = TRUE,
+#                                min.pct = 0.25)
+
+# top3 <- pbmc.markers %>% group_by(cluster) %>% 
+#   top_n(n=3,wt=avg_log2FC)
+
+# img_mark_genes <- function() {
+#   print(DimHeatmap(pbmc1, features = top3$gene))
+# }
+# app$add_get(path = "/img-mark-genes", FUN = function(.req, .res) {
+#   CommonHandler(.req, .res, img_mark_genes)
+# })
+
 
 app$add_post(path = "/choose-data", FUN = function(.req, .res) {
   # 从请求中获取选择的数据
