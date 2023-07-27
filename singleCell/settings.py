@@ -90,9 +90,9 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "Student",
-        "USER": "root",
+        "USER": "huawei",
         "PASSWORD": "200102",
-        "HOST": "localhost",
+        "HOST": "110.41.149.156",
         "PORT": "3306",
     },
     # "celldb_v2": {

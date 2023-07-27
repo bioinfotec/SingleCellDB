@@ -25,6 +25,5 @@ urlpatterns = [
     path("api/", include("api.urls")),
     path("api-v2/", include("api-v2.urls")),
     path("api-rpy2/", include("api-rpy2.urls")),
-    path("api-test/", include("api-test.urls")),
     path("task/", include("task1.urls")),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

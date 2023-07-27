@@ -14,6 +14,7 @@ api-test
 R_webserve/filtered_gene_bc_matrices/*
 node_modules
 src
+celldb/static/*
 # Backup files # 
 *.bak 
 
