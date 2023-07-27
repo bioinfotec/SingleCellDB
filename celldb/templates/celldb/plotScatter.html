@@ -111,7 +111,7 @@
 
   // 解析barcodes文件
   var barcodes = []; // 细胞条码列表
-  fetch("/photo/h19/barcodes.tsv", {
+  fetch("/media/h19/barcodes.tsv", {
     headers: {
       "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
     },
@@ -371,7 +371,7 @@
           return;
         }
         var matcher = new RegExp(
-          $.ui.autocomplete.escapeRegex(request.term),
+          "^" + $.ui.autocomplete.escapeRegex(request.term),
           "i"
         );
         var matchedResults = $.grep(
@@ -383,13 +383,22 @@
             return matcher.test(value);
           }
         );
-        // 返回最多前10条匹配的结果
-        var slicedResults = matchedResults.slice(0, 10);
+        // 返回最多前200条匹配的结果
+        var slicedResults = matchedResults.slice(0, 200);
         var responseResults =
           slicedResults.length < matchedResults.length
-            ? [...slicedResults, "..."]
+            ? [
+                ...slicedResults,
+                `...${matchedResults.length - slicedResults.length} more...`,
+              ]
             : slicedResults;
         response(responseResults);
+      },
+      open: function (event, ui) {
+        // 添加滚动条选项
+        var $ul = $(this).autocomplete("widget");
+        $ul.css("overflow-y", "auto");
+        $ul.css("max-height", "300px"); // 设置最大高度，这里可以根据需要进行调整
       },
     });
   });

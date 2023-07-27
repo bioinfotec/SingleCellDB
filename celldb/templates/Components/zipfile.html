@@ -1,0 +1,278 @@
+var chartDom = document.getElementById("Scatter");
+  var myChart = echarts.init(chartDom);
+  var option;
+  var defaultOption;
+  // 解析基因文件
+  var genes = []; // 基因列表
+  fetch("/photo/h19/genes.tsv", {
+    headers: {
+      "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
+    },
+  })
+    .then((res) => res.text())
+    .then((genesData) => {
+      // 下拉框
+      var geneSelect = document.getElementById("geneSelect");
+
+      genesData.split("\n").forEach(function (line) {
+        if (line.trim() !== "") {
+          var geneInfo = line.split("\t");
+          var gene = {
+            id: geneInfo[0],
+            name: geneInfo[1],
+          };
+
+          genes.push(gene);
+        }
+      });
+      genes.slice(0, 10).map(function (gene) {
+        var option = document.createElement("option");
+        option.value = gene.id;
+        option.text = gene.name;
+        geneSelect.appendChild(option);
+      });
+    });
+
+  // 解析barcodes文件
+  var barcodes = []; // 细胞条码列表
+  fetch("/photo/h19/barcodes.tsv", {
+    headers: {
+      "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
+    },
+  })
+    .then((res) => res.text())
+    .then((barcodesData) => {
+      barcodesData.split("\n").forEach(function (line) {
+        if (line.trim() !== "") {
+          barcodes.push(line.trim());
+        }
+      });
+    });
+
+  // 解析features文件
+  var features = []; // 特征列表
+  var cell_type = [];
+  fetch("/photo/h19/features.txt", {
+    headers: {
+      "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
+    },
+  })
+    .then((res) => res.text())
+    .then((featuresData) => {
+      featuresData = featuresData.split("\n").slice(1).join("\n");
+      featuresData.split("\n").forEach(function (line) {
+        if (line.trim() !== "") {
+          features.push(line.trim().split("\t"));
+        }
+      });
+      plotdata = features.map(function (value, index) {
+        if (cell_type.indexOf(value[3]) === -1) {
+          cell_type.push(value[3]);
+        }
+        return [
+          index + 1,
+          value[0],
+          parseFloat(value[1]).toFixed(2),
+          parseFloat(value[2]).toFixed(2),
+          value[3],
+        ];
+      });
+
+      // 对cell_type排序
+      cell_type.sort();
+
+      // 生成transform_option
+      var transform_option = [];
+      for (var i = 0; i < cell_type.length; i++) {
+        transform_option.push({
+          transform: {
+            type: "filter",
+            config: { dimension: "cell_type", "=": cell_type[i] },
+          },
+        });
+      }
+
+      // 生成多个series
+      var series = [];
+      for (var i = 0; i < cell_type.length; i++) {
+        series.push({
+          name: cell_type[i],
+          type: "scatter",
+          itemStyle: {
+            opacity: 0.9,
+            borderColor: "#fff",
+            borderWidth: 0.5,
+          },
+          emphasis: {
+            focus: "series",
+          },
+          legendHoverLink: false,
+          datasetIndex: i + 1,
+          symbolSize: 3.5,
+          encode: {
+            x: "x",
+            y: "y",
+          },
+        });
+      }
+
+      option = {
+        title: {
+          text: "UMAP",
+          left: "center",
+          top: "3%",
+        },
+        xAxis: {
+          name: "UMAP_X",
+          nameLocation: "middle",
+          nameGap: 25,
+          max: 15,
+          min: -15,
+          nameTextStyle: {
+            fontSize: 18,
+          },
+          axisLine: {
+            onZero: false,
+          },
+          splitLine: { show: false },
+        },
+        yAxis: {
+          name: "UMAP_Y",
+          nameLocation: "middle",
+          nameGap: 25,
+          max: 15,
+          min: -15,
+          nameTextStyle: {
+            fontSize: 18,
+          },
+          axisLine: {
+            onZero: false,
+          },
+          splitLine: { show: false },
+        },
+        legend: {
+          data: cell_type, // 初始为空数组，用于存储动态生成的图例项
+          orient: "vertical",
+          right: "5%",
+          type: "scroll",
+          selected: {
+            ...cell_type.reduce((acc, type) => {
+              acc[type] = true;
+              return acc;
+            }, {}),
+          },
+        },
+        tooltip: {
+          position: "top",
+          formatter: function (params) {
+            var data = params.data;
+            var formattedTooltip =
+              "Cell: " + data[4] + "<br>X: " + data[2] + "<br>Y: " + data[3];
+            return formattedTooltip;
+          },
+        },
+        dataset: [
+          {
+            dimensions: ["cell_id", "barcode", "x", "y", "cell_type"],
+            source: plotdata,
+          },
+          ...transform_option,
+        ],
+        series: [...series],
+      };
+      defaultOption = $.extend(true, {}, option);
+      option && myChart.setOption(option);
+    });
+
+  // // 监听基因搜索事件
+  $("#geneSelect").change(function () {
+    // 到后端搜寻寻找的基因表达量情况
+    var selectedGene = $(this).val();
+    console.log("你选择了基因：" + selectedGene);
+    var expression = []; // 基因表达量
+    fetch(`/api-test/gene-expression/?gene_id=${selectedGene}`, {
+      headers: {
+        "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
+      },
+    })
+      .then((res) => res.text())
+      .then((testString) => {
+        var expressionData = JSON.parse(testString);
+        console.log(expressionData);
+        // 判断表达量是否为空，提前终止
+        if (expressionData.length === 0) {
+          console.log(selectedGene + "在所有细胞中的表达量为空");
+          alert(selectedGene + "在所有细胞中的表达量为空\n请重新选择基因：");
+          myChart.clear();
+          // defaultOption && myChart.setOption(defaultOption);
+        } else {
+          console.log(selectedGene + "在所有细胞中的表达量不为空");
+          // 创建一个集合，存储有表达量的细胞的 cell_id 同时确定最大和最小值
+          var expressedCells = new Set();
+          var minExpression = Infinity;
+          var maxExpression = -Infinity;
+          expressionData.forEach(function (expressionInfo) {
+            expressedCells.add(expressionInfo.cell_id);
+            minExpression = Math.min(expressionInfo.expression, minExpression);
+            maxExpression = Math.max(expressionInfo.expression, maxExpression);
+          });
+
+          // 创建一个颜色比例尺，映射基因表达量到颜色
+          var colorScale = d3
+            .scaleLinear()
+            .domain([minExpression, maxExpression])
+            .range(["#8c0200", "#ff0000"]);
+
+          // 关闭legend
+          option.legend.show = false;
+
+          // 修改绘图逻辑，根据基因表达量设置散点颜色
+          option.series.forEach(function (series) {
+            series.itemStyle.color = function (params) {
+              // 获取当前细胞的 cell_id
+              const cellId = params.data[0];
+              // 判断当前细胞是否表达了该基因
+              if (expressedCells.has(cellId.toString())) {
+                return colorScale(expression);
+              } else {
+                return "#8c8c8c"; // 默认的非表达情况下的颜色
+              }
+            };
+            series.symbolSize = function (data) {
+              // 获取当前细胞的 cell_id
+              const cellId = data[0];
+              // 判断当前细胞是否表达了该基因
+              if (expressedCells.has(cellId.toString())) {
+                return 3.5;
+              } else {
+                return 3.5;
+              }
+            };
+            option.tooltip.formatter = function (params) {
+              var data = params.data;
+              // 获取当前细胞的 cell_id
+              const cellId = data[0];
+              if (expressedCells.has(cellId.toString())) {
+                // 获取当前细胞的表达量
+                var expressionValue = expressionData.find(
+                  (info) => info.cell_id == cellId
+                ).expression;
+                var formattedTooltip =
+                  "Cell: " +
+                  data[4] +
+                  "<br>X: " +
+                  data[2] +
+                  "<br>Y: " +
+                  data[3] +
+                  "<br>Expression: " +
+                  expressionValue;
+                return formattedTooltip;
+              }
+            };
+          });
+          // 更新图表
+          option && myChart.setOption(option);
+        }
+      });
+  });
+</script> -->

@@ -1,18 +1,20 @@
 from django.http.response import JsonResponse
 from celldb.models import TranMeta, DataSetMeta, LiteratureMeta,UploadedFile
-from .serializers import TranMetaSerializer, DataSetMetaSerializer, LiteratureMetaSerializer,UploadedFileSerializer
-from .paginations import CustomPagination
+from .serializers import TranMetaSerializer, DataSetMetaSerializer, LiteratureMetaSerializer,UploadedFileSerializer, TranMetaDatabalesSerializer
+from .paginations import CustomPagination, CustomeDatabalesPagination
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, AllowAny
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, renderer_classes
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_datatables.renderers import DatatablesRenderer
+from rest_framework_datatables.filters import DatatablesBaseFilterBackend
 from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.http import FileResponse
 import os
-    
+
 # For File download
 def download_file(request):
     # 获取文件路径
@@ -55,15 +57,18 @@ class UploadedFileViewSet(ModelViewSet):
     queryset = UploadedFile.objects.all()
     serializer_class = UploadedFileSerializer
     parser_classes = (MultiPartParser, FormParser)
+    # 设置访问权限
     def get_permissions(self):
-        if self.action in ['list', 'retrieve']:
-            # 列表和详情视图允许任何人访问
-            permission_classes = [AllowAny]
-        else:
-            # 其他视图需要身份验证
-            permission_classes = [IsAuthenticated]
+        # if self.action in ['list', 'retrieve', "create"]:
+        #     # 列表和详情视图允许任何人访问
+        #     permission_classes = [AllowAny]
+        # else:
+        #     # 其他视图需要身份验证
+        #     permission_classes = [IsAuthenticated]
+        # return [permission() for permission in permission_classes]
+        permission_classes = [AllowAny]
         return [permission() for permission in permission_classes]
-    
+
 #For DataSet
 class DataSetView(ModelViewSet):
     queryset = DataSetMeta.objects.order_by("dataset_id")
@@ -84,14 +89,14 @@ class LiteratureMetaView(ModelViewSet):
 
 
 @api_view(["GET"])
-@permission_classes([])
+@permission_classes([AllowAny])
+@renderer_classes([DatatablesRenderer])
 def getTran(request, formart=None):
-    paginator = CustomPagination()
-    data = TranMeta.objects.order_by("data_id")
+    paginator = CustomeDatabalesPagination()
+    data = TranMeta.objects.all().order_by("data_id")
     result_page = paginator.paginate_queryset(data, request)
-    serializer = TranMetaSerializer(result_page, many=True)
+    serializer = TranMetaDatabalesSerializer(result_page, many=True)
     return paginator.get_paginated_response(serializer.data)
-
 
 @api_view(["GET"])
 @permission_classes([])

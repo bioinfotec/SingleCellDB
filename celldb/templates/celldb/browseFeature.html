@@ -1,0 +1,420 @@
+{% extends 'celldb/base.html' %} {% load static %} {% block customstyles %}
+<link
+  href="{% static 'celldb/css/datatables_1.13.4.bootstrap5.min.css' %}"
+  rel="stylesheet"
+/>
+{% endblock %} {% block customlayout %}
+
+<div class="container-fluid justify-content-center">
+  <div class="row">
+    <!--侧边栏 -->
+    <div class="card col-md-2 mx-4">
+      <div style="display: flex; margin-top: 20px">
+        <label for="SelectLiter" class="mx-2">PMID</label>
+        <select
+          class="form-select form-select-sm"
+          aria-label="Default select"
+          id="SelectLiter"
+          style="width: 75%"
+        >
+          <option value="">All</option>
+          <option value="h19">00000001</option>
+          <option value="APAP">00000002</option>
+          <option value="137537">31653841</option>
+          <option value="137846">32386599</option>
+        </select>
+      </div>
+      <hr />
+      <div class="mt-2 row">
+        <div class="col">
+          <select id="cellTypeFilter" class="form-select" style="width: 100%">
+            <option value="">Cell Type</option>
+          </select>
+        </div>
+        <div class="col">
+          <button id="downloadBtn" class="btn btn-primary">Download</button>
+        </div>
+      </div>
+      <hr />
+      <div class="mt-2 row">
+        <div class="col">
+          <select id="SpeciesFilter" class="form-select" style="width: 100%">
+            <option value="">Species</option>
+            <option value="human">Human</option>
+            <option value="mouse">Mouse</option>
+          </select>
+        </div>
+      </div>
+      <hr />
+      <div class="row mx-2">
+        <div class="col-6">
+          <label for="min" class="col-form-label fs-6">Min</label>
+          <input type="text" class="form-control" id="min" name="min" />
+        </div>
+        <div class="col-6">
+          <label for="max" class="col-form-label fs-6">Max</label>
+          <input type="text" class="form-control" id="max" name="max" />
+        </div>
+      </div>
+      <hr />
+      <div class="row mx-2">
+        <button
+          type="button"
+          id="Plot"
+          class="btn btn-primary"
+          style="width: 50%"
+        >
+          Plot
+        </button>
+      </div>
+    </div>
+
+    <!-- 表格数据 -->
+    <div class="card col-md-8 mx-2">
+      <div class="card-body">
+        <h3 class="card-title" id="cardTitle">
+          The current data is: {{ pmid|default:"default data" }}
+        </h3>
+        <div class="row">
+          <div class="table-responsive">
+            <table
+              id="table_Feature"
+              class="table table-hover table-str"
+              style="width: 100%; border-collapse: collapse; font-size: 14px"
+            >
+              <thead>
+                <tr>
+                  <th>Barcode</th>
+                  <th>ident</th>
+                  <th>Type</th>
+                  <th>nCount_RNA</th>
+                  <th>nFeature_RNA</th>
+                  <th>percent_mt</th>
+                  <th>UMAP_1</th>
+                  <th>UMAP_2</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block customscripts %}
+<script src="{% static 'celldb/js/datatables_1.13.4_js_jquery.min.js' %}"></script>
+<script src="{% static 'celldb/js/datatables_1.13.4.bootstrap5.min.js' %}"></script>
+<script>
+  $(document).ready(function () {
+    var minEl = $("#min");
+    var maxEl = $("#max");
+    // Custom range filtering function
+    DataTable.ext.search.push(function (settings, data, dataIndex) {
+      var min = parseFloat(minEl.val(), 10);
+      var max = parseFloat(maxEl.val(), 10);
+      var x_col = parseFloat(data[6]) || 0; // use data for the x column
+      if (
+        (isNaN(min) && isNaN(max)) ||
+        (isNaN(min) && x_col <= max) ||
+        (min <= x_col && isNaN(max)) ||
+        (min <= x_col && x_col <= max)
+      ) {
+        return true;
+      }
+
+      return false;
+    });
+
+    var table = $("#table_Feature").DataTable({
+      ajax: {
+        url: "/media/cell_feature_APAP.json",
+        dataSrc: "",
+      },
+      columns: [
+        // { data: "id", orderable: false, searchable: false },
+        {
+          data: "barcodes",
+          orderable: false,
+          searchable: false,
+        },
+        {
+          data: "orig_ident",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "annotation",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "nCount_RNA",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "nFeature_RNA",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "percent_mt",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "UMAP_1",
+          render: function (data) {
+            return parseFloat(data).toExponential(2);
+          },
+          searchable: true,
+        },
+        {
+          data: "UMAP_2",
+          render: function (data) {
+            return parseFloat(data).toExponential(2);
+          },
+          searchable: true,
+        },
+      ],
+      paging: true,
+      deferRender: true,
+      order: [],
+
+      language: {
+        sortAscending: '<i class="fas fa-sort-up"></i>',
+        sortDescending: '<i class="fas fa-sort-down"></i>',
+      },
+      // 获取所有的 cell_type 数据
+      initComplete: function () {
+        var cellTypes = table.column(2).data().unique().toArray();
+        var selectOptions = cellTypes.map(function (cellType) {
+          return '<option value="' + cellType + '">' + cellType + "</option>";
+        });
+        $("cellTypeFilter").empty();
+        $("#cellTypeFilter").append(selectOptions.join(""));
+        $("#cellTypeFilter").on("change", function () {
+          var selectedCellType = $(this).val();
+          table.column(2).search(selectedCellType).draw();
+        });
+      },
+    });
+
+    minEl.on("input", function () {
+      table.draw();
+    });
+    maxEl.on("input", function () {
+      table.draw();
+    });
+    // 添加按钮点击事件处理函数
+    $("#downloadBtn").click(function () {
+      // 获取当前表格中的数据
+      var table = $("#table_Feature").DataTable();
+      var filteredData = table
+        .rows({
+          search: "applied",
+        })
+        .data()
+        .toArray();
+
+      // 执行下载操作，可以根据需要自定义实现
+      downloadData(filteredData);
+    });
+
+    // 处理绘图事件
+    // 获取选择框和按钮的元素
+    var cellTypeFilter = $("#cellTypeFilter");
+    var plotButton = $("#Plot");
+
+    // 添加点击事件处理程序
+    plotButton.on("click", function () {
+      // 获取选择框的值
+      var selectedCellType = cellTypeFilter.val();
+      window.location.href = "/plot";
+    });
+  });
+
+  $("#SelectLiter").change(function () {
+    var selectedOption = $(this).val(); // 获取被选中的选项的值
+    console.log(selectedOption);
+    // 获取 card title 元素并修改其文本内容
+    var cardTitleElement = $("#cardTitle");
+    cardTitleElement.text("The current data is: " + selectedOption);
+    var table = $("#table_Feature").DataTable();
+    table.destroy();
+    var table = $("#table_Feature").DataTable({
+      ajax: {
+        url: `/media/cell_feature_${selectedOption}.json`,
+        dataSrc: "",
+      },
+      columns: [
+        // { data: "id", orderable: false, searchable: false },
+        {
+          data: "barcodes",
+          orderable: false,
+          searchable: false,
+        },
+        {
+          data: "orig_ident",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "annotation",
+          orderable: false,
+          searchable: false,
+        },
+        {
+          data: "nCount_RNA",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "nFeature_RNA",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "percent_mt",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "UMAP_1",
+          render: function (data) {
+            return parseFloat(data).toExponential(2);
+          },
+          searchable: true,
+        },
+        {
+          data: "UMAP_2",
+          render: function (data) {
+            return parseFloat(data).toExponential(2);
+          },
+          searchable: true,
+        },
+      ],
+      paging: true,
+      deferRender: true,
+      order: [],
+
+      language: {
+        sortAscending: '<i class="fas fa-sort-up"></i>',
+        sortDescending: '<i class="fas fa-sort-down"></i>',
+      },
+      // 获取所有的 cell_type 数据
+      initComplete: function () {
+        var cellTypes = table.column(2).data().unique().toArray();
+        var selectOptions = cellTypes.map(function (cellType) {
+          return '<option value="' + cellType + '">' + cellType + "</option>";
+        });
+        $("#cellTypeFilter").children().not(":first-child").remove();
+        $("#cellTypeFilter").append(selectOptions.join(""));
+        $("#cellTypeFilter").on("change", function () {
+          var selectedCellType = $(this).val();
+          table.column(2).search(selectedCellType).draw();
+        });
+      },
+    });
+  });
+
+  // 处理物种按钮
+  $("#SpeciesFilter").change(function () {
+    $("#SelectLiter").empty();
+    $("#SelectLiter").append(
+      `<option value="">Filter By ${$(this).val()}</option>`
+    );
+    if ($(this).val() == "human") {
+      console.log("human");
+      $("#SelectLiter").children().not(":first-child").remove();
+      $("#SelectLiter").append('<option value="h19">00000001</option>');
+      $("#SelectLiter").append('<option value="APAP">00000002</option>');
+    }
+    if ($(this).val() == "mouse") {
+      console.log("mouse");
+      $("#SelectLiter").children().not(":first-child").remove();
+      $("#SelectLiter").append('<option value="137537">31653841</option>');
+      $("#SelectLiter").append('<option value="137846">32386599</option>');
+    }
+  });
+
+  // 下载数据的函数
+  function downloadData(data) {
+    // 将数据转换为文本格式
+    var textData = JSON.stringify(data);
+    // 转化为csv格式
+    var csv =
+      "data_id,cell_barcode,cell_type,zone,run_id,time_point,umap_x,umap_y\n";
+    var csvRows = data.map(function (row) {
+      return [
+        row.data_id,
+        row.cell_barcode,
+        row.cell_type,
+        row.zone,
+        row.run_id,
+        row.time_point,
+        row.umap_x,
+        row.umap_y,
+      ].join(",");
+    });
+    csv += csvRows.join("\n");
+    var blob = new Blob([csv], {
+      type: "text/csv;charset=utf-8;",
+    });
+    // 创建一个 <a> 元素
+    var link = document.createElement("a");
+    link.setAttribute("href", URL.createObjectURL(blob));
+    link.setAttribute("download", "data.csv");
+
+    // 模拟点击下载链接
+    link.click();
+  }
+</script>
+
+<!-- <script>
+  window.onload = function () {
+    const selectedValue = sessionStorage.getItem("selectedValue");
+    const selectBox = document.getElementById("SelectLiter"); // 假设为select框的id
+    for (let i = 0; i < selectBox.options.length; i++) {
+      if (selectBox.options[i].value === selectedValue) {
+        selectBox.selectedIndex = i;
+        break;
+      }
+    }
+    sessionStorage.removeItem("selectedValue"); // 清除sessionStorage中的选中值
+  };
+</script> -->
+
+<!-- <script>
+  $(document).ready(function () {
+    $.ajax({
+      url: "api/tran/literid", // 后端接口的URL
+      method: "GET",
+      dataType: "json",
+      success: function (response) {
+        // var options = response.options; // 假设后端返回的数据格式为 { "options": ["Option 1", "Option 2", "Option 3"] }
+        // var select = $('#mySelect');
+        // $.each(options, function(index, value) {
+        //   select.append($('<option>').text(value).val(value));
+        // });
+      },
+    });
+  });
+
+  fetch("api/tran/literid")
+    .then((response) => response.json())
+    .then((data) => {
+      // 渲染数据到<select>元素中的<option>选项
+      const selectElement = document.getElementById("SelectLiter");
+
+      data.forEach((item) => {
+        const option = document.createElement("option");
+        option.value = item.Liter_pmid;
+        option.textContent = item.Liter_pmid;
+        selectElement.appendChild(option);
+      });
+    })
+    .catch((error) => console.log(error));
+</script> -->
+{% endblock %}

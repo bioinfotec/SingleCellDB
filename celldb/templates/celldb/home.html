@@ -1,22 +1,75 @@
 {% extends 'celldb/base.html' %} {% block content %}
-<div class="jumbotron">
-  <h1 class="display-6">单细胞测序数据库项目日志</h1>
-  <hr class="my-4" />
-  <table class="table table-striped">
-    <thead>
-      <tr>
-        <th>日期</th>
-        <th>内容</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for log in logs %}
-      <tr>
-        <td>{{ log.date }}</td>
-        <td>{{ log.content }}</td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="container-fluid">
+  <div class="col-lg">
+    <div
+      class="well well-sm"
+      style="
+        border: 1px solid #000;
+        margin-top: 0px;
+        background: #f0f8ff;
+        padding: 30px;
+        border-style: hidden;
+      "
+    >
+      <p _msttexthash="1093705457" _msthash="18">
+        SingleCelldb是一个数据库，供有兴趣探索人类肝脏和视网膜单细胞RNA测序实验的科学界使用。我们收集和整合来自多项研究的数据，并通过统一的框架呈现。
+      </p>
+
+      <h5 style="padding-top: 10px" _msttexthash="11249277" _msthash="19">
+        使用示例
+      </h5>
+
+      <ul>
+        <!-- OVERVIEW -->
+        <li _msttexthash="61002409" _msthash="23">
+          浏览
+          <a href="{% url 'celldb-overview' %}" _istranslated="1">所有数据</a>
+          的介绍
+        </li>
+        <!-- SEARCH -->
+        <li>
+          进行
+          <a href="/search.html?query=sox2" _mstmutation="1" _istranslated="1"
+            >Alb</a
+          >
+          的基因搜索
+        </li>
+        <!-- PLOT -->
+        <li _msttexthash="61002409" _msthash="23">
+          浏览 <a href="#" _istranslated="1">示例数据</a> 的细胞类型
+        </li>
+        <!-- PLOT GENE EXPRESSION -->
+        <li _msttexthash="60061625" _msthash="24">
+          观察
+          <i _istranslated="1"><a href="" _istranslated="1">CRX</a></i>
+          在组织中的表达
+        </li>
+        <!-- UPLOAD -->
+        <li _msttexthash="61002409" _msthash="23">
+          <a href="#" _istranslated="1">本地数据</a> 的细胞类型可视化
+        </li>
+        <!-- ANALYSE -->
+        <li _msttexthash="61002409" _msthash="23">
+          对于 <a href="#" _istranslated="1">数据库中数据</a> 的分析
+        </li>
+      </ul>
+      <h5 style="padding-top: 10px" _msttexthash="46032857" _msthash="29">
+        什么是单细胞RNA测序？
+      </h5>
+
+      <div class="w3-panel w3-black">
+        <p class="w3-large w3-serif" _msttexthash="1318132218" _msthash="30">
+          改编自<a
+            href="https://en.wikipedia.org/wiki/Single_cell_sequencing#Single-cell_RNA_sequencing_(scRNA-seq)"
+            target="_blank"
+            _istranslated="1"
+            >维基百科</a
+          >关于该主题的文章：<i _istranslated="1"
+            >单细胞RNA测序使用优化的下一代测序技术检查单个细胞的转录组，提供更高分辨率的基因表达，并更好地了解单个细胞在其微环境中的功能。</i
+          >
+        </p>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

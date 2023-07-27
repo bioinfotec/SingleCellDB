@@ -44,10 +44,11 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "corsheaders",
     # "crispy_forms",
-    # "crispy_bootstrap4",
     "celldb",
+    "celldb_v2",
     "rest_framework",
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'task1',
 ]
 
 MIDDLEWARE = [
@@ -86,10 +87,6 @@ WSGI_APPLICATION = "singleCell.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-    # "default": {
-    #     "ENGINE": "django.db.backends.sqlite3",
-    #     "NAME": BASE_DIR / "db.sqlite3",
-    # }
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": "Student",
@@ -97,7 +94,15 @@ DATABASES = {
         "PASSWORD": "200102",
         "HOST": "localhost",
         "PORT": "3306",
-    }
+    },
+    # "celldb_v2": {
+    #     'ENGINE': 'django.db.backends.mysql',   # 使用 MySQL 数据库引擎
+    #     'NAME': 'sc_db',                      # 数据库名称
+    #     'USER': 'root',                       # 数据库用户名
+    #     'PASSWORD': '200102',               # 数据库密码
+    #     'HOST': 'localhost',                    # 数据库主机（如果在本地可以使用 localhost）
+    #     'PORT': '3306',
+    # },
 }
 
 # Django Rest Framework Settings
@@ -160,3 +165,6 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 CORS_ALLOW_ALL_ORIGINS = True
 ALLOWED_HOSTS = ["*"]
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"

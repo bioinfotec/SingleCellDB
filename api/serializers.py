@@ -19,7 +19,13 @@ class TranMetaSerializer(serializers.ModelSerializer):
             existing = set(self.fields)
             for field_name in existing - allowed:
                 self.fields.pop(field_name)
-
+                
+class TranMetaDatabalesSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    class Meta:
+        model = TranMeta
+        fields = ("id", "data_id", "cell_barcode")
+        
 class DataSetMetaSerializer(serializers.ModelSerializer):
     class Meta:
         model = DataSetMeta
