@@ -20,11 +20,13 @@ urlpatterns = [
     # 数据集-文献信息
     path("dataset-literature/", views.DatasetLiteratureVeiw.as_view({"get": "list"})),
     # 细胞信息
-    path("cell/", views.CellInfoView.as_view({"get": "list", "post": "create"})),
+    path("cell-info/", views.CellInfoView.as_view({"get": "list", "post": "create"})),
     # 基因表达量
     path("gene-expression/", views.GeneExpressionView.as_view({"get": "list"})),
     # 基因信息
     path("gene-info/", views.GeneInfoView.as_view({"get": "list", "post": "create"})),
+    # 细胞类型信息
+    path("cell-type-info/", views.CellTypeView.as_view({"get": "list", "post": "create"})),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 

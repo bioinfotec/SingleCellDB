@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from celldb_v2.models import literature_info, dataset_info, cell_info, gene_expression, gene_info
-
+from celldb_v2.models import literature_info, dataset_info, cell_info, gene_expression, gene_info, cell_type_info
 # 文献信息
 class LiteratureInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,7 +31,7 @@ class DatasetLiteratureSerializer(serializers.ModelSerializer):
     literature = LiteratureInfoSerializer(many=True)
     class Meta:
         model = dataset_info
-        fields = ('dataset_id','dataset_url','dataset_path','used_method','species_name','tissue_name','cell_types','num_cells','markers_main','markers_other', 'literature',)
+        fields = ('dataset_id','dataset_url','used_method','species_name','tissue_name','cell_types','num_cells','markers_main','markers_other', 'literature',)
 
 # 文献-数据集信息
 class LiteratureDatasetSerializer(serializers.ModelSerializer):
@@ -59,3 +58,8 @@ class GeneInfoSerializer(serializers.ModelSerializer):
         model = gene_info
         fields = ('gene_name','gene_ensg', 'gene_annotation',)
         
+# 细胞类型信息
+class CellTypeInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = cell_type_info
+        fields = ('cell_type_name','cell_type_alias','cell_type_annotation',)
