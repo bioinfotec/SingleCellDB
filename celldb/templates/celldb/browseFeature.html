@@ -17,11 +17,14 @@
           id="SelectLiter"
           style="width: 75%"
         >
-          <option value="">All</option>
-          <option value="h19">00000001</option>
+          <option value="h19">{{current_pmid}}</option>
+          {% for pmid in pmids %}
+          <option value="{{pmid}}">{{pmid}}</option>
+          {% endfor %}
+          <!-- <option value="h19">00000001</option>
           <option value="APAP">00000002</option>
           <option value="137537">31653841</option>
-          <option value="137846">32386599</option>
+          <option value="137846">32386599</option> -->
         </select>
       </div>
       <hr />
@@ -73,7 +76,7 @@
     <div class="card col-md-8 mx-2">
       <div class="card-body">
         <h3 class="card-title" id="cardTitle">
-          The current data is: {{ pmid|default:"default data" }}
+          The current data is: {{ dataset_id|default:"default data" }}
         </h3>
         <div class="row">
           <div class="table-responsive">

@@ -7,41 +7,89 @@
     margin-top: 10px; /* 设置上方间距 */
     margin-bottom: 10px; /* 设置上方间距 */
   }
+  .custom-tooltip .tooltip-inner {
+    max-width: 600px; /* Set the initial maximum width of the tooltip */
+  }
 </style>
 {%endblock%} {% block customlayout %}
 
 <div class="container-fluid">
   <div class="row">
     <!-- 侧边栏 -->
-    <div class="col-md-2 mx-4">
-      <!-- <div class="content-section">
-        <h5>Data Summary</h5>
-        <div class="textbox">
-          <p>About data...</p>
+    <div class="card col-md-2 mx-2">
+      <div class="mt-2 row">
+        <div class="col">
+          <h3 class="text-center">Filter Literature</h3>
         </div>
-        <button
-          id="addData"
-          class="ms-6 btn btn-primary mb-2"
-          data-bs-toggle="modal"
-          data-bs-target="#addDataModal"
-        >
-          Button1
-        </button>
-        <button
-          id="chanegData"
-          class="ms-6 btn btn-primary mb-2"
-          data-bs-toggle="modal"
-          data-bs-target="#changeDataModal"
-        >
-          Button2
-        </button>
-        <ul class="list-group">
-          <li class="list-group-item list-group-item-light">Option1</li>
-          <li class="list-group-item list-group-item-light">Option2</li>
-          <li class="list-group-item list-group-item-light">Option3</li>
-          <li class="list-group-item list-group-item-light">Option4</li>
-        </ul>
+      </div>
+      <hr />
+      <!-- <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectPMID" class="mx-2 input-group-text">PMID</label>
+            <select
+              class="form-select form-select-sm"
+              id="SelectPMID"
+              style="width: 75%"
+            >
+              <option value="" selected>Choose</option>
+              {% for pmid in pmids %}
+              <option value="{{pmid}}">{{pmid}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
       </div> -->
+      <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectSpecies" class="mx-2 input-group-text"
+              >Species</label
+            >
+            <select id="SelectSpecies" class="form-select" style="width: 100%">
+              <option value="" selected>Choose</option>
+              {% for species in species_all %} {% if species %}
+              <option value="{{species}}">{{species}}</option>
+              {% endif %} {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectCellType" class="mx-2 input-group-text"
+              >Cell tpye</label
+            >
+            <select id="SelectCellType" class="form-select" style="width: 100%">
+              <option selected value="">Choose</option>
+              {% for cell_type in cell_types_all %}
+              <option value="{{cell_type}}">{{cell_type}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectGene" class="mx-2 input-group-text">Gene</label>
+            <input
+              type="text"
+              id="SelectGene"
+              class="form-control"
+              placeholder="Enter Gene name"
+            />
+          </div>
+        </div>
+      </div> -->
+      <div class="row my-2">
+        <div class="col">
+          <button type="button" id="FilterLiterature" class="btn btn-primary">
+            Search
+          </button>
+        </div>
+      </div>
     </div>
     <!-- 表格 -->
     <div
@@ -54,6 +102,8 @@
             <th>PMID</th>
             <th>Title</th>
             <th>Abstract</th>
+            <th>Species</th>
+            <th>Dataset</th>
             <th>&nbsp;&nbsp;</th>
           </tr>
         </thead>
@@ -63,38 +113,61 @@
             <td style="cursor: pointer">
               <a
                 href="https://pubmed.ncbi.nlm.nih.gov/{{literature.pmid}}/"
+                class="link-primary link-offset-2 link-underline-opacity-0 link-underline-opacity-100-hover"
                 target="_blank"
               >
                 {{ literature.pmid }}
               </a>
             </td>
             <td style="cursor: pointer">
-              <span
-                class="d-inline-block text-truncate"
+              <a
+                class="d-inline-block text-truncate link-primary"
                 style="max-width: 350px"
-                data-bs-toggle="modal"
-                data-bs-target="#literModal"
-                data-pmid="{{ literature.pmid }}"
-                data-title="{{ literature.article_title }}"
-                data-release_time="{{ literature.release_time }}"
-                data-abstract="{{ literature.articel_abstract }}"
-                data-publication="{{ literature.publication }}"
-                data-content="{{ literature.articel_content }}"
-                data-dataset="{{ literature.Liter_data }}"
+                data-bs-custom-class="custom-tooltip"
+                data-bs-toggle="tooltip"
+                data-bs-placement="bottom"
+                data-bs-title="{{ literature.article_title }}"
+                ><span
+                  class="d-inline-block text-truncate"
+                  style="max-width: 350px"
+                  data-bs-toggle="modal"
+                  data-bs-target="#literModal"
+                  data-pmid="{{ literature.pmid }}"
+                  data-title="{{ literature.article_title }}"
+                  data-release_time="{{ literature.release_time }}"
+                  data-abstract="{{ literature.articel_abstract }}"
+                  data-publication="{{ literature.publication }}"
+                  data-content="{{ literature.articel_content }}"
+                  data-dataset="{% for dataset in literature.dataset_info_set.all %}{{ dataset.dataset_id }} {% endfor %}"
+                  >{{ literature.article_title | default:"None" }}</span
+                ></a
               >
-                {{ literature.article_title }}
-              </span>
             </td>
             <td>
               <span
                 class="d-inline-block text-truncate"
                 style="max-width: 350px"
+                data-bs-custom-class="custom-tooltip"
+                data-bs-placement="bottom"
                 data-bs-toggle="tooltip"
-                data-placement="top"
-                title="{{ item.Liter_abstract }}"
+                data-bs-title="{{ literature.articel_abstract }}"
               >
-                {{ literature.articel_abstract }}
+                {{ literature.articel_abstract | default:"None" }}
               </span>
+            </td>
+            <td>
+              {% for dataset in literature.dataset_info_set.all %}
+              <span class="d-inline-block text-truncate">
+                {{ dataset.species_name | default:"None"}}
+              </span>
+              {% endfor %}
+            </td>
+            <td>
+              {% for dataset in literature.dataset_info_set.all %}
+              <span class="d-inline-block text-truncate">
+                {{ dataset.dataset_id | default:"None"}}
+              </span>
+              {% endfor %}
             </td>
             <td>
               <button
@@ -132,7 +205,6 @@
   class="modal fade"
   id="literModal"
   tabindex="-1"
-  data-bs-backdrop="static"
   role="dialog"
   aria-labelledby="literModalLabel"
   aria-hidden="true"
@@ -151,18 +223,23 @@
       <div class="modal-body">
         <!-- 这里显示详细信息 -->
         <ul class="list-group">
-          <li class="list-group-item" id="literPublication">An item</li>
-          <li class="list-group-item" id="literContent">A second item</li>
-          <li class="list-group-item" id="literDataset">A third item</li>
-          <li class="list-group-item" id="literReleaseTime">A fourth item</li>
+          <li class="list-group-item">
+            <strong>Publication:</strong> <span id="literPublication"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>ReleaseTime:</strong> <span id="literReleaseTime"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Content:</strong> <span id="literContent"></span>
+          </li>
+          <li class="list-group-item">
+            <strong>Dataset:</strong> <span id="literDataset"></span>
+          </li>
         </ul>
         <div class="card mt-2">
           <div class="card-body">
             <h5 class="card-title">Abstract</h5>
-            <p class="card-text" id="literDetails">
-              Some quick example text to build on the card title and make up the
-              bulk of the card's content.
-            </p>
+            <p class="card-text" id="literAbstract">Abstract</p>
           </div>
         </div>
       </div>
@@ -264,13 +341,42 @@
   </div>
 </div> -->
 {% endblock %} {% block customscripts %}
+<!-- 触发tooltip -->
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"
+  integrity="sha512-VK2zcvntEufaimc+efOYi622VN5ZacdnufnmX7zIhCPmjhKnOi9ZDMtg1/ug5l183f19gG1/cBstPO4D8N/Img=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script>
+<script>
+  // 初始化tooltip
+  const tooltipTriggerList = document.querySelectorAll(
+    '[data-bs-toggle="tooltip"]'
+  );
+  const tooltipList = [...tooltipTriggerList].map(
+    (tooltipTriggerEl) => new bootstrap.Tooltip(tooltipTriggerEl)
+  );
 
+  // 数据过滤按钮
+  $("#FilterLiterature").click(function () {
+    species = $("#SelectSpecies").val();
+    cell_type = $("#SelectCellType").val();
+    var currentUrl = "http://127.0.0.1:8000/overview?";
+    if (species != "") {
+      currentUrl += "species=" + species + "&";
+    }
+    if (cell_type != "") {
+      currentUrl += "cell_type=" + cell_type + "&";
+    }
+    window.location.href = currentUrl;
+  });
+</script>
 <!-- 查看模态框数据 -->
 <script>
   $(document).ready(function () {
     $("#literModal").on("show.bs.modal", function (event) {
       var triggerElement = $(event.relatedTarget);
-      var pmid = triggerElement.data("id");
+      var pmid = triggerElement.data("pmid");
       var title = triggerElement.data("title");
       var abstract = triggerElement.data("abstract");
       var publication = triggerElement.data("publication");
@@ -279,11 +385,12 @@
       var release_time = triggerElement.data("release_time");
       var modal = $(this);
       modal.find(".modal-title").text(title);
-      modal.find("#literDetails").text(abstract);
-      modal.find("#literPublication").text("publiction: " + publication);
-      modal.find("#literContent").text("Content: " + content);
-      modal.find("#literDataset").text("Dataset: " + dataset);
-      modal.find("#literReleaseTime").text("Release Time: " + release_time);
+      modal.find("#literReleaseTime").text(release_time);
+      modal.find("#literPublication").text(publication);
+      modal.find("#literContent").text(content);
+      modal.find("#literAbstract").text(abstract);
+      modal.find("#literDataset").text(dataset);
+      console.log(pmid);
     });
     // 为删除按钮绑定点击事件
     $("#deleteLiterature").on("click", function () {
