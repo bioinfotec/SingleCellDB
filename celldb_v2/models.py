@@ -31,13 +31,13 @@ class dataset_info(models.Model):
 
 # 文献-数据集中间表
 class literature_dataset(models.Model):
-    literature_info = models.ForeignKey(literature_info, on_delete=models.CASCADE)
-    dataset_info = models.ForeignKey(dataset_info, on_delete=models.CASCADE)
+    literature_info = models.ForeignKey(literature_info, default="PMID000", on_delete=models.SET_DEFAULT)
+    dataset_info = models.ForeignKey(dataset_info, default="GSE000", on_delete=models.SET_DEFAULT)
     
 # 细胞信息表
 class cell_info(models.Model):
     id = models.AutoField(primary_key=True)
-    dataset_info = models.ForeignKey(dataset_info, on_delete=models.CASCADE)
+    dataset_info = models.ForeignKey(dataset_info, on_delete=models.SET_NULL, null=True)
     barcode = models.CharField(max_length=100, blank=True, null=True)
     cell_type = models.CharField(max_length=100, blank=True, null=True)
     ncount_rna = models.FloatField(blank=True,null=True)
@@ -51,7 +51,7 @@ class cell_info(models.Model):
 # 基因表达量表
 class gene_expression(models.Model):
     id = models.AutoField(primary_key=True)
-    dataset_info = models.ForeignKey(dataset_info, on_delete=models.CASCADE)
+    dataset_info = models.ForeignKey(dataset_info, on_delete=models.SET_NULL, null=True)
     gene_name = models.CharField(max_length=50, blank=True, null=True)
     expression = models.JSONField(blank=True, null=True)
     def __str__(self) -> str:
@@ -66,10 +66,16 @@ class gene_info(models.Model):
     def __str__(self) -> str:
         return self.gene_name
 
-# 细胞类型表
-class cell_type(models.Model):
-    cell_type_id = models.AutoField(primary_key=True)
-    cell_type_name = models.CharField(max_length=50)
+#细胞类型表
+class cell_type_info(models.Model):
+    cell_type_name = models.CharField(primary_key=True,max_length=50, default="Unknown")
+    cell_type_alias = models.CharField(max_length=50, blank=True, null=True)
     cell_type_annotation = models.TextField(blank=True, null=True)
+    cell_type = models.ManyToManyField(dataset_info, through="dataset_cell_type")
     def __str__(self) -> str:
         return self.cell_type_name
+
+# 数据集-细胞类型中间表
+class dataset_cell_type(models.Model):
+    dataset_info = models.ForeignKey(dataset_info, default="GSE000", on_delete=models.SET_DEFAULT)
+    cell_type_info = models.ForeignKey(cell_type_info, default="GSE000", on_delete=models.SET_DEFAULT)

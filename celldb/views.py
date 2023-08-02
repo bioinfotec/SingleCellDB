@@ -1,7 +1,7 @@
 from django.core.paginator import Paginator
 from django.shortcuts import render
 from .models import TranMeta, LiteratureMeta
-from celldb_v2.models import literature_info
+from celldb_v2.models import literature_info, literature_dataset, dataset_info, cell_type_info
 
 def home(request):
     logs = [
@@ -18,13 +18,35 @@ def home(request):
     return render(request, "celldb/home.html", {"logs": logs})
 
 def overview(request):
-    literature = literature_info.objects.all()
-    return render(request, "celldb/overview.html", {"literature_info":literature})
+    species_all = dataset_info.objects.all().values_list("species_name", flat=True).distinct()
+    cell_types_all = cell_type_info.objects.all().values_list("cell_type_name", flat=True).distinct()
+    species = request.GET.get('species', None)
+    cell_type = request.GET.get('cell_type', None)
+    queryset = literature_info.objects.all()
+    if species:
+        queryset = queryset.filter(dataset_info__species_name=species)
+    if cell_type:
+        queryset = queryset.filter(dataset_info__cell_types__icontains=cell_type)
+    return render(request, "celldb/overview.html", {"literature_info":queryset, "species_all":species_all, "cell_types_all":cell_types_all})
+
+def browseDataset(request):
+    req_pmid = request.GET.get("pmid", None)
+    pmids = literature_info.objects.all().values_list("pmid", flat=True).distinct()
+    species = dataset_info.objects.all().values_list("species_name", flat=True).distinct()
+    cell_types = cell_type_info.objects.all().values_list("cell_type_name", flat=True).distinct()
+    res_dataset = None
+    if req_pmid:
+        res_dataset = literature_info.objects.get(pmid=req_pmid).dataset_info_set.all()
+    return render(request, "celldb/browseDataset.html", {"res_dataset": res_dataset, "pmids":pmids, "species":species, "cell_types":cell_types})
 
 def browseFeature(request):
+    pmids = literature_info.objects.all().values_list("pmid", flat=True).distinct()
     # 根据参数浏览数据
-    pmid = request.GET.get("pmid", None)
-    context = {"pmid": pmid}
+    current_pmid = request.GET.get("pmid", None)
+    dataset_id = None
+    if current_pmid != None:
+        dataset_id = literature_info.objects.get(pmid=current_pmid).dataset_info_set.all()[0].dataset_id
+    context = {"current_pmid": current_pmid, "pmids": pmids, 'dataset_id': dataset_id}
     return render(request, "celldb/browseFeature.html", context)
 
 def browseExpression(request):
@@ -34,19 +56,6 @@ def browseExpression(request):
     return render(request, "celldb/browseExpression.html", context)
 
 def download(request):
-    # restframework暂时未能实现
-    # response = requests.get("http://127.0.0.1:8000/api/tran/", params=request.GET)
-    # if response.status_code == 200:
-    #     data = response.json()
-    #     results = data['results']
-    #     paginator = Paginator(results, 10)
-    #     page_number = request.GET.get('page',1)
-    #     page_data = paginator.get_page(page_number)
-    # else:
-    #     page_data = Paginator([], 10).get_page(1)
-    # return render(request, 'celldb/data.html', {'data': page_data})
-
-    # 直接使用内置API
     data = TranMeta.objects.all()
     items_per_page = 10
     paginator = Paginator(data, items_per_page)

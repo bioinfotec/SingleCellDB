@@ -6,6 +6,7 @@ __pycache__
 db.sqlite3
 media
 celldb/migrations/*
+celldb_v2/migrations/*
 nohup.out
 new
 Photo
