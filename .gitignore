@@ -16,6 +16,7 @@ R_webserve/filtered_gene_bc_matrices/*
 node_modules
 src
 celldb/static/*
+singleCell/settings.py
 # Backup files # 
 *.bak 
 

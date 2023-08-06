@@ -87,12 +87,20 @@ WSGI_APPLICATION = "singleCell.wsgi.application"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
+    # "default": {
+    #     "ENGINE": "django.db.backends.mysql",
+    #     "NAME": "Student",
+    #     "USER": "huawei",
+    #     "PASSWORD": "200102",
+    #     "HOST": "110.41.149.156",
+    #     "PORT": "3306",
+    # },
     "default": {
         "ENGINE": "django.db.backends.mysql",
-        "NAME": "Student",
-        "USER": "huawei",
-        "PASSWORD": "200102",
-        "HOST": "110.41.149.156",
+        "NAME": "scdb",
+        "USER": "admin",
+        "PASSWORD": "China123",
+        "HOST": "aswmysqlsap.ceswkpd53vds.ap-southeast-1.rds.amazonaws.com",
         "PORT": "3306",
     },
     # "celldb_v2": {
