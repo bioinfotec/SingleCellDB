@@ -4,7 +4,8 @@ from . import views
 
 urlpatterns = [
     path("", views.home, name="celldb-home"),
-    # path("search/", views.search, name="celldb-browse"),
+    # path("search/", views.search, name="celldb-search"),
+    path("browse/", views.browse, name="celldb-browse"),
     path("browse-dataset/", views.browseDataset, name="celldb-browse-dataset"),
     path("browse-feature/", views.browseFeature, name="celldb-browse-feature"),
     path("browse-expression/", views.browseExpression, name="celldb-browse-expression"),
