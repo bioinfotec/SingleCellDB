@@ -38,41 +38,65 @@
 </style>
 {% endblock %} {% block content %}
 <div class="row">
-  <div id="selectorContainer" class="justify-content-end">
+  <div class="col-md-3">
+    <label for="cellTypeSelect">Select DataSet:</label>
+    <select class="form-select mt-2" id="DataSetSelect" style="width: 10rem">
+      {% for pmid in pmids %}
+      <option value="{{pmid}}">{{pmid}}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
     <label for="cellTypeSelect">Select Cell Type:</label>
-    <select id="cellTypeSelect" style="width: 100px"></select>
-    <!-- <label class="mx-2" for="geneSelect">Choose from 10 Gene:</label>
+    <select
+      class="form-select mt-2"
+      id="cellTypeSelect"
+      style="width: 10rem"
+    ></select>
+  </div>
+
+  <!-- <label class="mx-2" for="geneSelect">Choose from 10 Gene:</label>
     <select id="geneSelect" style="width: 100px">
       <option value="">Name</option>
       <option value="ENSG00000198727">test</option>
     </select> -->
-    <label class="mx-2" for="searchGene">Search Gene:</label>
-    <input
-      type="text"
-      id="searchGene"
-      style="width: 150px"
-      placeholder="Enter Gene name"
-    />
-    <button id="searchButtonGene" class="btn btn-primary">Search</button>
-    <button id="buttPlotR" class="btn btn-primary mx-2">R-plot</button>
+  <div class="col-md-6">
+    <div class="row">
+      <div class="col-md-6">
+        <label class="mx-2" for="searchGene">Search Gene:</label>
+        <input
+          type="text"
+          id="searchGene"
+          class="form-control mt-2"
+          placeholder="Enter Gene name"
+        />
+      </div>
+      <div class="col-md-4">
+        <hr />
+        <button id="searchButtonGene" class="btn btn-primary">Search</button>
+        <!-- <button id="buttPlotR" class="btn btn-primary mx-2">R-plot</button> -->
+      </div>
+    </div>
   </div>
 </div>
 
-<div class="row mt-2 justify-content-center">
-  <div id="Scatter" style="width: 1000px; height: 800px"></div>
-</div>
-<div class="row">
-  <div class="card col-md-6">
+<div class="row mt-2 justify-content-around">
+  <div class="card col-md-7">
+    <div id="Scatter" style="width: 800px; height: 600px"></div>
+  </div>
+  <div class="card col-md-5">
     <img
-      id="scatterRImg1"
+      id="scatterRImg2"
       alt="plotR-Scatter"
       class="img-fluid"
       style="display: none"
     />
   </div>
+</div>
+<div class="row">
   <div class="card col-md-6">
     <img
-      id="scatterRImg2"
+      id="scatterRImg1"
       alt="plotR-Scatter"
       class="img-fluid"
       style="display: none"
@@ -282,17 +306,24 @@
       defaultOption = $.extend(true, {}, option);
       option && myChart.setOption(option);
     });
+
   // R绘图
-  $("#buttPlotR").on("click", function () {
-    $("#scatterRImg1").attr(
+  $("#searchButtonGene").on("click", function () {
+    //$("#scatterRImg1").attr(
+    //  "src",
+    //  "http://192.168.83.63:8080/img-umap-dimplot"
+    //);
+    var selectedGene = $("#searchGene").val();
+    console.log("你选择了基因：" + selectedGene);
+    $("#scatterRImg2").attr(
       "src",
-      "http://192.168.83.63:8080/img-umap-dimplot"
+      `http://192.168.83.63:8080/img-featureplot?features=${selectedGene}`
     );
-    $("#scatterRImg2").attr("src", "http://192.168.83.63:8080/img-featureplot");
     // 显示图片
-    $("#scatterRImg1").show();
+    //$("#scatterRImg1").show();
     $("#scatterRImg2").show();
   });
+
   // 监听基因选择事件
   $("#geneSelect").change(function () {
     // 到后端搜寻寻找的基因表达量情况

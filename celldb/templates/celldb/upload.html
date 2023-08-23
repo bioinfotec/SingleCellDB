@@ -286,6 +286,16 @@
         </div>
       </div>
     </div>
+    <div class="row my-1 progress">
+      <div
+        class="progress-bar"
+        role="progressbar"
+        style="width: 0%"
+        aria-valuenow="0"
+        aria-valuemin="0"
+        aria-valuemax="100"
+      ></div>
+    </div>
   </main>
 </div>
 {% endblock %} {% block customscripts %}
@@ -358,7 +368,20 @@
       formData.append("expression_file", expressionMatrixFile);
       formData.append("data_id", datasetId);
       formData.append("csrfmiddlewaretoken", csrftoken);
+      const xhr = new XMLHttpRequest();
+      xhr.upload.addEventListener("progress", function (event) {
+        if (event.lengthComputable) {
+          const percentComplete = (event.loaded / event.total) * 100;
+          console.log("上传进度：" + percentComplete + "%");
+          // 在这里更新你的进度条UI，例如修改进度条的宽度或百分比显示
+          $(".progress-bar").css("width", percentComplete + "%");
+          $(".progress-bar").attr("aria-valuenow", percentComplete);
+        }
+      });
       $.ajax({
+        xhr: function () {
+          return xhr; // 将XMLHttpRequest对象用于AJAX请求
+        },
         url: "/api-v2/upload-matrix-file/",
         method: "POST",
         data: formData,

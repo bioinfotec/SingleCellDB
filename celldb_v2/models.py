@@ -83,12 +83,15 @@ class dataset_cell_type(models.Model):
     cell_type_info = models.ForeignKey(cell_type_info, default="GSE000", on_delete=models.SET_DEFAULT)
 
 # 文件上传
+def user_directory_path(instance, filename):
+    # 文件将会上传到 MEDIA_ROOT/user_<user_id>/<filename>
+    return f'user_{instance.user.id}/{instance.data_id}/{filename}'
 class matrix_file(models.Model):
     user = models.ForeignKey(User, default="user",on_delete=models.SET_DEFAULT)
     data_id = models.CharField(max_length=50)
-    gene_file = models.FileField(upload_to='data')
-    cell_file = models.FileField(upload_to='data')
-    expression_file = models.FileField(upload_to='data')
+    gene_file = models.FileField(upload_to=user_directory_path)
+    cell_file = models.FileField(upload_to=user_directory_path)
+    expression_file = models.FileField(upload_to=user_directory_path)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     def __str__(self):
         return self.data_id
