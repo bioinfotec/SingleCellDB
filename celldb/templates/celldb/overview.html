@@ -16,30 +16,13 @@
 <div class="container-fluid">
   <div class="row">
     <!-- 侧边栏 -->
-    <div class="card col-md-2 mx-2">
+    <!-- <div class="card col-md-2 mx-2">
       <div class="mt-2 row">
         <div class="col">
           <h3 class="text-center">Filter Literature</h3>
         </div>
       </div>
       <hr />
-      <!-- <div class="mt-2 row my-2">
-        <div class="col">
-          <div class="input-group d-flex flex-nowrap">
-            <label for="SelectPMID" class="mx-2 input-group-text">PMID</label>
-            <select
-              class="form-select form-select-sm"
-              id="SelectPMID"
-              style="width: 75%"
-            >
-              <option value="" selected>Choose</option>
-              {% for pmid in pmids %}
-              <option value="{{pmid}}">{{pmid}}</option>
-              {% endfor %}
-            </select>
-          </div>
-        </div>
-      </div> -->
       <div class="mt-2 row my-2">
         <div class="col">
           <div class="input-group d-flex flex-nowrap">
@@ -70,19 +53,6 @@
           </div>
         </div>
       </div>
-      <!-- <div class="mt-2 row my-2">
-        <div class="col">
-          <div class="input-group d-flex flex-nowrap">
-            <label for="SelectGene" class="mx-2 input-group-text">Gene</label>
-            <input
-              type="text"
-              id="SelectGene"
-              class="form-control"
-              placeholder="Enter Gene name"
-            />
-          </div>
-        </div>
-      </div> -->
       <div class="row my-2">
         <div class="col">
           <button type="button" id="FilterLiterature" class="btn btn-primary">
@@ -90,12 +60,9 @@
           </button>
         </div>
       </div>
-    </div>
+    </div> -->
     <!-- 表格 -->
-    <div
-      class="table-responsive col-md-10"
-      style="max-height: 800px; max-width: 75vw; overflow-y: scroll"
-    >
+    <div class="table-responsive col-md-12">
       <table class="table table-striped table-bordered" style="width: 100%">
         <thead>
           <tr>
@@ -190,6 +157,14 @@
                 class="btn btn-warning btn-analyse-data"
               >
                 Analyse
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary btn-download"
+                data-pmid="{{ literature.pmid }}"
+                data-title="{{ literature.article_title }}"
+              >
+                Download
               </button>
             </td>
           </tr>
@@ -361,7 +336,7 @@
   $("#FilterLiterature").click(function () {
     species = $("#SelectSpecies").val();
     cell_type = $("#SelectCellType").val();
-    var currentUrl = "http://127.0.0.1:8000/overview?";
+    var currentUrl = "/overview?";
     if (species != "") {
       currentUrl += "species=" + species + "&";
     }
@@ -370,6 +345,15 @@
     }
     window.location.href = currentUrl;
   });
+
+  // 是否选中数据
+  if ("{{selected_cell_type}}" !== "None") {
+    $("#SelectCellType").val("{{selected_cell_type}}");
+  }
+  if ("{{selected_species}}" !== "None") {
+    console.log("{{selected_species}}");
+    $("#SelectSpecies").val("{{selected_species}}");
+  }
 </script>
 <!-- 查看模态框数据 -->
 <script>
@@ -427,6 +411,48 @@
     });
   });
 
+  // 下载数据
+  $(document).ready(function () {
+    $(".btn-download").on("click", function () {
+      var pmid = $(this).data("pmid");
+      var title = $(this).data("title");
+      var abstract = $(this)
+        .closest("tr")
+        .find("[data-abstract]")
+        .data("abstract");
+      var release_time = $(this)
+        .closest("tr")
+        .find("[data-release_time]")
+        .data("release_time");
+      var publication = $(this)
+        .closest("tr")
+        .find("[data-publication]")
+        .data("publication");
+      var content = $(this)
+        .closest("tr")
+        .find("[data-content]")
+        .data("content");
+      var dataset = $(this)
+        .closest("tr")
+        .find("[data-dataset]")
+        .data("dataset");
+      const tsvData = [
+        ["标题", "PMID", "发布时间", "摘要", "出版物", "内容", "数据集"],
+        [title, pmid, release_time, abstract, publication, content, dataset],
+      ]
+        .map((row) => row.join("\t"))
+        .join("\n");
+      const blob = new Blob([tsvData], { type: "text/tsv" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "data.tsv";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    });
+  });
   // 添加数据
   function addData() {
     var form = $("#addDataForm");
@@ -458,7 +484,7 @@
   $(".btn-brwose-data").click(function () {
     var pmid = $(this).val();
     // 构造目标页面的 URL，将 pmid 作为查询参数传递
-    var url = "/browse-feature/?pmid=" + encodeURIComponent(pmid);
+    var url = "/browse/?pmid=" + encodeURIComponent(pmid);
     // 执行页面跳转
     window.location.href = url;
   });

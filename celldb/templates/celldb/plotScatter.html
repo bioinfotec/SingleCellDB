@@ -38,17 +38,14 @@
 </style>
 {% endblock %} {% block content %}
 <div class="row">
-  <h3>The current data is from pmid: {{ pmid|default:"default data" }}</h3>
-</div>
-<div class="row mt-2 justify-content-end">
   <div id="selectorContainer" class="justify-content-end">
     <label for="cellTypeSelect">Select Cell Type:</label>
     <select id="cellTypeSelect" style="width: 100px"></select>
-    <label class="mx-2" for="geneSelect">Choose from 10 Gene:</label>
+    <!-- <label class="mx-2" for="geneSelect">Choose from 10 Gene:</label>
     <select id="geneSelect" style="width: 100px">
       <option value="">Name</option>
       <option value="ENSG00000198727">test</option>
-    </select>
+    </select> -->
     <label class="mx-2" for="searchGene">Search Gene:</label>
     <input
       type="text"
@@ -57,12 +54,29 @@
       placeholder="Enter Gene name"
     />
     <button id="searchButtonGene" class="btn btn-primary">Search</button>
+    <button id="buttPlotR" class="btn btn-primary mx-2">R-plot</button>
   </div>
 </div>
 
 <div class="row mt-2 justify-content-center">
-  <div class="card">
-    <div id="Scatter" style="width: 1000px; height: 800px"></div>
+  <div id="Scatter" style="width: 1000px; height: 800px"></div>
+</div>
+<div class="row">
+  <div class="card col-md-6">
+    <img
+      id="scatterRImg1"
+      alt="plotR-Scatter"
+      class="img-fluid"
+      style="display: none"
+    />
+  </div>
+  <div class="card col-md-6">
+    <img
+      id="scatterRImg2"
+      alt="plotR-Scatter"
+      class="img-fluid"
+      style="display: none"
+    />
   </div>
 </div>
 
@@ -80,7 +94,7 @@
 
   // 解析基因文件
   var genes = []; // 基因列表
-  fetch("/media/h19/genes.tsv", {
+  fetch("/media/hg19/genes.tsv", {
     headers: {
       "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
     },
@@ -101,17 +115,17 @@
           genes.push(gene);
         }
       });
-      genes.slice(0, 10).map(function (gene) {
-        var option = document.createElement("option");
-        option.value = gene.id;
-        option.text = gene.name;
-        geneSelect.appendChild(option);
-      });
+      //genes.slice(0, 10).map(function (gene) {
+      //  var option = document.createElement("option");
+      //  option.value = gene.id;
+      //  option.text = gene.name;
+      //  geneSelect.appendChild(option);
+      //});
     });
 
   // 解析barcodes文件
   var barcodes = []; // 细胞条码列表
-  fetch("/media/h19/barcodes.tsv", {
+  fetch("/media/hg19/barcodes.tsv", {
     headers: {
       "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
     },
@@ -128,7 +142,7 @@
   // 解析features文件
   var features = []; // 特征列表
   var cell_type = [];
-  fetch("/media/h19/features.txt", {
+  fetch("/media/hg19/features.txt", {
     headers: {
       "Accept-Encoding": "gzip, deflate", // 设置支持的压缩方式
     },
@@ -268,7 +282,17 @@
       defaultOption = $.extend(true, {}, option);
       option && myChart.setOption(option);
     });
-
+  // R绘图
+  $("#buttPlotR").on("click", function () {
+    $("#scatterRImg1").attr(
+      "src",
+      "http://192.168.83.63:8080/img-umap-dimplot"
+    );
+    $("#scatterRImg2").attr("src", "http://192.168.83.63:8080/img-featureplot");
+    // 显示图片
+    $("#scatterRImg1").show();
+    $("#scatterRImg2").show();
+  });
   // 监听基因选择事件
   $("#geneSelect").change(function () {
     // 到后端搜寻寻找的基因表达量情况

@@ -45,8 +45,8 @@ plot1 + plot2</code>
   </div>
 </div>
 
-<div class="row mt-2 justify-content-center">
-  <div class="card mx-2">
+<div class="row mt-2 justify-content-center flex-nowrap">
+  <div class="card mx-2 col-md-6">
     <div class="card-body">
       <div id="Plot" style="width: 30rem; height: 25rem">
         <img
@@ -58,7 +58,7 @@ plot1 + plot2</code>
       </div>
     </div>
   </div>
-  <div class="card mx-2">
+  <div class="card mx-2 col-md-6">
     <div class="card-body">
       <div id="Plot" style="width: 30rem; height: 25rem">
         <img
@@ -106,8 +106,8 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
   </div>
 </div>
 
-<div class="row mt-2 justify-content-center">
-  <div class="card mx-2">
+<div class="row mt-2 justify-content-center flex-nowrap">
+  <div class="card mx-2 col-md-6">
     <div class="card-body">
       <div id="Plot" style="width: 30rem; height: 25rem">
         <img
@@ -119,7 +119,7 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
       </div>
     </div>
   </div>
-  <div class="card mx-2">
+  <div class="card mx-2 col-md-6">
     <div class="card-body">
       <div id="Plot" style="width: 30rem; height: 25rem">
         <img
@@ -178,8 +178,8 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
   </div>
 </div>
 
-<div class="row mt-2 justify-content-center">
-  <div class="card mx-2">
+<div class="row mt-2 justify-content-center flex-nowrap">
+  <div class="card mx-2 col-md-6">
     <div class="card-body">
       <div id="Plot" style="width: 30rem; height: 25rem">
         <img
@@ -191,7 +191,7 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
       </div>
     </div>
   </div>
-  <div class="card mx-2">
+  <div class="card mx-2 col-md-6">
     <div class="card-body">
       <div id="Plot" style="width: 30rem; height: 25rem">
         <img
@@ -228,6 +228,34 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
   </div>
 </div>
 
+<div class="row mt-2 justify-content-center">
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">img-cluster-vlnplot</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">VlnPlot(pbmc, features = c("MS4A1", "CD79A"))
+      </code>
+      </pre>
+      <button id="Img-Cluster-Vlnplot" class="btn btn-primary mb-2 mx-2">
+        Vlnplot
+      </button>
+    </div>
+  </div>
+
+  <div class="card mx-3" style="width: 30rem">
+    <div class="card-body">
+      <h5 class="card-title">img_FeaturePlot</h5>
+      <pre
+        class="pre-scrollable"
+      ><code class="pre code bg-light">FeaturePlot(pbmc, features = c("MS4A1", "CD79A"))</code>
+        </pre>
+      <button id="Img_Feature-Plot" class="btn btn-primary mb-2 mx-2">
+        FeaturePlot
+      </button>
+    </div>
+  </div>
+</div>
 {% endblock %} {% block customscripts %}
 <script>
   $(document).ready(function () {
@@ -250,32 +278,29 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
     }
 
     $("#QC-metrice-Plot").click(function () {
-      plotImage("http://110.41.149.156:8080/img-vlnplot", "img-VlnPlot");
+      plotImage("http://192.168.83.63:8080/img-vlnplot", "img-VlnPlot");
     });
 
     $("#F2F-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-feature-scatter",
+        "http://192.168.83.63:8080/img-feature-scatter",
         "img-FeatureScatter"
       );
     });
 
     $("#feature-selection-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-highVar-features",
+        "http://192.168.83.63:8080/img-highVar-features",
         "img-HighVarFeatures"
       );
     });
 
     $("#linear-dimensional-Plot").click(function () {
-      plotImage(
-        "http://110.41.149.156:8080/img-examine-pca",
-        "img-Examine-PCA"
-      );
+      plotImage("http://192.168.83.63:8080/img-examine-pca", "img-Examine-PCA");
     });
 
     $("#btn-top5-PCA-txt").click(function () {
-      fetch("http://110.41.149.156:8080/txt-examine-pca", {
+      fetch("http://192.168.83.63:8080/txt-examine-pca", {
         headers: {
           "Access-Control-Request-Headers": "Content-Type, Authorization",
         },
@@ -292,22 +317,33 @@ VizDimLoadings(pbmc, dims = 1:2, reduction = "pca")
     });
 
     $("#PCA-Dim-Plot").click(function () {
-      plotImage(
-        "http://110.41.149.156:8080/img-pca-dimplot",
-        "img-PCA-DimPlot"
-      );
+      plotImage("http://192.168.83.63:8080/img-pca-dimplot", "img-PCA-DimPlot");
     });
 
     $("#PCA-Heatmap-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-pca-headtmap",
+        "http://192.168.83.63:8080/img-pca-headtmap",
         "img-PCA-DimHeatmap"
       );
     });
 
     $("#15-PCA-Heatmap-Plot").click(function () {
       plotImage(
-        "http://110.41.149.156:8080/img-15-pca-headtmap",
+        "http://192.168.83.63:8080/img-15-pca-headtmap",
+        "img-15-PCA-Heatmap"
+      );
+    });
+
+    $("#Img-Cluster-Vlnplot").click(function () {
+      plotImage(
+        "http://192.168.83.63:8080/img-cluster-vlnplot",
+        "img-15-PCA-Heatmap"
+      );
+    });
+
+    $("#Img_Feature-Plot").click(function () {
+      plotImage(
+        "http://192.168.83.63:8080/img-featureplot",
         "img-15-PCA-Heatmap"
       );
     });

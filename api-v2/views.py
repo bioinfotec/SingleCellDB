@@ -1,11 +1,20 @@
-from celldb_v2.models import literature_info, literature_dataset, dataset_info,cell_info, gene_expression,gene_info, cell_type_info
-from .serializers import LiteratureInfoSerializer, DatasetInfoSerializer, DatasetLiteratureSerializer, LiteratureDatasetSerializer, CellInfoSerializer,GeneExpressionSerializer, GeneInfoSerializer, CellTypeInfoSerializer
+from celldb_v2.models import literature_info, literature_dataset, dataset_info,cell_info, gene_expression,gene_info, cell_type_info, matrix_file
+from .serializers import LiteratureInfoSerializer, DatasetInfoSerializer, DatasetLiteratureSerializer, LiteratureDatasetSerializer, CellInfoSerializer,GeneExpressionSerializer, GeneInfoSerializer, CellTypeInfoSerializer, DatasetLiteratureGeneSerializer,UploadedMatrixFileSerializer
+from .paginations import CustomPagination,CustomeDatabalesPagination
+
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.viewsets import ModelViewSet
+from rest_framework_datatables.filters import DatatablesFilterBackend
+from rest_framework_datatables.renderers import DatatablesRenderer
+from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.response import Response
+
 from django.views.decorators.csrf import csrf_exempt
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.db.models import Q, F
+from django.contrib.auth.decorators import login_required
 
 # 文献信息
 class LiteratureInfoView(ModelViewSet):
@@ -86,7 +95,7 @@ class LiteratureDatasetVeiw(ModelViewSet):
         if cell_type:
             filters &= Q(dataset_info__cell_types__icontains=cell_type)
 
-        return queryset.filter(filters)
+        return queryset.filter(filters).distinct()
     
     def get_permissions(self):
         if self.action in ['list', 'retrieve']:
@@ -175,6 +184,74 @@ class CellTypeView(ModelViewSet):
             permission_classes = [IsAuthenticated]
         return [permission() for permission in permission_classes]
 
+# 数据集-文献-基因表
+class DatasetLiteratureGeneView(ModelViewSet):
+    serializer_class = DatasetLiteratureGeneSerializer
+    # 分页
+    pagination_class = CustomeDatabalesPagination
+    renderer_classes = [DatatablesRenderer]
+    filter_backends = [DatatablesFilterBackend]
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context['gene_name'] = self.request.query_params.get('gene_name')
+        context['cell_type'] = self.request.query_params.get('cell_type')
+        return context
+    
+    def get_queryset(self):
+        pmid = self.request.query_params.get('pmid', None)
+        gene_name = self.request.query_params.get('gene_name', None)
+        cell_type = self.request.query_params.get('cell_type', None)
+        species_name = self.request.query_params.get('species_name', None)
+        queryset = dataset_info.objects.all().order_by('dataset_id')
+        if pmid is not None:
+            queryset = queryset.filter(literature__pmid=pmid)
+        if gene_name is not None:
+            queryset = queryset.filter(gene_expression__gene_name=gene_name)
+        if cell_type is not None:
+            queryset = queryset.filter(gene_expression__cell_types__icontains=cell_type)
+        if species_name is not None:
+            queryset = queryset.filter(species_name=species_name)
+        return queryset
+    
+    def get_permissions(self):
+        if self.action in ['list', 'retrieve']:
+            # 列表和详情视图允许任何人访问
+            permission_classes = [AllowAny]
+        else:
+            # 其他视图需要身份验证
+            permission_classes = [IsAuthenticated]
+        return [permission() for permission in permission_classes]
+    
+# 提交-文献-数据集
+class DatasetAndLiteratureCreateView(APIView):
+    permission_classes = [AllowAny]
+    def post(self, request):
+        dataset_serializer = DatasetInfoSerializer(data=request.data)
+        literature_serializer = LiteratureInfoSerializer(data=request.data)
+        valid_dataset = dataset_serializer.is_valid()
+        if dataset_serializer.is_valid() and literature_serializer.is_valid():
+            dataset = dataset_serializer.save()
+            literature = literature_serializer.save()
+
+            # 建立关联关系
+            dataset.literature.add(literature)
+
+            return Response({"message": "Data submitted successfully."}, status=status.HTTP_201_CREATED)
+        else:
+            return Response(f"error {valid_dataset}",status=status.HTTP_400_BAD_REQUEST)
+  
+# 提交-矩阵文件     
+class UploadedMatrixFileView(ModelViewSet):
+    permission_classes = [IsAuthenticated]  # 限制只有登录用户能够访问
+    serializer_class = UploadedMatrixFileSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return matrix_file.objects.filter(user=user)
+    
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
 # 测试
 def test(request):
     pmid = request.GET.get("pmid")

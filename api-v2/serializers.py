@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from celldb_v2.models import literature_info, dataset_info, cell_info, gene_expression, gene_info, cell_type_info
+from celldb_v2.models import literature_info, dataset_info, cell_info, gene_expression, gene_info, cell_type_info, matrix_file
+
+
 # 文献信息
 class LiteratureInfoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -44,7 +46,7 @@ class LiteratureDatasetSerializer(serializers.ModelSerializer):
 class CellInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = cell_info
-        fields = ('barcode','cell_type','ncount_rna','nfeature_rna','percent_mt','umap_1','umap_2',)
+        fields = ('barcode','cell_type','orig_ident','ncount_rna','nfeature_rna','percent_mt','umap_1','umap_2',)
 
 # 基因表达量表
 class GeneExpressionSerializer(serializers.ModelSerializer):
@@ -63,3 +65,34 @@ class CellTypeInfoSerializer(serializers.ModelSerializer):
     class Meta:
         model = cell_type_info
         fields = ('cell_type_name','cell_type_alias','cell_type_annotation',)
+ 
+       
+# 数据集-文献-基因表
+class DatasetLiteratureGeneSerializer(serializers.ModelSerializer):
+    literature = serializers.SerializerMethodField()
+    gene_expression_set = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = dataset_info
+        fields = ("dataset_id","species_name","literature","gene_expression_set",)
+        
+    def get_literature(self, obj):
+        literature_pmid = obj.literature.values("pmid")
+        return literature_pmid
+
+    def get_gene_expression_set(self, obj):
+        gene_name = self.context.get('gene_name')
+        cell_type = self.context.get('cell_type')
+        if gene_name is not None:
+            gene_expression_data = obj.gene_expression_set.filter(gene_name=gene_name).values("gene_name", "cell_types")
+        else:
+            gene_expression_data = obj.gene_expression_set.values("cell_types")
+        if cell_type is not None:
+            gene_expression_data = gene_expression_data.filter(cell_types__icontains=cell_type)
+        return gene_expression_data
+    
+# 文件上传
+class UploadedMatrixFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = matrix_file
+        fields = "__all__"

@@ -10,8 +10,8 @@ urlpatterns = [
     # 测试
     path("test/", views.test),
     # 文献信息
-    path("literarure/", views.LiteratureInfoView.as_view({"get": "list", "post": "create"})),
-    re_path("literarure/(?P<pk>\w+)/$", views.LiteratureInfoView.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})),
+    path("literature/", views.LiteratureInfoView.as_view({"get": "list", "post": "create"})),
+    re_path("literature/(?P<pk>\w+)/$", views.LiteratureInfoView.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})),
     # 数据集信息
     path("dataset/", views.DatasetInfoVeiw.as_view({"get": "list", "post": "create"})),
     re_path("dataset/(?P<pk>\w+)/$", views.DatasetInfoVeiw.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})),
@@ -27,6 +27,12 @@ urlpatterns = [
     path("gene-info/", views.GeneInfoView.as_view({"get": "list", "post": "create"})),
     # 细胞类型信息
     path("cell-type-info/", views.CellTypeView.as_view({"get": "list", "post": "create"})),
+    # 数据集-文献-基因信息
+    path("dataset-literature-gene/", views.DatasetLiteratureGeneView.as_view({"get": "list"})),
+    # 提交-文献-数据
+    path("upload-literature-dataset/", views.DatasetAndLiteratureCreateView.as_view()),
+    # 提交-矩阵文件
+    path("upload-matrix-file/", views.UploadedMatrixFileView.as_view({"post": "create"})),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 

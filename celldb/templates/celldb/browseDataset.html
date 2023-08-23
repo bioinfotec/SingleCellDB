@@ -118,7 +118,10 @@
       <div class="row my-2">
         <div class="col">
           <button type="button" id="FilterDataSet" class="btn btn-primary">
-            Search
+            Search Data
+          </button>
+          <button type="button" id="FilterGene" class="btn btn-primary">
+            Search Gene
           </button>
         </div>
       </div>
@@ -163,76 +166,84 @@
 <script src="{% static 'celldb/js/datatables_1.13.4.bootstrap5.min.js' %}"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
+  // 表格加载函数
+
   $(document).ready(function () {
     // 初始化表格
-    var table = $("#table_Dataset").DataTable({
-      ajax: {
-        url: "/api-v2/dataset-literature/",
-        dataSrc: "",
-      },
-      columns: [
-        // { data: "id", orderable: false, searchable: false },
-        {
-          data: "dataset_id",
-          orderable: false,
-          searchable: true,
+    function initializeDataTable(url) {
+      var table = $("#table_Dataset").DataTable({
+        ajax: {
+          url: url,
+          dataSrc: "",
         },
-        {
-          data: "used_method",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "species_name",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "tissue_name",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "cell_types",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "num_cells",
-          orderable: false,
-          searchable: false,
-        },
-        {
-          data: "markers_main",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "markers_other",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "literature",
-          orderable: false,
-          searchable: false,
-          render: function (data) {
-            var pmids = data.map(function (literature) {
-              return literature.pmid;
-            });
-            return pmids;
+        columns: [
+          // { data: "id", orderable: false, searchable: false },
+          {
+            data: "dataset_id",
+            orderable: false,
+            searchable: true,
           },
-        },
-      ],
-      paging: true,
-      deferRender: true,
-      order: [],
+          {
+            data: "used_method",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "species_name",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "tissue_name",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "cell_types",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "num_cells",
+            orderable: false,
+            searchable: false,
+          },
+          {
+            data: "markers_main",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "markers_other",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "literature",
+            orderable: false,
+            searchable: false,
+            render: function (data) {
+              var pmids = data.map(function (literature) {
+                return literature.pmid;
+              });
+              return pmids;
+            },
+          },
+        ],
+        processing: true,
+        paging: true,
+        deferRender: true,
+        order: [],
 
-      language: {
-        sortAscending: '<i class="fas fa-sort-up"></i>',
-        sortDescending: '<i class="fas fa-sort-down"></i>',
-      },
-    });
+        language: {
+          sortAscending: '<i class="fas fa-sort-up"></i>',
+          sortDescending: '<i class="fas fa-sort-down"></i>',
+        },
+      });
+    }
+
+    url = "/api-v2/dataset-literature/";
+    initializeDataTable(url);
 
     var genes = ["CD4", "TP53", "CD8A", "CD8B", "CD3E", "CD3D", "CD3G"];
     // 基因名称补全
@@ -297,12 +308,13 @@
     });
   });
 
+  // 过滤数据集
   $("#FilterDataSet").on("click", function () {
     var table = $("#table_Dataset").DataTable();
     pmid = $("#SelectPMID").val();
     species = $("#SelectSpecies").val();
     cell_type = $("#SelectCellType").val();
-    var url = "http://127.0.0.1:8000/api-v2/dataset-literature/?";
+    var url = "/api-v2/dataset-literature/?";
     if (pmid != "") {
       url += "pmid=" + pmid + "&";
     }
@@ -312,23 +324,12 @@
     if (cell_type != "") {
       url += "cell_type=" + cell_type + "&";
     }
-    fetch(url)
-      .then((res) => {
-        // 检查请求是否成功，如果不成功，返回一个被拒绝的Promise
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        // 解析返回的JSON数据
-        return res.json();
-      })
-      .then((data) => {
-        // 在这里处理返回的JSON数据
-        table.clear().rows.add(data).draw();
-      })
-      .catch((error) => {
-        // 捕获请求发生的错误
-        console.error("Error:", error);
-      });
+    table.ajax.url(url).load();
+  });
+
+  // 处理基因搜索
+  $("#FilterGene").on("click", function () {
+    window.location.href = "/browse-expression";
   });
 
   // 下载数据的函数

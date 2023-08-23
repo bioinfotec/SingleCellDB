@@ -1,8 +1,4 @@
 {% extends 'celldb/base.html' %} {% load static %} {% block customstyles %}
-<link
-  href="{% static 'celldb/css/datatables_1.13.4.bootstrap5.min.css' %}"
-  rel="stylesheet"
-/>
 <style>
   /* 搜索补全的样式设置 */
   .ui-autocomplete {
@@ -43,6 +39,11 @@
     display: none !important;
   }
 </style>
+<link
+  href="{% static 'celldb/css/datatables_1.13.4.bootstrap5.min.css' %}"
+  rel="stylesheet"
+/>
+
 {% endblock %} {% block customlayout %}
 
 <div class="container-fluid justify-content-center">
@@ -51,31 +52,28 @@
     <div class="card col-md-2 mx-4">
       <div class="mt-2 row">
         <div class="col">
-          <h3 class="text-center">Filter Cell</h3>
+          <h3 class="text-center">Filter DataSet</h3>
         </div>
       </div>
       <hr />
       <div class="mt-2 row my-2">
         <div class="col">
           <div class="input-group d-flex flex-nowrap">
-            <label for="SelectDataSet" class="mx-2 input-group-text"
-              >DataSet</label
-            >
+            <label for="SelectPMID" class="mx-2 input-group-text">PMID</label>
             <select
               class="form-select form-select-sm"
-              id="SelectDataSet"
+              id="SelectPMID"
               style="width: 75%"
             >
               <option value="" selected>Choose</option>
-              {% for dataset_id in dataset_ids %}
-              <option value="{{dataset_id}}">{{dataset_id}}</option>
+              {% for pmid in pmids %}
+              <option value="{{pmid}}">{{pmid}}</option>
               {% endfor %}
             </select>
           </div>
         </div>
       </div>
-      <hr />
-      <!-- <div class="mt-2 row my-2">
+      <div class="mt-2 row my-2">
         <div class="col">
           <div class="input-group d-flex flex-nowrap">
             <label for="SelectSpecies" class="mx-2 input-group-text"
@@ -88,7 +86,22 @@
             </select>
           </div>
         </div>
-      </div> -->
+      </div>
+      <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectCellType" class="mx-2 input-group-text"
+              >Cell tpye</label
+            >
+            <select id="SelectCellType" class="form-select" style="width: 100%">
+              <option selected value="">Choose</option>
+              {% for cell_type in cell_types %}
+              <option value="{{cell_type}}">{{cell_type}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
       <div class="mt-2 row my-2">
         <div class="col">
           <div class="input-group d-flex flex-nowrap">
@@ -110,29 +123,24 @@
         </div>
       </div>
     </div>
+
     <!-- 表格数据 -->
     <div class="card col-md-8 mx-2">
       <div class="card-body">
-        <h3 class="card-title" id="cardTitle">
-          The current data is: {{ res_dataset_id|default:"default data" }}
-        </h3>
         <div class="row">
           <div class="table-responsive">
             <table
-              id="table_Cell"
+              id="table_Dataset"
               class="table table-hover table-str"
               style="width: 100%; border-collapse: collapse; font-size: 14px"
             >
               <thead>
                 <tr>
-                  <th>Barcode</th>
-                  <th>ident</th>
-                  <th>Type</th>
-                  <th>nCount_RNA</th>
-                  <th>nFeature_RNA</th>
-                  <th>percent_mt</th>
-                  <th>UMAP_1</th>
-                  <th>UMAP_2</th>
+                  <th>PMID</th>
+                  <th>Species</th>
+                  <th>Cell_Type</th>
+                  <th>Gene</th>
+                  <th>DataSet</th>
                 </tr>
               </thead>
               <tbody></tbody>
@@ -148,129 +156,100 @@
 <script src="{% static 'celldb/js/datatables_1.13.4.bootstrap5.min.js' %}"></script>
 <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
 <script>
+  // 表格加载函数
+
   $(document).ready(function () {
-    var url = "/api-v2/cell-info/";
-    if ("{{ res_dataset_id }}" != "") {
-      url = url + "?dataset_id={{ res_dataset_id }}";
+    // 初始化表格
+    function initializeDataTable(url) {
+      var table = $("#table_Dataset").DataTable({
+        ajax: {
+          url: url,
+          dataSrc: "data",
+        },
+        columns: [
+          {
+            data: "literature",
+            orderable: false,
+            searchable: false,
+            render: function (data) {
+              var pmids = data.map(function (literature) {
+                return literature.pmid;
+              });
+              return pmids;
+            },
+          },
+          {
+            data: "species_name",
+            orderable: false,
+            searchable: true,
+          },
+          {
+            data: "gene_expression_set",
+            orderable: false,
+            searchable: false,
+            render: function (data) {
+              var cell_types = data.map(function (gene_expression_set) {
+                return gene_expression_set.cell_types;
+              });
+              return cell_types;
+            },
+          },
+          {
+            data: "gene_expression_set",
+            orderable: false,
+            searchable: false,
+            render: function (data) {
+              if (!data || data.length === 0 || !data[0].gene_name) {
+                return "ALL";
+              }
+              var geneRows = data.map(function (gene_expression_set) {
+                return (
+                  "<tr><td>" + gene_expression_set.gene_name + "</td></tr>"
+                );
+              });
+
+              var geneTable = "<table>" + geneRows.join("") + "</table>";
+              return geneTable;
+            },
+          },
+          {
+            data: "dataset_id",
+            orderable: false,
+            searchable: true,
+          },
+        ],
+        processing: true,
+        paging: true,
+        deferRender: true,
+        order: [],
+
+        language: {
+          sortAscending: '<i class="fas fa-sort-up"></i>',
+          sortDescending: '<i class="fas fa-sort-down"></i>',
+        },
+      });
     }
-    var table = $("#table_Cell").DataTable({
-      ajax: {
-        url: url,
-        dataSrc: "",
-      },
-      columns: [
-        // { data: "id", orderable: false, searchable: false },
-        {
-          data: "barcode",
-          orderable: false,
-          searchable: false,
-        },
-        {
-          data: "orig_ident",
-          orderable: false,
-          searchable: true,
-        },
-        {
-          data: "cell_type",
-          orderable: true,
-          searchable: true,
-        },
-        {
-          data: "ncount_rna",
-          orderable: true,
-          searchable: true,
-        },
-        {
-          data: "nfeature_rna",
-          orderable: true,
-          searchable: true,
-        },
-        {
-          data: "percent_mt",
-          orderable: true,
-          searchable: true,
-        },
-        {
-          data: "umap_1",
-          render: function (data) {
-            return parseFloat(data).toExponential(2);
-          },
-          searchable: true,
-        },
-        {
-          data: "umap_2",
-          render: function (data) {
-            return parseFloat(data).toExponential(2);
-          },
-          searchable: true,
-        },
-      ],
-      paging: true,
-      deferRender: true,
-      order: [],
+    var urlParams = $(location).attr("href");
+    url = "/api-v2/dataset-literature-gene/";
+    if (urlParams.indexOf("?") !== -1) {
+      pmidParam = urlParams.split("?")[1].split("=")[1];
+      url = url + "?pmid=" + pmidParam;
+      $("#SelectPMID").val(pmidParam);
+    }
+    initializeDataTable(url);
 
-      language: {
-        sortAscending: '<i class="fas fa-sort-up"></i>',
-        sortDescending: '<i class="fas fa-sort-down"></i>',
-      },
-      // 获取所有的 cell_type 数据
-      initComplete: function () {
-        var cellTypes = table.column(2).data().unique().toArray();
-        var selectOptions = cellTypes.map(function (cellType) {
-          return '<option value="' + cellType + '">' + cellType + "</option>";
-        });
-        $("cellTypeFilter").empty();
-        $("#cellTypeFilter").append(selectOptions.join(""));
-        $("#cellTypeFilter").on("change", function () {
-          var selectedCellType = $(this).val();
-          table.column(2).search(selectedCellType).draw();
-        });
-      },
-    });
-    var minEl = $("#min");
-    var maxEl = $("#max");
-    // Custom range filtering function
-    DataTable.ext.search.push(function (settings, data, dataIndex) {
-      var min = parseFloat(minEl.val(), 10);
-      var max = parseFloat(maxEl.val(), 10);
-      var x_col = parseFloat(data[6]) || 0; // use data for the x column
-      if (
-        (isNaN(min) && isNaN(max)) ||
-        (isNaN(min) && x_col <= max) ||
-        (min <= x_col && isNaN(max)) ||
-        (min <= x_col && x_col <= max)
-      ) {
-        return true;
-      }
-
-      return false;
-    });
-    minEl.on("input", function () {
-      table.draw();
-    });
-    maxEl.on("input", function () {
-      table.draw();
-    });
-    // 添加按钮点击事件处理下载
-    $("#downloadBtn").click(function () {
-      // 获取当前表格中的数据
-      var table = $("#table_Cell").DataTable();
-      var filteredData = table
-        .rows({
-          search: "applied",
-        })
-        .data()
-        .toArray();
-
-      // 执行下载操作，可以根据需要自定义实现
-      downloadData(filteredData);
-    });
-
-    // 处理绘图事件
-    // 获取选择框和按钮的元素
-    var cellTypeFilter = $("#cellTypeFilter");
-    var plotButton = $("#Plot");
-    var genes = ["CD4", "TP53", "CD8A", "CD8B", "CD3E", "CD3D", "CD3G"];
+    var genes = [
+      "testGene1",
+      "testGene2",
+      "testGene3",
+      "CD4",
+      "TP53",
+      "CD8A",
+      "CD8B",
+      "CD3E",
+      "CD3D",
+      "CD3G",
+    ];
     // 基因名称补全
     $("#SelectGene").autocomplete({
       source: function (request, response) {
@@ -305,6 +284,26 @@
       },
     });
 
+    // 添加按钮点击事件处理函数
+    $("#downloadBtn").click(function () {
+      // 获取当前表格中的数据
+      var table = $("#table_Feature").DataTable();
+      var filteredData = table
+        .rows({
+          search: "applied",
+        })
+        .data()
+        .toArray();
+
+      // 执行下载操作，可以根据需要自定义实现
+      downloadData(filteredData);
+    });
+
+    // 处理绘图事件
+    // 获取选择框和按钮的元素
+    var cellTypeFilter = $("#cellTypeFilter");
+    var plotButton = $("#Plot");
+
     // 添加点击事件处理程序
     plotButton.on("click", function () {
       // 获取选择框的值
@@ -313,23 +312,32 @@
     });
   });
 
-  $("#SelectDataSet").change(function () {
-    var selectedOption = $(this).val(); // 获取被选中的选项的值
-    console.log(selectedOption);
-    var url = "/api-v2/cell-info/?dataset_id=" + selectedOption;
-    fetch(url)
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (data) {
-        // 获取 card title 元素并修改其文本内容
-        var cardTitleElement = $("#cardTitle");
-        cardTitleElement.text("The current data is: " + selectedOption);
-        var table = $("#table_Cell").DataTable();
-        table.clear();
-        table.rows.add(data);
-        table.draw();
-      });
+  // 过滤数据集
+  $("#FilterDataSet").on("click", function () {
+    var table = $("#table_Dataset").DataTable();
+    pmid = $("#SelectPMID").val();
+    species_name = $("#SelectSpecies").val();
+    cell_type = $("#SelectCellType").val();
+    gene_name = $("#SelectGene").val();
+    var url = "/api-v2/dataset-literature-gene/?";
+    if (pmid != "") {
+      url += "pmid=" + pmid + "&";
+    }
+    if (species_name != "") {
+      url += "species_name=" + species_name + "&";
+    }
+    if (cell_type != "") {
+      url += "cell_type=" + cell_type + "&";
+    }
+    if (gene_name != "") {
+      url += "gene_name=" + gene_name + "&";
+    }
+    table.ajax.url(url).load();
+  });
+
+  // 处理基因搜索
+  $("#FilterGene").on("click", function () {
+    window.location.href = "/browse-expression";
   });
 
   // 下载数据的函数

@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.contrib.auth.models import User
 # 文献信息表
 class literature_info(models.Model):
     pmid = models.CharField(primary_key=True,max_length=25)
@@ -38,6 +38,7 @@ class literature_dataset(models.Model):
 class cell_info(models.Model):
     id = models.AutoField(primary_key=True)
     dataset_info = models.ForeignKey(dataset_info, on_delete=models.SET_NULL, null=True)
+    orig_ident = models.CharField(max_length=100, blank=True, null=True)
     barcode = models.CharField(max_length=100, blank=True, null=True)
     cell_type = models.CharField(max_length=100, blank=True, null=True)
     ncount_rna = models.FloatField(blank=True,null=True)
@@ -54,6 +55,7 @@ class gene_expression(models.Model):
     dataset_info = models.ForeignKey(dataset_info, on_delete=models.SET_NULL, null=True)
     gene_name = models.CharField(max_length=50, blank=True, null=True)
     expression = models.JSONField(blank=True, null=True)
+    cell_types = models.CharField(max_length=255, blank=True, null=True)
     def __str__(self) -> str:
         return self.gene_name
 
@@ -79,3 +81,14 @@ class cell_type_info(models.Model):
 class dataset_cell_type(models.Model):
     dataset_info = models.ForeignKey(dataset_info, default="GSE000", on_delete=models.SET_DEFAULT)
     cell_type_info = models.ForeignKey(cell_type_info, default="GSE000", on_delete=models.SET_DEFAULT)
+
+# 文件上传
+class matrix_file(models.Model):
+    user = models.ForeignKey(User, default="user",on_delete=models.SET_DEFAULT)
+    data_id = models.CharField(max_length=50)
+    gene_file = models.FileField(upload_to='data')
+    cell_file = models.FileField(upload_to='data')
+    expression_file = models.FileField(upload_to='data')
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    def __str__(self):
+        return self.data_id

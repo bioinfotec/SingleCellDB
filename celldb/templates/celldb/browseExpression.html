@@ -1,0 +1,253 @@
+{% extends 'celldb/base.html' %} {% load static %} {% block customstyles %}
+<link
+  href="{% static 'celldb/css/datatables_1.13.4.bootstrap5.min.css' %}"
+  rel="stylesheet"
+/>
+<style>
+  /* 搜索补全的样式设置 */
+  .ui-autocomplete {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 160px;
+    padding: 4px 0;
+    margin: 2px 0 0;
+    list-style: none;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.175);
+    background-clip: padding-box;
+  }
+
+  .ui-autocomplete .ui-menu-item {
+    clear: both;
+    width: 100%;
+    padding: 3px 20px;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+    background-color: #fff;
+    cursor: pointer;
+  }
+
+  .ui-autocomplete .ui-menu-item:hover {
+    background-color: #f0f0f0;
+  }
+  .ui-helper-hidden-accessible {
+    display: none !important;
+  }
+</style>
+{% endblock %} {% block customlayout %}
+
+<div class="container-fluid justify-content-center">
+  <div class="row">
+    <!--侧边栏 -->
+    <div class="card col-md-2 mx-4">
+      <div class="mt-2 row">
+        <div class="col">
+          <h3 class="text-center">Filter Gene</h3>
+        </div>
+      </div>
+      <hr />
+      <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectDataSet" class="mx-2 input-group-text"
+              >DataSet</label
+            >
+            <select
+              class="form-select form-select-sm"
+              id="SelectDataSet"
+              style="width: 75%"
+            >
+              <option value="" selected>Choose</option>
+              {% for dataset_id in dataset_ids %}
+              <option value="{{dataset_id}}">{{dataset_id}}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <!-- <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectSpecies" class="mx-2 input-group-text"
+              >Species</label
+            >
+            <select id="SelectSpecies" class="form-select" style="width: 100%">
+              <option value="" selected>Choose</option>
+              <option value="human">Human</option>
+              <option value="mouse">Mouse</option>
+            </select>
+          </div>
+        </div>
+      </div> -->
+      <div class="mt-2 row my-2">
+        <div class="col">
+          <div class="input-group d-flex flex-nowrap">
+            <label for="SelectGene" class="mx-2 input-group-text">Gene</label>
+            <input
+              type="text"
+              id="SelectGene"
+              class="form-control"
+              placeholder="Enter Gene name"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row my-2">
+        <div class="col">
+          <button
+            type="button"
+            id="FilterGeneExpression"
+            class="btn btn-primary"
+          >
+            Search Gene
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- 表格数据 -->
+    <div class="card col-md-8 mx-2">
+      <div class="card-body">
+        <h3 class="card-title" id="cardTitle">
+          The current data is: {{ res_dataset_id|default:"default data" }}
+        </h3>
+        <div class="row">
+          <div class="table-responsive">
+            <table
+              id="table_GeneExpression"
+              class="table table-hover table-str"
+              style="width: 100%; border-collapse: collapse; font-size: 14px"
+            >
+              <thead>
+                <tr>
+                  <th>GeneName</th>
+                  <th>Expression</th>
+                  <th>Dataset</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %} {% block customscripts %}
+<script src="{% static 'celldb/js/datatables_1.13.4_js_jquery.min.js' %}"></script>
+<script src="{% static 'celldb/js/datatables_1.13.4.bootstrap5.min.js' %}"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+<script>
+  $(document).ready(function () {
+    var url = "/api-v2/gene-expression/?gene_name=testGene1";
+    if ("{{ res_dataset_id }}" != "") {
+      url = url + "?dataset_id={{ res_dataset_id }}";
+    }
+    var table = $("#table_GeneExpression").DataTable({
+      ajax: {
+        url: url,
+        dataSrc: "",
+      },
+      columns: [
+        // { data: "id", orderable: false, searchable: false },
+        {
+          data: "gene_name",
+          orderable: false,
+          searchable: false,
+        },
+        {
+          data: "expression",
+          orderable: false,
+          searchable: true,
+        },
+        {
+          data: "dataset_info_id",
+          orderable: true,
+          searchable: true,
+        },
+      ],
+      paging: true,
+      deferRender: true,
+      order: [],
+
+      language: {
+        sortAscending: '<i class="fas fa-sort-up"></i>',
+        sortDescending: '<i class="fas fa-sort-down"></i>',
+      },
+    });
+
+    $("#FilterGeneExpression").on("click", function () {
+      var table = $("#table_GeneExpression").DataTable();
+      dataset_id = $("#SelectDataSet").val();
+      gene_name = $("#SelectGene").val();
+      var url = "/api-v2/gene-expression/?";
+      if (dataset_id != "") {
+        url = url + "dataset_id=" + dataset_id + "&";
+      }
+      if (gene_name != "") {
+        url = url + "gene_name=" + gene_name + "&";
+      }
+      fetch(url)
+        .then((res) => {
+          // 检查请求是否成功，如果不成功，返回一个被拒绝的Promise
+          if (!res.ok) {
+            throw new Error("Network response was not ok");
+          }
+          // 解析返回的JSON数据
+          return res.json();
+        })
+        .then((data) => {
+          // 在这里处理返回的JSON数据
+          table.clear().rows.add(data).draw();
+        })
+        .catch((error) => {
+          // 捕获请求发生的错误
+          console.error("Error:", error);
+        });
+    });
+    var genes = ["CD4", "TP53", "CD8A", "CD8B", "CD3E", "CD3D", "CD3G"];
+    // 基因名称补全
+    $("#SelectGene").autocomplete({
+      source: function (request, response) {
+        var term = request.term;
+        if (term.length < 2) {
+          response([]); // 返回一个空数组，表示没有匹配的结果
+          return;
+        }
+        var matcher = new RegExp(
+          "^" + $.ui.autocomplete.escapeRegex(request.term),
+          "i"
+        );
+        var matchedResults = $.grep(genes, function (value) {
+          return matcher.test(value);
+        });
+        // 返回最多前200条匹配的结果
+        var slicedResults = matchedResults.slice(0, 200);
+        var responseResults =
+          slicedResults.length < matchedResults.length
+            ? [
+                ...slicedResults,
+                `...${matchedResults.length - slicedResults.length} more...`,
+              ]
+            : slicedResults;
+        response(responseResults);
+      },
+      open: function (event, ui) {
+        // 添加滚动条选项
+        var $ul = $(this).autocomplete("widget");
+        $ul.css("overflow-y", "auto");
+        $ul.css("max-height", "300px"); // 设置最大高度，这里可以根据需要进行调整
+      },
+    });
+  });
+</script>
+{% endblock %}

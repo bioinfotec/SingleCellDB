@@ -74,17 +74,17 @@
                   >
                     <path
                       d="M8 1.783C7.015.936 5.587.81 4.287.94c-1.514.153-3.042.672-3.994 1.105A.5.5 0 0 0 0 2.5v11a.5.5 0 0 0 .707.455c.882-.4 2.303-.881 3.68-1.02 1.409-.142 2.59.087 3.223.877a.5.5 0 0 0 .78 0c.633-.79 1.814-1.019 3.222-.877 1.378.139 2.8.62 3.681 1.02A.5.5 0 0 0 16 13.5v-11a.5.5 0 0 0-.293-.455c-.952-.433-2.48-.952-3.994-1.105C10.413.809 8.985.936 8 1.783z"
-                    /></svg
-                  >Overview
+                    />
+                  </svg>
+                  <span>Overview</span>
                 </a>
               </li>
 
-              <li class="nav-item dropdown">
+              <li class="nav-item">
                 <a
-                  class="nav-link dropdown-toggle dropdown-toggleB"
-                  href="#"
+                  class="nav-link"
+                  href="{% url 'celldb-browse' %}"
                   role="button"
-                  data-bs-toggle="dropdown"
                   aria-expanded="false"
                 >
                   <svg
@@ -97,10 +97,11 @@
                   >
                     <path
                       d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z"
-                    /></svg
-                  >Browse
+                    />
+                  </svg>
+                  Browse
                 </a>
-                <ul class="dropdown-menu">
+                <!-- <ul class="dropdown-menu">
                   <a
                     class="dropdown-item"
                     href="{% url 'celldb-browse-dataset' %}"
@@ -116,7 +117,7 @@
                     href="{% url 'celldb-browse-expression' %}"
                     >Gene Expression</a
                   >
-                </ul>
+                </ul> -->
               </li>
               <li class="nav-item dropdown">
                 <a
@@ -136,8 +137,9 @@
                   >
                     <path
                       d="M15.825.12a.5.5 0 0 1 .132.584c-1.53 3.43-4.743 8.17-7.095 10.64a6.067 6.067 0 0 1-2.373 1.534c-.018.227-.06.538-.16.868-.201.659-.667 1.479-1.708 1.74a8.118 8.118 0 0 1-3.078.132 3.659 3.659 0 0 1-.562-.135 1.382 1.382 0 0 1-.466-.247.714.714 0 0 1-.204-.288.622.622 0 0 1 .004-.443c.095-.245.316-.38.461-.452.394-.197.625-.453.867-.826.095-.144.184-.297.287-.472l.117-.198c.151-.255.326-.54.546-.848.528-.739 1.201-.925 1.746-.896.126.007.243.025.348.048.062-.172.142-.38.238-.608.261-.619.658-1.419 1.187-2.069 2.176-2.67 6.18-6.206 9.117-8.104a.5.5 0 0 1 .596.04z"
-                    /></svg
-                  >Visualize
+                    />
+                  </svg>
+                  Visualize
                 </a>
                 <ul class="dropdown-menu">
                   <a class="dropdown-item" href="{% url 'celldb-plot' %}"
@@ -152,8 +154,8 @@
                 </ul>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'celldb-analyse' %}"
-                  ><svg
+                <a class="nav-link" href="{% url 'celldb-analyse' %}">
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -163,13 +165,14 @@
                   >
                     <path
                       d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311c.446.82.023 1.841-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.86 2.929 2.929 0 0 1 0 5.858z"
-                    /></svg
-                  >Analyse</a
+                    />
+                  </svg>
+                  Analyse</a
                 >
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="{% url 'celldb-upload' %}"
-                  ><svg
+                <a class="nav-link" href="{% url 'celldb-upload' %}">
+                  <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
                     height="16"
@@ -179,8 +182,9 @@
                   >
                     <path
                       d="M7.27 1.047a1 1 0 0 1 1.46 0l6.345 6.77c.6.638.146 1.683-.73 1.683H11.5v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1H1.654C.78 9.5.326 8.455.924 7.816L7.27 1.047zM4.5 13.5a1 1 0 0 1 1-1h5a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-5a1 1 0 0 1-1-1v-1z"
-                    /></svg
-                  >Upload</a
+                    />
+                  </svg>
+                  Upload</a
                 >
               </li>
               <li class="nav-item">
@@ -196,15 +200,23 @@
                     <path
                       fill-rule="evenodd"
                       d="M8 0a5.53 5.53 0 0 0-3.594 1.342c-.766.66-1.321 1.52-1.464 2.383C1.266 4.095 0 5.555 0 7.318 0 9.366 1.708 11 3.781 11H7.5V5.5a.5.5 0 0 1 1 0V11h4.188C14.502 11 16 9.57 16 7.773c0-1.636-1.242-2.969-2.834-3.194C12.923 1.999 10.69 0 8 0zm-.354 15.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 14.293V11h-1v3.293l-2.146-2.147a.5.5 0 0 0-.708.708l3 3z"
-                    /></svg
-                  >Download</a
+                    />
+                  </svg>
+                  Download</a
                 >
               </li>
             </ul>
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
-              <a class="nav-item nav-link" href="/admin/">Login</a>
+              {% if user.is_authenticated %}
+              <li class="nav-item">
+                <a>User: {{ user.get_username }}</a>
+                <a href="{% url 'logout' %}?next={{ request.path }}">Logout</a>
+              </li>
+              {% else %}
+              <a class="nav-item nav-link" href="/accounts/login">Login</a>
               <a class="nav-item nav-link" href="#">Register</a>
+              {% endif %}
             </div>
           </div>
         </div>
