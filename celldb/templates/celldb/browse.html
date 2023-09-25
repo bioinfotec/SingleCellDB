@@ -159,8 +159,71 @@
   // 表格加载函数
 
   $(document).ready(function () {
+    // 更新侧边栏
+    function updateSidebar() {
+      var pmid = $("#SelectPMID").val();
+      console.log(pmid);
+      if (pmid != "") {
+        fetch(`/api-v2/literature-dataset/?pmid=${pmid}`)
+          .then((response) => response.json())
+          .then((data) => {
+            var species = data[0].dataset_info_set[0].species_name;
+            var cell_types = data[0].dataset_info_set[0].cell_types.split(",");
+            if (species != null) {
+              $("#SelectSpecies").val(`${species}`);
+            }
+            // 清空SelectCellType下拉框并循环遍历cell_types
+            $("#SelectCellType").empty();
+            $("#SelectCellType").append(
+              `<option value="" selected>Choose</option>`
+            );
+            cell_types.forEach((cell_type) => {
+              $("#SelectCellType").append(
+                `<option value="${cell_type}">${cell_type}</option>`
+              );
+            });
+          });
+      }
+    }
     // 初始化表格
-    function initializeDataTable(url) {
+    function initializeDataTable(url, cell_type = "") {
+      var columnsCelltype;
+      if (cell_type != "") {
+        columnsCelltype = {
+          data: "gene_expression_set",
+          orderable: false,
+          searchable: false,
+          render: function (data) {
+            var cell_types = data.map(function (gene_expression_set) {
+              return gene_expression_set.cell_types;
+            });
+            return '<span class="badge bg-primary">' + cell_types + "</span>";
+          },
+        };
+      } else {
+        columnsCelltype = {
+          data: "cell_types",
+          orderable: false,
+          searchable: false,
+          render: function (data) {
+            if (data == null) {
+              return "";
+            }
+            var cellTypeArray = data.split(",");
+            var maxCellTypesPerRow = 2;
+            var groupedCellTypes = [];
+            for (var i = 0; i < cellTypeArray.length; i += maxCellTypesPerRow) {
+              var group = cellTypeArray.slice(i, i + maxCellTypesPerRow);
+              var formattedGroup = group.map(function (cellType) {
+                return '<span class="badge bg-primary">' + cellType + "</span>";
+              });
+              groupedCellTypes.push(formattedGroup.join(" "));
+            }
+            var formattedCellTypes = groupedCellTypes.join("<br>");
+            return formattedCellTypes;
+          },
+        };
+      }
       var table = $("#table_Dataset").DataTable({
         ajax: {
           url: url,
@@ -183,17 +246,7 @@
             orderable: false,
             searchable: true,
           },
-          {
-            data: "gene_expression_set",
-            orderable: false,
-            searchable: false,
-            render: function (data) {
-              var cell_types = data.map(function (gene_expression_set) {
-                return gene_expression_set.cell_types;
-              });
-              return cell_types;
-            },
-          },
+          columnsCelltype,
           {
             data: "gene_expression_set",
             orderable: false,
@@ -229,6 +282,7 @@
         },
       });
     }
+
     var urlParams = $(location).attr("href");
     url = "/api-v2/dataset-literature-gene/";
     if (urlParams.indexOf("?") !== -1) {
@@ -237,19 +291,13 @@
       $("#SelectPMID").val(pmidParam);
     }
     initializeDataTable(url);
-
-    var genes = [
-      "testGene1",
-      "testGene2",
-      "testGene3",
-      "CD4",
-      "TP53",
-      "CD8A",
-      "CD8B",
-      "CD3E",
-      "CD3D",
-      "CD3G",
-    ];
+    updateSidebar();
+    var genes = ["CD4", "TP53", "CD8A", "CD8B", "CD3E", "CD3D", "CD3G"];
+    fetch("/api-v2/gene-expression/")
+      .then((response) => response.json())
+      .then((data) => {
+        genes = data.map((gene) => gene.gene_name);
+      });
     // 基因名称补全
     $("#SelectGene").autocomplete({
       source: function (request, response) {
@@ -284,6 +332,10 @@
       },
     });
 
+    // 处理PMID更改事件
+    $("#SelectPMID").on("change", function () {
+      updateSidebar();
+    });
     // 添加按钮点击事件处理函数
     $("#downloadBtn").click(function () {
       // 获取当前表格中的数据
@@ -301,15 +353,15 @@
 
     // 处理绘图事件
     // 获取选择框和按钮的元素
-    var cellTypeFilter = $("#cellTypeFilter");
-    var plotButton = $("#Plot");
+    //var cellTypeFilter = $("#cellTypeFilter");
+    //var plotButton = $("#Plot");
 
-    // 添加点击事件处理程序
-    plotButton.on("click", function () {
-      // 获取选择框的值
-      var selectedCellType = cellTypeFilter.val();
-      window.location.href = "/plot";
-    });
+    //// 添加点击事件处理程序
+    //plotButton.on("click", function () {
+    //  // 获取选择框的值
+    //  var selectedCellType = cellTypeFilter.val();
+    //  window.location.href = "/plot";
+    //});
   });
 
   // 过滤数据集

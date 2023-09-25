@@ -13,14 +13,16 @@
   >
     <thead>
       <tr>
-        <th>First name</th>
-        <th>Last name</th>
+        <th>ID</th>
+        <th>barcode</th>
+        <th>type</th>
       </tr>
     </thead>
     <tfoot>
       <tr>
-        <th>First name</th>
-        <th>Last name</th>
+        <th>ID</th>
+        <th>barcode</th>
+        <th>type</th>
       </tr>
     </tfoot>
   </table>
@@ -32,7 +34,12 @@
   new DataTable("#example", {
     ajax: "/api/tran/?format=datatables",
     serverSide: true,
-    columns: [{ data: "data_id" }, { data: "cell_barcode" }],
+    columns: [
+      { data: "data_id" },
+      { data: "cell_barcode" },
+      { data: "cell_type" },
+    ],
+    processing: true,
   });
 </script>
 {% endblock %}

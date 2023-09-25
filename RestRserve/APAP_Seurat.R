@@ -1,7 +1,6 @@
 library(RestRserve)
 library(png)
 library(Seurat)
-
 app = Application$new()
 
 CommonPngFile <- function(plot_func, width, height, res) {

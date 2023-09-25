@@ -146,7 +146,7 @@
               </button>
               <button
                 type="button"
-                value="{{literature.pmid}}"
+                value="{{literature.dataset_info_set.first.dataset_id }}"
                 class="btn btn-success btn-plot-data"
               >
                 Plot
@@ -333,7 +333,7 @@
   );
 
   // 数据过滤按钮
-  $("#FilterLiterature").click(function () {
+  /*$("#FilterLiterature").click(function () {
     species = $("#SelectSpecies").val();
     cell_type = $("#SelectCellType").val();
     var currentUrl = "/overview?";
@@ -344,16 +344,16 @@
       currentUrl += "cell_type=" + cell_type + "&";
     }
     window.location.href = currentUrl;
-  });
+  });*/
 
   // 是否选中数据
-  if ("{{selected_cell_type}}" !== "None") {
+  /*if ("{{selected_cell_type}}" !== "None") {
     $("#SelectCellType").val("{{selected_cell_type}}");
   }
   if ("{{selected_species}}" !== "None") {
     console.log("{{selected_species}}");
     $("#SelectSpecies").val("{{selected_species}}");
-  }
+  }*/
 </script>
 <!-- 查看模态框数据 -->
 <script>
@@ -491,9 +491,9 @@
 
   // 切换到Plot页面
   $(".btn-plot-data").click(function () {
-    var pmid = $(this).val();
+    var dataset_id = $(this).val();
     // 构造目标页面的 URL，将 pmid 作为查询参数传递
-    var url = "/plot/?pmid=" + encodeURIComponent(pmid);
+    var url = "/plot/?dataset=" + encodeURIComponent(dataset_id);
     // 执行页面跳转
     window.location.href = url;
   });

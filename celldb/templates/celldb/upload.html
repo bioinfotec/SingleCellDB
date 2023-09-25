@@ -23,99 +23,200 @@
                 />
                 <div class="invalid-feedback">Please enter pmid</div>
               </div>
-
-              <div class="col-sm-6">
-                <label for="publication" class="form-label"
-                  >publication<span class="text-muted">(Optional)</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="publication"
-                  placeholder="Enter the publication"
-                  name="publication"
-                  value=""
-                  required
-                />
-              </div>
-
-              <div class="col-12">
-                <label for="article_title" class="form-label"
-                  >article title<span class="text-muted"
-                    >(Optional)</span
-                  ></label
-                >
-                <div class="input-group has-validation">
+              <div class="row mt-2">
+                <div class="col-md-4">
+                  <label for="input_type" class="form-label">Optional</label>
+                  <select class="form-select" id="input_type" name="input_type">
+                    <option selected>Choose...</option>
+                    <option value="publication">Publication</option>
+                    <option value="article_title">Article Title</option>
+                    <option value="article_url">Article URL</option>
+                    <option value="release_time">Release Time</option>
+                    <option value="article_abstract">Article Abstract</option>
+                    <option value="article_content">Article Content</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="input_value" class="form-label">&nbsp;</label>
                   <input
                     type="text"
                     class="form-control"
-                    id="article_title"
-                    name="article_title"
-                    value=""
-                    placeholder="Enter article title"
+                    id="input_value"
+                    name="input_value"
+                    placeholder="Enter value"
                   />
                 </div>
               </div>
 
-              <div class="col-12">
-                <label for="article_url" class="form-label"
-                  >article url<span class="text-muted">(Optional)</span></label
+              <!-- <div class="col-md-2">
+                <a
+                  class="btn btn-secondary btn-sm"
+                  data-bs-toggle="collapse"
+                  href="#collapseLiterature"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="collapseLiterature"
                 >
-                <div class="input-group has-validation">
+                  +
+                </a>
+              </div> -->
+              <!-- <div class="collapse" id="collapseLiterature">
+                <div class="col-sm-6">
+                  <label for="publication" class="form-label"
+                    >publication<span class="text-muted"
+                      >(Optional)</span
+                    ></label
+                  >
+                  <button
+                    class="btn btn-light btn-sm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#publication"
+                    aria-expanded="false"
+                    aria-controls="publication"
+                  >
+                    +
+                  </button>
                   <input
                     type="text"
-                    class="form-control"
-                    id="article_url"
-                    name="article_url"
+                    class="form-control collapse"
+                    id="publication"
+                    placeholder="Enter the publication"
+                    name="publication"
                     value=""
-                    placeholder="Enter article url"
+                    required
                   />
                 </div>
-              </div>
+                <div class="col-12">
+                  <label for="article_title" class="form-label"
+                    >article title<span class="text-muted"
+                      >(Optional)</span
+                    ></label
+                  >
+                  <button
+                    class="btn btn-light btn-sm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#article_title"
+                    aria-expanded="false"
+                    aria-controls="article_title"
+                  >
+                    +
+                  </button>
+                  <div class="input-group has-validation">
+                    <input
+                      type="text"
+                      class="form-control collapse"
+                      id="article_title"
+                      name="article_title"
+                      value=""
+                      placeholder="Enter article title"
+                    />
+                  </div>
+                </div>
 
-              <div class="col-12">
-                <label for="release_time" class="form-label"
-                  >release time<span class="text-muted">(Optional)</span></label
-                >
-                <div class="input-group has-validation">
+                <div class="col-12">
+                  <label for="article_url" class="form-label"
+                    >article url<span class="text-muted"
+                      >(Optional)</span
+                    ></label
+                  >
+                  <button
+                    class="btn btn-light btn-sm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#article_url"
+                    aria-expanded="false"
+                    aria-controls="article_url"
+                  >
+                    +
+                  </button>
+                  <div class="input-group has-validation">
+                    <input
+                      type="text"
+                      class="form-control collapse"
+                      id="article_url"
+                      name="article_url"
+                      value=""
+                      placeholder="Enter article url"
+                    />
+                  </div>
+                </div>
+
+                <div class="col-12">
+                  <label for="release_time" class="form-label"
+                    >release time<span class="text-muted"
+                      >(Optional)</span
+                    ></label
+                  >
+                  <button
+                    class="btn btn-light btn-sm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#release_time"
+                    aria-expanded="false"
+                    aria-controls="release_time"
+                  >
+                    +
+                  </button>
                   <input
                     type="text"
-                    class="form-control"
+                    class="form-control collapse"
                     id="release_time"
                     name="release_time"
                     value=""
                     placeholder="Enter release time (eg.2023-01-01)"
                   />
                 </div>
-              </div>
 
-              <div class="col-12">
-                <label for="article_abstract" class="form-label"
-                  >article abstract
-                  <span class="text-muted">(Optional)</span></label
-                >
-                <textarea
-                  class="form-control"
-                  id="article_abstract"
-                  name="article_abstract"
-                  placeholder="Enter article abstract"
-                  style="height: 150px"
-                ></textarea>
-              </div>
+                <div class="col-12">
+                  <label for="article_abstract" class="form-label"
+                    >article abstract
+                    <span class="text-muted">(Optional)</span></label
+                  >
+                  <button
+                    class="btn btn-light btn-sm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#article_abstract"
+                    aria-expanded="false"
+                    aria-controls="article_abstract"
+                  >
+                    +
+                  </button>
+                  <textarea
+                    class="form-control collapse"
+                    id="article_abstract"
+                    name="article_abstract"
+                    placeholder="Enter article abstract"
+                    style="height: 150px"
+                  ></textarea>
+                </div>
 
-              <div class="col-12">
-                <label for="article_content" class="form-label"
-                  >article content
-                  <span class="text-muted">(Optional)</span></label
-                >
-                <textarea
-                  class="form-control"
-                  id="article_content"
-                  name="article_content"
-                  placeholder="Enter article content"
-                  style="height: 150px"
-                ></textarea>
-              </div>
+                <div class="col-12">
+                  <label for="article_content" class="form-label"
+                    >article content
+                    <span class="text-muted">(Optional)</span></label
+                  >
+                  <button
+                    class="btn btn-light btn-sm"
+                    type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#article_content"
+                    aria-expanded="false"
+                    aria-controls="article_content"
+                  >
+                    +
+                  </button>
+                  <textarea
+                    class="form-control collapse"
+                    id="article_content"
+                    name="article_content"
+                    placeholder="Enter article content"
+                    style="height: 150px"
+                  ></textarea>
+                </div>
+              </div> -->
             </div>
           </div>
 
@@ -138,163 +239,212 @@
                 <div class="invalid-feedback">Please enter dataset id</div>
               </div>
 
-              <div class="col-sm-6"></div>
-
-              <div class="col-12">
+              <div class="col-sm-6">
                 <label for="species_name" class="form-label"
                   >species<span class="text-muted">(Optional)</span></label
                 >
-                <div class="input-group has-validation">
+                <select
+                  class="form-select"
+                  id="species_name"
+                  name="species_name"
+                  aria-label="Species name"
+                >
+                  <option selected>Choose species</option>
+                  <option value="human">human</option>
+                  <option value="mouse">mouse</option>
+                </select>
+              </div>
+              <div class="row mt-2">
+                <div class="col-md-4">
+                  <label for="input_type" class="form-label">Optional</label>
+                  <select class="form-select" id="input_type" name="input_type">
+                    <option selected>Choose...</option>
+                    <option value="tissue">Tissue</option>
+                    <option value="method">Method</option>
+                  </select>
+                </div>
+                <div class="col-md-6">
+                  <label for="input_value" class="form-label">&nbsp;</label>
                   <input
                     type="text"
                     class="form-control"
-                    id="species_name"
-                    name="species_name"
-                    placeholder="Enter species (human, mouse, etc.)"
+                    id="input_value"
+                    name="input_value"
+                    placeholder="Enter value"
                   />
                 </div>
               </div>
-
-              <div class="col-12">
-                <label for="cell_types" class="form-label"
-                  >cell types<span class="text-muted">(Optional)</span></label
+              <!-- <div class="col-md-2">
+                <a
+                  class="btn btn-secondary btn-sm"
+                  data-bs-toggle="collapse"
+                  href="#collapseDataset"
+                  role="button"
+                  aria-expanded="false"
+                  aria-controls="collapseDataset"
                 >
-                <div class="input-group has-validation">
+                  +
+                </a>
+              </div> -->
+              <div class="collapse" id="collapseDataset">
+                <!-- <div class="col-12">
+                  <label for="cell_types" class="form-label"
+                    >cell types<span class="text-muted">(Optional)</span></label
+                  >
+                  <div class="input-group has-validation">
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="cell_types"
+                      name="cell_types"
+                      placeholder="Enter cell types"
+                    />
+                  </div>
+                </div> -->
+
+                <!-- <div class="col-sm-12">
+                  <label for="tissue_name" class="form-label"
+                    >tissue name<span class="text-muted"
+                      >(Optional)</span
+                    ></label
+                  >
                   <input
                     type="text"
                     class="form-control"
-                    id="cell_types"
-                    name="cell_types"
-                    placeholder="Enter cell types"
+                    id="tissue_name"
+                    name="tissue_name"
+                    placeholder="Enter tissue name"
+                    value=""
                   />
                 </div>
-              </div>
 
-              <div class="col-sm-12">
-                <label for="tissue_name" class="form-label"
-                  >tissue name<span class="text-muted">(Optional)</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="tissue_name"
-                  name="tissue_name"
-                  placeholder="Enter tissue name"
-                  value=""
-                />
-              </div>
+                <div class="col-sm-8">
+                  <label for="used_method" class="form-label"
+                    >method<span class="text-muted">(Optional)</span></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="used_method"
+                    name="used_method"
+                    value=""
+                    placeholder="Enter the method (eg. scRNA-seq)"
+                  />
+                </div> -->
 
-              <div class="col-sm-6">
-                <label for="used_method" class="form-label"
-                  >method<span class="text-muted">(Optional)</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="used_method"
-                  name="used_method"
-                  value=""
-                  placeholder="Enter the method (eg. scRNA-seq)"
-                />
-              </div>
+                <!-- <div class="col-sm-6">
+                  <label for="num_cells" class="form-label"
+                    >cell number<span class="text-muted"
+                      >(Optional)</span
+                    ></label
+                  >
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="num_cells"
+                    name="num_cells"
+                    value=""
+                    placeholder="Enter the number of cells"
+                    required
+                  />
+                </div> -->
 
-              <div class="col-sm-6">
-                <label for="num_cells" class="form-label"
-                  >cell number<span class="text-muted">(Optional)</span></label
-                >
-                <input
-                  type="text"
-                  class="form-control"
-                  id="num_cells"
-                  name="num_cells"
-                  value=""
-                  placeholder="Enter the number of cells"
-                  required
-                />
-              </div>
+                <!-- <div class="col-12">
+                  <label for="markers_main" class="form-label"
+                    >main markers
+                    <span class="text-muted">(Optional)</span></label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="markers_main"
+                    name="markers_main"
+                    placeholder="Enter main markers"
+                    style="height: 50px"
+                  ></textarea>
+                </div>
 
-              <div class="col-12">
-                <label for="markers_main" class="form-label"
-                  >main markers
-                  <span class="text-muted">(Optional)</span></label
-                >
-                <textarea
-                  class="form-control"
-                  id="markers_main"
-                  name="markers_main"
-                  placeholder="Enter main markers"
-                  style="height: 50px"
-                ></textarea>
-              </div>
-
-              <div class="col-12">
-                <label for="markers_other" class="form-label"
-                  >other markers
-                  <span class="text-muted">(Optional)</span></label
-                >
-                <textarea
-                  class="form-control"
-                  id="markers_other"
-                  name="markers_other"
-                  placeholder="Enter other markers"
-                  style="height: 50px"
-                ></textarea>
+                <div class="col-12">
+                  <label for="markers_other" class="form-label"
+                    >other markers
+                    <span class="text-muted">(Optional)</span></label
+                  >
+                  <textarea
+                    class="form-control"
+                    id="markers_other"
+                    name="markers_other"
+                    placeholder="Enter other markers"
+                    style="height: 50px"
+                  ></textarea>
+                </div> -->
               </div>
             </div>
-            <button class="w-100 btn btn-primary btn-lg my-2" type="submit">
-              Sumbmit Literature and Dataset Info
-            </button>
           </div>
         </div>
+        <button class="btn btn-primary my-2 offset-md-4 col-md-4" type="submit">
+          Submit Literature and Dataset Info
+        </button>
       </form>
     </div>
     <div class="row my-2">
       <h4>Matrix</h4>
-      <div class="input-group">
-        <div class="col-md-3 mx-2">
-          <label class="form-label">Gene Feature Matrix</label>
-          <input
-            class="form-control"
-            type="file"
-            id="genes_matrix"
-            accept=".txt, .csv"
-          />
+      <form>
+        <div class="input-group">
+          <div class="col-md-3 mx-2">
+            <label class="form-label">Gene Feature Matrix</label>
+            <input
+              class="form-control"
+              type="file"
+              id="genes_matrix"
+              accept=".txt, .csv, .tsv"
+            />
+          </div>
+          <div class="col-md-3 mx-2">
+            <label class="form-label">Cell Feature Matrix</label>
+            <input
+              class="form-control"
+              type="file"
+              id="cell_matrix"
+              accept=".txt, .csv, .tsv"
+            />
+          </div>
+          <div class="col-md-3 mx-2">
+            <label class="form-label">Expression Matrix</label>
+            <input
+              class="form-control"
+              type="file"
+              id="expression_matrix"
+              accept=".txt, .csv, .tsv, .mtx"
+            />
+          </div>
         </div>
-        <div class="col-md-3 mx-2">
-          <label class="form-label">Cell Feature Matrix</label>
-          <input
-            class="form-control"
-            type="file"
-            id="cell_matrix"
-            accept=".txt, .csv"
-          />
-        </div>
-        <div class="col-md-3 mx-2">
-          <label class="form-label">Expression Matrix</label>
-          <input
-            class="form-control"
-            type="file"
-            id="expression_matrix"
-            accept=".txt, .csv"
-          />
-        </div>
-        <div class="col-md-2 mx-2">
-          <hr />
-          <button class="btn btn-primary" type="button" id="upload_matrix">
+        <div class="col-md-2 mx-2 mt-2">
+          <button class="btn btn-primary" type="submit" id="MatrixFileForm">
             Upload Matrix
           </button>
         </div>
+      </form>
+    </div>
+    <div
+      class="progress"
+      role="progressbar"
+      style="display: none"
+      aria-label="Basic example"
+      aria-valuenow="0"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div class="progress-bar" style="width: 0%">
+        <span id="prgressbarPercent">0%</span>
       </div>
     </div>
-    <div class="row my-1 progress">
-      <div
-        class="progress-bar"
-        role="progressbar"
-        style="width: 0%"
-        aria-valuenow="0"
-        aria-valuemin="0"
-        aria-valuemax="100"
-      ></div>
+    <div class="row mt-2" id="UploadInfo" style="display: none">
+      <div class="col-md-4">
+        Loaded/Total: <span id="dataTransferred"></span>
+      </div>
+      <div class="col-md-4">Speed: <span id="prgressbarMbps"></span></div>
+      <div class="col-md-4">
+        Time Left: <span id="prgressbartimeLeft"></span>
+      </div>
     </div>
   </main>
 </div>
@@ -340,24 +490,40 @@
         dataset: datasetData,
       };
       console.log(formData);
-      // 使用AJAX提交表单数据
+      // 提交文献-数据集信息
       $.ajax({
         url: "/api-v2/upload-literature-dataset/", // 提交的URL
         type: "POST",
         data: formDataArray, // 表单数据
         success: function (response) {
+          alert("Success!");
           console.log("Data submitted successfully:", response);
-          alert("数据提交成功！");
         },
         error: function (error) {
-          alert("数据提交失败！");
+          alert("Failed！");
           console.error("Error submitting data:", error);
         },
       });
     });
+    // 在文件选择后触发的事件中添加文件大小检查
+    $("#genes_matrix, #cell_matrix, #expression_matrix").on(
+      "change",
+      function (event) {
+        var file = event.target.files[0]; // 获取选择的文件
+        var maxSize = 500 * 1024 * 1024; // 设置文件大小限制为10MB
 
+        if (file.size > maxSize) {
+          // 文件大小超过限制，阻止上传并显示提示
+          alert("文件大小超过限制（最大500MB）");
+          // 清空文件选择框，防止继续上传
+          $(this).val("");
+        }
+      }
+    );
     // 矩阵文件提交事件
-    $("#upload_matrix").on("click", function () {
+    $("#MatrixFileForm").on("click", function () {
+      event.preventDefault(); // 阻止默认的表单提交行为
+      $("#MatrixFileForm").attr("disabled", true);
       const geneMatrixFile = $("#genes_matrix")[0].files[0];
       const cellMatrixFile = $("#cell_matrix")[0].files[0];
       const expressionMatrixFile = $("#expression_matrix")[0].files[0];
@@ -368,27 +534,63 @@
       formData.append("expression_file", expressionMatrixFile);
       formData.append("data_id", datasetId);
       formData.append("csrfmiddlewaretoken", csrftoken);
-      const xhr = new XMLHttpRequest();
-      xhr.upload.addEventListener("progress", function (event) {
-        if (event.lengthComputable) {
-          const percentComplete = (event.loaded / event.total) * 100;
-          console.log("上传进度：" + percentComplete + "%");
-          // 在这里更新你的进度条UI，例如修改进度条的宽度或百分比显示
-          $(".progress-bar").css("width", percentComplete + "%");
-          $(".progress-bar").attr("aria-valuenow", percentComplete);
+
+      $(window).on("beforeunload", function (e) {
+        // 如果上传尚未完成，显示确认消息
+        if (uploadInProgress) {
+          var confirmationMessage = "您的上传尚未完成，确定要离开吗？";
+          return confirmationMessage;
         }
       });
+
+      // 在上传开始时设置uploadInProgress为true，在上传完成时设置为false
+      var uploadInProgress = false;
+      $("#UploadInfo").show();
+      $(".progress").show();
       $.ajax({
         xhr: function () {
+          var xhr = new XMLHttpRequest();
+          var startTime = new Date().getTime();
+          xhr.upload.addEventListener(
+            "progress",
+            function (event) {
+              if (event.lengthComputable) {
+                const percentComplete = (event.loaded / event.total) * 100;
+                console.log("上传进度：" + percentComplete + "%");
+                var mbTotal = Math.floor(event.total / (1024 * 1024));
+                var mbLoaded = Math.floor(event.loaded / (1024 * 1024));
+                var time = (new Date().getTime() - startTime) / 1000;
+                var bps = event.loaded / time;
+                var Mbps = Math.floor(bps / (1024 * 1024));
+                var remTime = (event.total - event.loaded) / bps;
+                var seconds = Math.floor(remTime % 60);
+                var minutes = Math.floor(remTime / 60);
+                $("#prgressbarPercent").text(percentComplete.toFixed(2) + "%");
+                $(".progress-bar").css("width", percentComplete + "%");
+                $(".progress-bar").attr("aria-valuenow", percentComplete);
+                $("#dataTransferred").html(`${mbLoaded}/${mbTotal} MB`);
+                $("#prgressbarMbps").html(`${Mbps} Mbps`);
+                $("#prgressbartimeLeft").html(`${minutes}:${seconds}s`);
+              }
+            },
+            false
+          );
           return xhr; // 将XMLHttpRequest对象用于AJAX请求
         },
         url: "/api-v2/upload-matrix-file/",
-        method: "POST",
+        type: "POST",
         data: formData,
         processData: false,
         contentType: false,
+        beforeSend: function () {
+          // 设置上传状态为true，表示上传进行中
+          uploadInProgress = true;
+        },
         success: function () {
+          uploadInProgress = false;
           alert("Matrix files uploaded successfully!");
+          // 跳转到overview页面
+          window.location.href = "/overview";
         },
         error: function () {
           alert("Error uploading matrix files.");

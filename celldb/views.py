@@ -1,8 +1,10 @@
 from django.core.paginator import Paginator
-from django.shortcuts import render
-from .models import TranMeta, LiteratureMeta
-from celldb_v2.models import literature_info, literature_dataset, dataset_info, cell_type_info
+from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
+
+from celldb_v2.models import literature_info, dataset_info, cell_type_info
+from .models import TranMeta
+
 
 def home(request):
     logs = [
@@ -17,7 +19,6 @@ def home(request):
         {"date": "6.28~7.5", "content": "对数据过滤，允许对数据进行添加或删除"},
     ]
     return render(request, "celldb/home.html", {"logs": logs})
-
 def overview(request):
     species_all = dataset_info.objects.all().values_list("species_name", flat=True).distinct()
     cell_types_all = cell_type_info.objects.all().values_list("cell_type_name", flat=True).distinct()
@@ -77,8 +78,8 @@ def upload(request):
 
 def plotScatter(request):
     # 根据参数绘制散点图
-    pmid = request.GET.get("pmid", None)
-    context = {"pmid": pmid}
+    dataset_id = request.GET.get("dataset", None)
+    context = {"plot_dataset": dataset_id}
     return render(request, "celldb/plotScatter.html", context)
 
 def plotLocal(request):
@@ -99,5 +100,25 @@ def analyse(request):
 def test(request):
     return render(request, "celldb/test.html")
 
+from .forms import RegisterForm
+from django.contrib.auth import login
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+
 def test2(request):
-    return render(request, "celldb/test2.html")
+    if request.method == 'GET':
+        form = RegisterForm()
+        return render(request, 'celldb/test2.html', { 'form': form})
+    
+    if request.method == 'POST':
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.username = user.username.lower()
+            user.save()
+            messages.success(request, 'You have singed up successfully.')
+            login(request, user)
+            return redirect('celldb-home')
+        else:
+            messages.error(request, 'Error Validating Form')
+            return render(request, 'celldb/test2.html', {'form': form})

@@ -17,6 +17,6 @@ urlpatterns = [
     path("plot/r", views.plotR, name="celldb-plot-r"),
     path("runcode/", views.runCode, name="celldb-runcode"),
     path("analyse/", views.analyse, name="celldb-analyse"),
-    path("test", views.test, name="celldb-test"),
-    path("test2", views.test2, name="celldb-test2"),
+    path("test/", views.test, name="celldb-test"),
+    path("test2/", views.test2, name="celldb-test2"),
 ]

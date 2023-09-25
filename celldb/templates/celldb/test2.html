@@ -1,22 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-  </head>
-  <body>
-    <h1>待解决的问题</h1>
-    <p>
-      1.基因表达量表文件过大不适合存入数据库，考虑稀疏矩阵转化为坐标矩阵？(row,col,value)
-    </p>
-    <img src="/media/img1.png" alt="" />
-    <img src="/media/img2.png" alt="" />
-    <p>2.其他两张矩阵表（特征和基因）</p>
-    <p>方案一</p>
-    <img src="/media/img3.png" alt="" />
-    <p>方案二</p>
-    <img src="/media/img4.png" alt="" />
-    <hr />
-  </body>
-</html>
+{% extends 'celldb/base.html' %}
+{% block content %}
+<form method="POST" novalidate>
+	{% csrf_token %}
+	<h2>Sign Up</h2>
+		
+	{% for field in form %}
+	<p>
+		{% if field.errors %}
+		<ul class="errorlist">
+			{% for error in field.errors %}
+			<li>{{ error }}</li>
+			{% endfor %}
+		</ul>
+		{% endif %}
+	 	{{ field.label_tag }} {{ field }}
+	</p>
+	{% endfor %}
+	<input type="submit" value="Register" />
+</form>
+{% endblock content%}

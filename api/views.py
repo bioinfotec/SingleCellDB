@@ -89,7 +89,7 @@ class LiteratureMetaView(ModelViewSet):
 
 
 @api_view(["GET"])
-@permission_classes([AllowAny])
+@permission_classes([IsAuthenticated])
 @renderer_classes([DatatablesRenderer])
 def getTran(request, formart=None):
     paginator = CustomeDatabalesPagination()

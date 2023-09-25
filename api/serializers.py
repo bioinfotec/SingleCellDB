@@ -24,7 +24,7 @@ class TranMetaDatabalesSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     class Meta:
         model = TranMeta
-        fields = ("id", "data_id", "cell_barcode")
+        fields = ("id", "data_id", "cell_barcode", "cell_type")
         
 class DataSetMetaSerializer(serializers.ModelSerializer):
     class Meta:

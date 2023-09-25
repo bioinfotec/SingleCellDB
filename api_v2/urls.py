@@ -7,8 +7,11 @@ from django.conf import settings
 
 app_name = "api-v2"
 urlpatterns = [
+    # 删除
+    path("literature-delete/<str:pmid>/", views.literature_delete),
     # 测试
-    path("test/", views.test),
+    path("test/<str:pk>/", views.LiteratureMixinView.as_view()),
+    path("test/", views.LiteratureMixinView.as_view()),
     # 文献信息
     path("literature/", views.LiteratureInfoView.as_view({"get": "list", "post": "create"})),
     re_path("literature/(?P<pk>\w+)/$", views.LiteratureInfoView.as_view({"get": "retrieve", "put": "update", "delete": "destroy"})),
@@ -32,7 +35,9 @@ urlpatterns = [
     # 提交-文献-数据
     path("upload-literature-dataset/", views.DatasetAndLiteratureCreateView.as_view()),
     # 提交-矩阵文件
-    path("upload-matrix-file/", views.UploadedMatrixFileView.as_view({"post": "create"})),
+    path("upload-matrix-file/", views.UploadedMatrixFileView.as_view({"post": "create", "get": "list"})),
+    # 查询-矩阵文件
+    path("list-matrix-file/", views.ListMatrixFileListView.as_view()),
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
 

@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.db import models
+
+
 # 文献信息表
 class literature_info(models.Model):
     pmid = models.CharField(primary_key=True,max_length=25)
@@ -85,10 +88,11 @@ class dataset_cell_type(models.Model):
 # 文件上传
 def user_directory_path(instance, filename):
     # 文件将会上传到 MEDIA_ROOT/user_<user_id>/<filename>
-    return f'user_{instance.user.id}/{instance.data_id}/{filename}'
+    return f'user_{instance.user.username}/{instance.data_id}/{filename}'
+
 class matrix_file(models.Model):
     user = models.ForeignKey(User, default="user",on_delete=models.SET_DEFAULT)
-    data_id = models.CharField(max_length=50)
+    data_id = models.CharField(max_length=50, unique=True)
     gene_file = models.FileField(upload_to=user_directory_path)
     cell_file = models.FileField(upload_to=user_directory_path)
     expression_file = models.FileField(upload_to=user_directory_path)

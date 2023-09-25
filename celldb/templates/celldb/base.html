@@ -217,7 +217,9 @@
               </li>
               {% else %}
               <a class="nav-item nav-link" href="/accounts/login">Login</a>
-              <a class="nav-item nav-link" href="#">Register</a>
+              <a class="nav-item nav-link" href="/accounts/register"
+                >Register</a
+              >
               {% endif %}
             </div>
           </div>
@@ -269,7 +271,7 @@
           </li>
         </ul>
         <p class="text-center text-muted">© 2023 SingleCellDB</p>
-      </footer>
+        <p class="text-center text-muted">User's IP: {{ request.user_ip }}</p>
     </div>
 
     {% block scripts %}

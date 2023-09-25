@@ -66,7 +66,13 @@ class CellTypeInfoSerializer(serializers.ModelSerializer):
         model = cell_type_info
         fields = ('cell_type_name','cell_type_alias','cell_type_annotation',)
  
-       
+ 
+# from rest_framework.pagination import PageNumberPagination
+# class MyPagination(PageNumberPagination):
+#     page_query_param = "sub_page"
+#     page_size_query_param = "sub_page_size"
+#     page_size = 10  # 每页显示的数据量
+#     max_page_size = 1000  # 最大允许的每页数据量      
 # 数据集-文献-基因表
 class DatasetLiteratureGeneSerializer(serializers.ModelSerializer):
     literature = serializers.SerializerMethodField()
@@ -74,7 +80,7 @@ class DatasetLiteratureGeneSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = dataset_info
-        fields = ("dataset_id","species_name","literature","gene_expression_set",)
+        fields = ("dataset_id","cell_types","species_name","literature","gene_expression_set",)
         
     def get_literature(self, obj):
         literature_pmid = obj.literature.values("pmid")
@@ -89,6 +95,9 @@ class DatasetLiteratureGeneSerializer(serializers.ModelSerializer):
             gene_expression_data = obj.gene_expression_set.values("cell_types")
         if cell_type is not None:
             gene_expression_data = gene_expression_data.filter(cell_types__icontains=cell_type)
+        #paginator = MyPagination()
+        #result_page = paginator.paginate_queryset(gene_expression_data, self.context.get('request'))
+        #return paginator.get_paginated_response(result_page).data
         return gene_expression_data
     
 # 文件上传
@@ -96,3 +105,9 @@ class UploadedMatrixFileSerializer(serializers.ModelSerializer):
     class Meta:
         model = matrix_file
         fields = "__all__"
+        
+# 查询文件
+class ListMatrixFileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = matrix_file
+        fields = ("data_id","gene_file","cell_file","expression_file",)
